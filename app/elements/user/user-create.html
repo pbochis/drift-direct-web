@@ -1,0 +1,107 @@
+<link rel="import" href="/styles/shared-styles.html">
+<link rel="import" href="/bower_components/iron-form/iron-form.html">
+<link rel="import" href="/bower_components/paper-input/paper-input.html">
+<link rel="import" href="/bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="/elements/dd-ajax">
+
+<dom-module id="user-create">
+	<template>
+		<style is="custom-style" include="shared-styles"></style>
+		<style>
+			paper-material {
+				height: 100%;
+				width: calc(60% - 36px);
+				padding: 36px 18px;
+				margin: 36px auto;
+			}
+			paper-button {
+				margin: 20px 10px 10px 0;
+			}
+		</style>
+
+		<paper-material>
+			<h1>Create user</h1>
+			<dd-ajax
+				id="getRoles"
+				method="GET"
+				last-response="{{roles}}">
+			</dd-ajax>
+			<dd-ajax
+				id="postUser"
+				method="POST"
+				body="{{user}}"
+				on-response="onResponse"
+				on-error="onError">
+			</dd-ajax>
+
+			<form is="iron-form" id="userForm">
+				<paper-input id="firstName" label="First name" value="{{user.firstName}}" required></paper-input>
+				<paper-input id="lastName" label="Last name(surname)" value="{{user.lastName}}" required></paper-input>
+				<paper-input id="email" type="email" label="Email" value="{{user.email}}" required></paper-input>
+				<paper-radio-group id="roleGroup" selected-item="{{selectedRole}}">
+					<template is="dom-repeat" items="{{roles}}">
+						<paper-radio-button name="{{item.id}}" value="{{item.id}}">{{_roleName(item.role)}}</paper-radio-button><br>
+					</template>
+				</paper-radio-group><br>
+				<paper-button class="colorful" raised on-click="_createUser">Create</paper-button>
+				<paper-toast id="noRoleSelected" text="Please select a role for the user"></paper-toast>
+			</form>
+		</paper-material>
+	</template>
+	<script>
+		Polymer({
+			is: 'user-create',
+			properties: {
+				roles: {
+					type: Array,
+					notify: true
+				},
+				user: {
+					type: Object,
+					notify: true,
+					value: {}
+				},
+				selectedRole: {
+					type: Object,
+					notify: true
+				}
+			},
+			getRoles: function(){
+				this.$.getRoles.url = util.build('/roles');
+				this.$.getRoles.generateRequest();
+			},
+			_roleName: function(role){
+				switch (role){
+					case 'ROLE_ADMIN':
+						return 'Admin';
+					case 'ROLE_ORGANIZER':
+						return 'Organizer';
+					case 'ROLE_JUDGE':
+						return 'Judge';
+				}
+			},
+			_createUser: function(){
+				if (!this.$.userForm.validate()){
+					return;
+				}
+				if (this.selectedRole === undefined){
+					this.$.noRoleSelected.show();
+					return;
+				}
+				this.set('user.roles', [this.selectedRole.value]);
+				this.$.postUser.url = util.build('/user');
+				this.$.postUser.generateRequest();
+			},
+			onResponse: function(event, r){
+				console.log('Success');
+				console.log(r);
+			},
+			onError: function(event, e){
+				console.log('Error');
+				console.log(e);
+			}
+		});
+	</script>
+</dom-module>

@@ -1,0 +1,32 @@
+<link rel="import" href="/styles/shared-styles.html">
+<link rel="import" href="/elements/dd-ajax">
+<dom-module id="championship-view">
+	<template>
+		<style include="shared-styles"></style>
+		<dd-ajax
+			id="getChampionship"
+			method="GET"
+			last-response="{{championship}}"
+			on-response="onResponse">
+		</dd-ajax>
+		<h1>{{championship.name}}</h1>
+	</template>
+	<script>
+		Polymer({
+			is: 'championship-view',
+			properties: {
+				championship: {
+					type: Object,
+					notify: true
+				}
+			},
+			getChampionship: function(championshipId){
+				this.$.getChampionship.url = util.build('/championship/' + championshipId);
+				this.$.getChampionship.generateRequest();
+			},
+			onResponse: function(){
+				app.header = this.championship.name;
+			}
+		});
+	</script>
+</dom-module>

@@ -1,0 +1,37 @@
+<link rel="import" href="/styles/shared-styles.html">
+<link rel="import" href="/elements/dd-ajax">
+<link rel="import" href="championship-card.html">
+<link rel="import" href="/bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+
+<dom-module id="championship-list">
+	<template>
+		<style include="shared-styles"></style>
+		<dd-ajax
+			id="getChampionships"
+			method="GET"
+			last-response="{{championships}}">
+		</dd-ajax>
+		<div class="layout vertical">
+			<template is="dom-repeat" items="{{championships}}">
+				<championship-card championship="{{item}}"></championship-card>
+			</template>
+		</div>
+
+	</template>
+	<script>
+		Polymer({
+			is: 'championship-list',
+			properties: {
+				championships: {
+					type: Array,
+					notify: true
+				}
+			},
+			getChampionships: function(){
+				console.log('hello');
+				this.$.getChampionships.url = util.build('/championship/short');
+				this.$.getChampionships.generateRequest();
+			}
+		});
+	</script>
+</dom-module>

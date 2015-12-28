@@ -10,65 +10,98 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <script src="../bower_components/page/page.js"></script>
 <script>
-  window.addEventListener('WebComponentsReady', function() {
+	window.addEventListener('WebComponentsReady', function () {
 
-    // We use Page.js for routing. This is a Micro
-    // client-side router inspired by the Express router
-    // More info: https://visionmedia.github.io/page.js/
+		// We use Page.js for routing. This is a Micro
+		// client-side router inspired by the Express router
+		// More info: https://visionmedia.github.io/page.js/
 
-    // Removes end / from app.baseUrl which page.base requires for production
-    if (window.location.port === '') {  // if production
-      page.base(app.baseUrl.replace(/\/$/, ''));
-    }
+		// Removes end / from app.baseUrl which page.base requires for production
+		if (window.location.port === '') {  // if production
+			page.base(app.baseUrl.replace(/\/$/, ''));
+		}
 
-    // Middleware
-    function scrollToTop(ctx, next) {
-      app.scrollPageToTop();
-      next();
-    }
+		// Middleware
+		function scrollToTop(ctx, next) {
+			app.scrollPageToTop();
+			next();
+		}
 
-    function closeDrawer(ctx, next) {
-      app.closeDrawer();
-      next();
-    }
+		function closeDrawer(ctx, next) {
+			app.closeDrawer();
+			next();
+		}
 
-    // Routes
-    page('*', scrollToTop, closeDrawer, function(ctx, next) {
-      next();
-    });
+		// Routes
+		page('*', scrollToTop, closeDrawer, function (ctx, next) {
+			next();
+		});
 
-    page('/', function() {
-      app.route = 'home';
-    });
+		page('/', function () {
+			if (!util.loggedIn()){
+				page('/login');
+			}
+			else{
+				page('/championships');
+			}
+		});
 
-    page(app.baseUrl, function() {
-      app.route = 'home';
-    });
+		page('/login', function(){
+			app.route = 'login';
+		});
 
-    page('/users', function() {
-      app.route = 'users';
-    });
+		page('/championships', function(){
+			app.header = 'Championships';
+			Polymer.Base.importHref('/elements/championship/championship-list.html', function(){
+				app.route = 'championships';
+				app.$.championships.getChampionships();
+			});
+		});
 
-    page('/users/:name', function(data) {
-      app.route = 'user-info';
-      app.params = data.params;
-    });
+		page('/championship/:championshipId', function(data){
+			app.route = 'championship-view';
+			var id = data.params.championshipId;
+			Polymer.Base.importHref('/elements/championship/championship-view.html', function(){
+				app.$.championship.getChampionship(id);
+			});
+		});
 
-    page('/contact', function() {
-      app.route = 'contact';
-    });
+		page('/users', function () {
+			app.route = 'users';
+			app.header = 'Users';
+			Polymer.Base.importHref('/elements/user/user-list.html', function(){
+				app.$.users.getUsers();
+			});
+		});
 
-    // 404
-    page('*', function() {
-      app.$.toast.text = 'Can\'t find: ' + window.location.href  + '. Redirected you to Home Page';
-      app.$.toast.show();
-      page.redirect(app.baseUrl);
-    });
+		page ('/user/create', function(){
+			app.route = 'user-create';
+			app.header = 'Create user';
+			Polymer.Base.importHref('/elements/user/user-create.html', function(){
+				app.$.userCreate.getRoles();
+			})
+		})
 
-    // add #! before urls
-    page({
-      hashbang: true
-    });
+		page('/users/:name', function (data) {
+			app.route = 'user-info';
+			app.params = data.params;
+		});
 
-  });
+		page('/contact', function () {
+			app.route = 'contact';
+		});
+
+		// 404
+		page('*', function () {
+			app.$.toast.text = 'Can\'t find: ' + window.location.href + '. Redirected you to Home Page';
+			app.$.toast.show();
+			page.redirect(app.baseUrl);
+		});
+
+		// add #! before urls
+		page({
+			hashbang: true
+		});
+
+	});
 </script>
