@@ -1,4 +1,4 @@
-<link rel="import" href="/elements/dd-ajax">
+<link rel="import" href="/elements/shared/dd-ajax.html">
 <link rel="import" href="/styles/shared-styles.html">
 <link rel="import" href="/bower_components/iron-flex-layout/classes/iron-flex-layout.html">
 <link rel="import" href="/bower_components/paper-fab/paper-fab.html">
@@ -37,7 +37,6 @@
 				}
 			},
 			getUsers: function(){
-				console.log('getting users');
 				this.$.getUsers.url = util.build("/users");
 				this.$.getUsers.generateRequest();
 			},

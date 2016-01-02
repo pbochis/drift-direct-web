@@ -54,16 +54,13 @@
 				}
 			},
 			generateRequest: function () {
-				console.log(this.body);
 				this.headers.Authorization = localStorage.token;
 				this.$.ajaxRequest.generateRequest();
 			},
 			_onError: function (e) {
-				console.log(e);
 				this.fire('error', e);
 			},
 			_onResponse: function(r){
-				console.log(this.lastResponse);
 				this.fire('response', r);
 			}
 		});

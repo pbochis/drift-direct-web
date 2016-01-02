@@ -2,14 +2,18 @@
 <link rel="import" href="/bower_components/iron-form/iron-form.html">
 <link rel="import" href="/bower_components/paper-input/paper-input.html">
 <link rel="import" href="/bower_components/paper-checkbox/paper-checkbox.html">
-<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
-<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
-<link rel="import" href="/elements/dd-ajax">
+<link rel="import" href="/bower_components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="/bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/elements/shared/dd-ajax.html">
 
 <dom-module id="user-create">
 	<template>
 		<style is="custom-style" include="shared-styles"></style>
 		<style>
+			:host {
+				display: block;
+			}
 			paper-material {
 				height: 100%;
 				width: calc(60% - 36px);
@@ -21,21 +25,20 @@
 			}
 		</style>
 
-		<paper-material>
-			<h1>Create user</h1>
-			<dd-ajax
-				id="getRoles"
-				method="GET"
-				last-response="{{roles}}">
-			</dd-ajax>
-			<dd-ajax
-				id="postUser"
-				method="POST"
-				body="{{user}}"
-				on-response="onResponse"
-				on-error="onError">
-			</dd-ajax>
+		<dd-ajax
+			id="getRoles"
+			method="GET"
+			last-response="{{roles}}">
+		</dd-ajax>
+		<dd-ajax
+			id="postUser"
+			method="POST"
+			body="{{user}}"
+			on-response="onResponse"
+			on-error="onError">
+		</dd-ajax>
 
+		<paper-material>
 			<form is="iron-form" id="userForm">
 				<paper-input id="firstName" label="First name" value="{{user.firstName}}" required></paper-input>
 				<paper-input id="lastName" label="Last name(surname)" value="{{user.lastName}}" required></paper-input>
@@ -83,6 +86,9 @@
 				}
 			},
 			_createUser: function(){
+				console.log(this.roles);
+				console.log(this.selectedRole);
+
 				if (!this.$.userForm.validate()){
 					return;
 				}
@@ -90,13 +96,14 @@
 					this.$.noRoleSelected.show();
 					return;
 				}
-				this.set('user.roles', [this.selectedRole.value]);
+				this.set('user.role', this.selectedRole.value);
 				this.$.postUser.url = util.build('/user');
 				this.$.postUser.generateRequest();
 			},
 			onResponse: function(event, r){
 				console.log('Success');
-				console.log(r);
+				this.user = {};
+				page('/users');
 			},
 			onError: function(event, e){
 				console.log('Error');

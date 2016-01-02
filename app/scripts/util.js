@@ -6,7 +6,10 @@ var util = {
 		var prefix = "http://localhost:8080";
 		return prefix + suffix;
 	},
-	imageLink: function(id){
+	imageLink: function(id, width, height){
+		if (width !== undefined && height !== undefined){
+			return this.build('/file/' + id + '?height=' + height + '&width=' + width);
+		}
 		return this.build('/file/' + id);
 	},
 	loggedIn: function(){

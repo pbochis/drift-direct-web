@@ -1,0 +1,47 @@
+<link rel="import" href="/styles/shared-styles.html">
+<dom-module id="championship-rules">
+	<template>
+		<style include="shared-styles"></style>
+		<style>
+			:host {
+				display: block;
+			}
+
+			paper-material {
+				width: 100%;
+			}
+		</style>
+		<paper-material>
+			<template is="dom-if" if="{{videoUrl}}">
+				<dl>
+					<dt>Video</dt>
+					<dd><a href$="{{rules.videoUrl}}" target="_blank">{{rules.videoUrl}}</a></dd>
+				</dl>
+			</template>
+			<br>
+			<p style="font-weight: bold">Rules:</p>
+			<div>{{rules.rules}}</div>
+
+		</paper-material>
+	</template>
+	<script>
+		Polymer({
+			is: 'championship-rules',
+			properties: {
+				rules: {
+					type: Object,
+					notify: true,
+					observer: 'rulesSet'
+				},
+				videoUrl: {
+					type: Boolean,
+					notify: true,
+					value: true
+				}
+			},
+			rulesSet: function () {
+				this.videoUrl = this.rules.videoUrl !== null;
+			}
+		})
+	</script>
+</dom-module>

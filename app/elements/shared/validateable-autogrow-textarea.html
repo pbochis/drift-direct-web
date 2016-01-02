@@ -1,0 +1,73 @@
+<link rel="import" href="/styles/shared-styles.html">
+<link rel="import" href="/bower_components/iron-autogrow-textarea/iron-autogrow-textarea.html">
+
+<dom-module id="validateable-autogrow-textarea">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			iron-autogrow-textarea{
+				background-color: white;
+				width: 95%;
+				margin: 25px auto;
+			}
+			.error {
+				color: red;
+			}
+		</style>
+		<template is="dom-if" if="{{invalid}}">
+			<p class="error">{{errorMessage}}</p>
+		</template>
+		<iron-autogrow-textarea placeHolder="{{placeHolder}}" id="textarea" bind-value="{{bindValue}}" rows="{{rows}}" max-rows="{{rows}}" required></iron-autogrow-textarea>
+	</template>
+	<script>
+		Polymer({
+			is: 'validateable-autogrow-textarea',
+			properties: {
+				invalid: {
+					type: Boolean,
+					value: false,
+					notify: true
+				},
+				errorMessage: {
+					type: String,
+					notify: true,
+					value: 'You must fill this field'
+				},
+				bindValue: {
+					type: String,
+					notify: true,
+					reflectToAttribute: true
+				},
+				placeHolder: {
+					type: String,
+					notify: true
+				},
+				rows: {
+					type: Number,
+					notify: true,
+					value: 10
+				},
+				maxRows: {
+					type: Number,
+					notify: true,
+					value: 10
+				},
+				required: {
+					type: Boolean,
+					notify: true,
+					value: true
+				}
+			},
+			validate: function(){
+				if (!this.required){
+					return true;
+				}
+				if (!this.$.textarea.validate()){
+					this.invalid = true;
+					return false;
+				}
+				this.invalid = false;
+				return true;
+			}
+		});
+	</script>
+</dom-module>

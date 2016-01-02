@@ -11,16 +11,15 @@
 
 					<!-- Drawer Toolbar -->
 					<paper-toolbar id="drawerToolbar">
-						<span class="paper-font-title">Menu</span>
+						<span class="paper-font-title">DriftDirect - Beta</span>
 					</paper-toolbar>
 
 					<!-- Drawer Content -->
-					<paper-menu class="list" attr-for-selected="data-route" selected="[[route]]">
+					<paper-menu class="list">
 						<a href="/championships">
 							<iron-icon icon="home"></iron-icon>
 							<span>Championships</span>
 						</a>
-
 						<a href="/users">
 							<iron-icon icon="info"></iron-icon>
 							<span>Users</span>
@@ -59,6 +58,9 @@
 						</section>
 						<section data-route="championship-view">
 							<championship-view id="championship"></championship-view>
+						</section>
+						<section data-route="championship-create">
+							<championship-create id="championshipCreate"></championship-create>
 						</section>
 
 						<section data-route="users">
@@ -107,10 +109,6 @@
 			},
 			login: function(){
 				this.isLoggedIn = util.loggedIn();
-			},
-			_loggedIn: function(){
-				console.log('wtf');
-				return util.loggedIn();
 			}
 		});
 	</script>

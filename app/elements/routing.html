@@ -32,6 +32,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			next();
 		}
 
+		function checkIsLoggedIn(){
+			if (!util.loggedIn){
+				page('/login');
+			}
+		}
+
 		// Routes
 		page('*', scrollToTop, closeDrawer, function (ctx, next) {
 			next();
@@ -48,9 +54,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 		page('/login', function(){
 			app.route = 'login';
+			app.isLoggedIn = false;
 		});
 
 		page('/championships', function(){
+			checkIsLoggedIn();
 			app.header = 'Championships';
 			Polymer.Base.importHref('/elements/championship/championship-list.html', function(){
 				app.route = 'championships';
@@ -59,6 +67,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 		});
 
 		page('/championship/:championshipId', function(data){
+			checkIsLoggedIn();
 			app.route = 'championship-view';
 			var id = data.params.championshipId;
 			Polymer.Base.importHref('/elements/championship/championship-view.html', function(){
@@ -66,7 +75,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			});
 		});
 
+		page('/championships/create', function(){
+			checkIsLoggedIn();
+			app.route = 'championship-create';
+			app.header = 'New championship';
+			Polymer.Base.importHref('/elements/championship/championship-create.html', function(){
+				app.$.championshipCreate.getPersons();
+			});
+		});
+
 		page('/users', function () {
+			checkIsLoggedIn();
 			app.route = 'users';
 			app.header = 'Users';
 			Polymer.Base.importHref('/elements/user/user-list.html', function(){
@@ -75,12 +94,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 		});
 
 		page ('/user/create', function(){
+			checkIsLoggedIn();
 			app.route = 'user-create';
 			app.header = 'Create user';
 			Polymer.Base.importHref('/elements/user/user-create.html', function(){
 				app.$.userCreate.getRoles();
 			})
-		})
+		});
 
 		page('/users/:name', function (data) {
 			app.route = 'user-info';
