@@ -17,5 +17,16 @@ var util = {
 			console.log(JSON.parse(localStorage.getItem('user')));
 			return JSON.parse(localStorage.getItem('user'));
 		}
+	},
+
+	formatDate: function(date){
+		return date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear() + ' ' + this.getTimeField(date.getHours()) + ':' + this.getTimeField(date.getMinutes());
+	},
+	getTimeField: function(timeField){
+		if (timeField < 10){
+			return '0' + timeField;
+		}
+		return timeField;
+
 	}
 };

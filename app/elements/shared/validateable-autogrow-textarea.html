@@ -16,7 +16,7 @@
 		<template is="dom-if" if="{{invalid}}">
 			<p class="error">{{errorMessage}}</p>
 		</template>
-		<iron-autogrow-textarea placeHolder="{{placeHolder}}" id="textarea" bind-value="{{bindValue}}" rows="{{rows}}" max-rows="{{rows}}" required></iron-autogrow-textarea>
+		<iron-autogrow-textarea placeHolder="{{placeHolder}}" id="textarea" bind-value="{{bindValue}}" rows="{{rows}}" max-rows="{{rows}}"></iron-autogrow-textarea>
 	</template>
 	<script>
 		Polymer({
@@ -58,10 +58,11 @@
 				}
 			},
 			validate: function(){
+				console.log(this.bindValue);
 				if (!this.required){
 					return true;
 				}
-				if (!this.$.textarea.validate()){
+				if (this.bindValue === undefined || this.bindValue === null || this.bindValue === ''){
 					this.invalid = true;
 					return false;
 				}

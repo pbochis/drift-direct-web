@@ -3,12 +3,13 @@
 <link rel="import" href="/bower_components/paper-menu/paper-menu.html">
 <link rel="import" href="/bower_components/paper-item/paper-item.html">
 
-<dom-module id="person-chooser">
+<link rel="import" href="dd-ajax.html">
+
+<dom-module id="country-chooser">
 	<template>
 		<style is="custom-style" include="shared-styles">
 			:host{
 				display: block;
-				width: 100%;
 			}
 			paper-dropdown-menu{
 				width: 200px;
@@ -17,45 +18,50 @@
 				background-color: white;
 			}
 		</style>
-		<paper-dropdown-menu id="person" label="{{label}}" selected-item="{{selectedPerson}}" required>
+		<dd-ajax
+			id="getCountries"
+			method="GET"
+			last-response="{{countries}}">
+		</dd-ajax>
+		<paper-dropdown-menu id="country" label="Country" selected-item="{{selectedCountry}}" required>
 			<paper-menu class="dropdown-content">
-				<template is="dom-repeat" items="{{persons}}">
-					<paper-item value="{{item.id}}">{{item.firstName}} {{item.lastName}}</paper-item>
+				<template is="dom-repeat" items="{{countries}}">
+					<paper-item value="{{item.id}}">{{item.name}}</paper-item>
 				</template>
 			</paper-menu>
 		</paper-dropdown-menu>
 	</template>
 	<script>
 		Polymer({
-			is: 'person-chooser',
+			is: 'country-chooser',
 			properties: {
-				persons: {
+				countries: {
 					type: Array,
 					notify: true
 				},
-				label : {
-					type: String,
-					notify: true,
-					value: 'Person'
-				},
-				selectedPerson: {
+				selectedCountry: {
 					type: Object,
 					notify: true,
 					observer: '_selectionChanged'
 				},
-				selectedPersonId: {
+				selectedCountryId: {
 					type: Number,
 					notify: true,
 					reflectToAttribute: true
 				}
 			},
+			ready: function(){
+				this.$.getCountries.url = util.build('/country');
+				this.$.getCountries.generateRequest();
+			},
 			_selectionChanged: function(){
-				if (this.selectedPerson !== undefined){
-					this.selectedPersonId = this.selectedPerson.value;
+				if (this.selectedCountry !== undefined && this.selectedCountry !== null){
+					this.selectedCountryId = this.selectedCountry.value;
+					console.log(this.selectedCountryId);
 				}
 			},
 			validate: function(){
-				return this.$.person.validate();
+				return this.$.country.validate();
 			}
 		});
 	</script>

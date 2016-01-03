@@ -11,6 +11,7 @@
 
 			paper-material {
 				width: 600px;
+				cursor: pointer;
 				padding: 0;
 			}
 
@@ -26,7 +27,7 @@
 			}
 
 		</style>
-		<paper-material>
+		<paper-material on-click="_viewRound">
 			<iron-image src$="{{logoUrl}}" sizing="contain"></iron-image>
 			<div class="container">
 				<div>{{round.name}}</div>
@@ -63,6 +64,9 @@
 				}
 				this.startDate = new Date(this.round.startDate).toDateString();
 				this.endDate = new Date(this.round.endDate).toDateString();
+			},
+			_viewRound: function(){
+				page('/round/' + this.round.id);
 			}
 		});
 	</script>

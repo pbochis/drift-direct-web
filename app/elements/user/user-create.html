@@ -1,10 +1,10 @@
 <link rel="import" href="/styles/shared-styles.html">
 <link rel="import" href="/bower_components/iron-form/iron-form.html">
 <link rel="import" href="/bower_components/paper-input/paper-input.html">
-<link rel="import" href="/bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="/bower_components/paper-radio-group/paper-radio-group.html">
 <link rel="import" href="/bower_components/paper-radio-button/paper-radio-button.html">
 <link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/elements/person/person-create-form.html">
 <link rel="import" href="/elements/shared/dd-ajax.html">
 
 <dom-module id="user-create">
@@ -14,12 +14,15 @@
 			:host {
 				display: block;
 			}
-			paper-material {
-				height: 100%;
-				width: calc(60% - 36px);
-				padding: 36px 18px;
+			.content {
+				width: 80%;
 				margin: 36px auto;
 			}
+
+			paper-material {
+				height:auto;
+			}
+
 			paper-button {
 				margin: 20px 10px 10px 0;
 			}
@@ -37,21 +40,22 @@
 			on-response="onResponse"
 			on-error="onError">
 		</dd-ajax>
-
-		<paper-material>
-			<form is="iron-form" id="userForm">
-				<paper-input id="firstName" label="First name" value="{{user.firstName}}" required></paper-input>
-				<paper-input id="lastName" label="Last name(surname)" value="{{user.lastName}}" required></paper-input>
-				<paper-input id="email" type="email" label="Email" value="{{user.email}}" required></paper-input>
-				<paper-radio-group id="roleGroup" selected-item="{{selectedRole}}">
-					<template is="dom-repeat" items="{{roles}}">
-						<paper-radio-button name="{{item.id}}" value="{{item.id}}">{{_roleName(item.role)}}</paper-radio-button><br>
-					</template>
-				</paper-radio-group><br>
-				<paper-button class="colorful" raised on-click="_createUser">Create</paper-button>
-				<paper-toast id="noRoleSelected" text="Please select a role for the user"></paper-toast>
-			</form>
-		</paper-material>
+		<div class="content">
+			<person-create-form id="person" person="{{user.person}}" person-type="{{personType}}"></person-create-form>
+			<paper-material>
+				<h2>User details</h2>
+				<form is="iron-form" id="userForm">
+					<paper-input id="email" type="email" label="Email" value="{{user.email}}" required></paper-input>
+					<paper-radio-group id="roleGroup" selected-item="{{selectedRole}}">
+						<template is="dom-repeat" items="{{roles}}">
+							<paper-radio-button name="{{item.role}}" value="{{item.id}}">{{_roleName(item.role)}}</paper-radio-button><br>
+						</template>
+					</paper-radio-group><br>
+					<paper-button class="colorful" raised on-click="_createUser">Create</paper-button>
+				</form>
+			</paper-material>
+			<paper-toast id="noRoleSelected" text="Please select a role for the user"></paper-toast>
+		</div>
 	</template>
 	<script>
 		Polymer({
@@ -64,16 +68,29 @@
 				user: {
 					type: Object,
 					notify: true,
-					value: {}
+					value: {
+						person: {}
+					}
 				},
 				selectedRole: {
 					type: Object,
+					notify: true,
+					observer: '_roleSelectionChanged'
+				},
+				personType: {
+					type: String,
 					notify: true
 				}
 			},
 			getRoles: function(){
 				this.$.getRoles.url = util.build('/roles');
 				this.$.getRoles.generateRequest();
+			},
+			_roleSelectionChanged(){
+				if (this.selectedRole !== undefined && this.selectedRole !== null){
+					this.set('user.role', this.selectedRole.value);
+					this.set('personType', this._roleName(this.selectedRole.name));
+				}
 			},
 			_roleName: function(role){
 				switch (role){
@@ -86,17 +103,16 @@
 				}
 			},
 			_createUser: function(){
-				console.log(this.roles);
-				console.log(this.selectedRole);
-
-				if (!this.$.userForm.validate()){
+				var valid = this.$.userForm.validate();
+				valid = this.$.person.validate() && valid;
+				if (!valid){
 					return;
 				}
 				if (this.selectedRole === undefined){
 					this.$.noRoleSelected.show();
 					return;
 				}
-				this.set('user.role', this.selectedRole.value);
+
 				this.$.postUser.url = util.build('/user');
 				this.$.postUser.generateRequest();
 			},

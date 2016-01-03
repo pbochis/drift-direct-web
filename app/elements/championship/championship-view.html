@@ -96,12 +96,8 @@
 				selectedTab: {
 					type: Number,
 					notify: true,
-					value: 0,
-					observer: 'selectedTabChanged'
+					value: 0
 				}
-			},
-			selectedTabChanged: function(){
-				console.log(this.selectedTab);
 			},
 			getChampionship: function(championshipId){
 				this.$.getChampionship.url = util.build('/championship/' + championshipId);
