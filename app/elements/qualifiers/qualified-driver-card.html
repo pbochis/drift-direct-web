@@ -1,0 +1,108 @@
+<link rel="import" href="/styles/shared-styles.html">
+<link rel="import" href="/bower_components/iron-image/iron-image.html">
+
+<link rel="import" href="/bower_components/paper-tooltip/paper-tooltip.html">
+
+<dom-module id="qualified-driver-card">
+	<template>
+		<style include="shared-styles"></style>
+		<style>
+			:host{
+				display: block;
+			}
+			paper-material {
+				height: 300px;
+				width: 250px;
+				padding: 0;
+			}
+			.profilePicture {
+				width: 250px;
+				height: 150px;
+				margin: 0;
+				padding: 0;
+			}
+			.desc {
+				font-weight: bold;
+			}
+
+			.controls{
+				@apply(--layout-horizontal-reverse);
+			}
+
+			iron-icon {
+				cursor: pointer;
+			}
+
+		</style>
+		<paper-material>
+			<template is="dom-if" if="{{profilePicture}}">
+				<iron-image class="profilePicture" src$="{{profilePictureUrl}}" sizing="contain"></iron-image>
+			</template>
+			<template is="dom-if" if="{{!profilePicture}}">
+				<iron-image class="profilePicture" src="/images/user.png"></iron-image>
+			</template>
+			<hr style="margin: 0">
+			<template is="dom-if" if="{{canJudge}}">
+				<div class="controls">
+					<iron-icon id="judgeIcon" icon="chevron-right" on-click="_goJudge"></iron-icon>
+					<paper-tooltip for="judgeIcon" offset="0">Go to qualifier judging screen</paper-tooltip>
+				</div>
+			</template>
+			<div class="vertical layout center">
+				<div class="desc">{{qualifier.driver.firstName}} {{qualifier.driver.lastName}}</div>
+				<template is="dom-if" if="{{hasNick}}">
+					<div class="desc">"{{qualifier.driver.nick}}"</div>
+				</template>
+			</div>
+		</paper-material>
+	</template>
+	<script>
+		Polymer({
+			is: 'qualified-driver-card',
+			properties: {
+				qualifier: {
+					type: Object,
+					notify: true,
+					observer: '_qualifierSet'
+				},
+				profilePicture: {
+					type: Boolean,
+					notify: true,
+					value: false
+				},
+				profilePictureUrl: {
+					type: String,
+					notify: true
+				},
+				hasNick: {
+					type: Boolean,
+					notify: true,
+					value: true
+				},
+				canJudge: {
+					type: Boolean,
+					notify: true,
+					value: false
+				},
+				roundId: {
+					type: Number,
+					notify: true
+				}
+			},
+			_qualifierSet: function() {
+				var driver = this.qualifier.driver;
+				this.hasNick = driver.nick !== null;
+				if (driver.profilePicture !== null){
+					this.profilePictureUrl = util.imageLink(driver.profilePicture);
+					this.profilePicture = true;
+				}
+				//TODO: replace this with an API call;
+				this.canJudge = util.isJudge();
+			},
+			_goJudge: function(){
+				page('/qualifiers/' + this.qualifier.id);
+			}
+		})
+	</script>
+</dom-module>
+

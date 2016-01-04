@@ -19,6 +19,26 @@ var util = {
 		}
 	},
 
+	isJudge: function(){
+		var user = JSON.parse(localStorage.getItem('user'));
+		for (var i = 0; i < user.roles.length; i++){
+			if (user.roles[i] === 'ROLE_JUDGE'){
+				return true;
+			}
+		}
+		return false;
+	},
+
+	isOrganizer: function(){
+		var user = JSON.parse(localStorage.getItem('user'));
+		for (var i = 0; i < user.roles.length; i++){
+			if (user.roles[i] === 'ROLE_ORGANIZER'){
+				return true;
+			}
+		}
+		return false;
+	},
+
 	formatDate: function(date){
 		return date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear() + ' ' + this.getTimeField(date.getHours()) + ':' + this.getTimeField(date.getMinutes());
 	},

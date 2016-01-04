@@ -1,0 +1,53 @@
+<link rel="import" href="/styles/shared-styles.html">
+<link rel="import" href="/bower_components/paper-slider/paper-slider.html">
+
+<dom-module id="qualifier-points-slider">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			:host{
+				display: block;
+			}
+			.content {
+				height: auto;
+				@apply(--layout-vertical)
+			}
+			paper-slider {
+				--paper-slider-secondary-color: #000000;
+				--paper-slider-height: 4px;
+			}
+		</style>
+		<div class="content">
+			<p>{{pointsAllocation.name}}</p>
+			<div class="layout horizontal">
+				<span>0</span>
+				<paper-slider class="flex" min="0" value={{awardedPoints}} max="{{pointsAllocation.maxPoints}}" pin="true"></paper-slider>
+				<span>{{pointsAllocation.maxPoints}}</span>
+			</div>
+		</div>
+
+	</template>
+	<script>
+		Polymer({
+			is: 'qualifier-points-slider',
+			properties: {
+				pointsAllocation: {
+					type: Object,
+					notify: true
+				},
+				awardedPoints: {
+					type: Number,
+					notify: true
+				}
+			},
+			clear: function(){
+				this.awardedPoints = 0;
+			},
+			getAwardedPoints(){
+				var awardedPoints = {};
+				awardedPoints.pointsAllocation = this.pointsAllocation.id;
+				awardedPoints.awardedPoints = this.awardedPoints;
+				return awardedPoints;
+			}
+		});
+	</script>
+</dom-module>

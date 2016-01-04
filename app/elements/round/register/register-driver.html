@@ -115,7 +115,7 @@
 				this.$.postRegister.generateRequest();
 			},
 			onRegisterResponse: function(event, r){
-				this.person = JSON.parse('{"driverDetails": {}');
+				this.person = JSON.parse('{"driverDetails": {}}');
 				page('/round/' + this.roundId);
 			}
 		});

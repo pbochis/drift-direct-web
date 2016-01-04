@@ -1,0 +1,185 @@
+<link rel="import" href="/styles/shared-styles.html">
+<link rel="import" href="/elements/shared/dd-ajax.html">
+<link rel="import" href="/elements/shared/comment-picker.html">
+<link rel="import" href="/elements/person/driver/short-driver-profile.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="/bower_components/paper-input/paper-input.html">
+<link rel="import" href="/bower_components/paper-dialog/paper-dialog.html">
+
+<link  rel="import" href="qualifier-points-slider.html">
+
+
+<dom-module id="qualifier-judging">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			:host {
+				display: block;
+			}
+			.content {
+				width: 80%;
+				margin: 36px auto;
+			}
+
+			paper-material {
+				height: auto;
+			}
+			paper-button {
+				margin-top: 20px;
+				background-color: #3F51B5;
+				color: white;
+			}
+
+			.warning {
+				text-align: center;
+				vertical-align: middle;
+				font-weight: bold;
+			}
+
+			.controls {
+				@apply(--layout-horizontal);
+				@apply(--layout-center-justified);
+			}
+
+		</style>
+
+		<dd-ajax
+			id="startJudging"
+			method="GET"
+			last-response="{{qualifierJudge}}">
+		</dd-ajax>
+		<dd-ajax
+			id="submitRunJudging"
+			method="POST"
+			on-response="onSubmitResponse">
+		</dd-ajax>
+
+		<div class="content">
+			<short-driver-profile person="{{qualifierJudge.driver}}"></short-driver-profile>
+			<paper-material elevation="1">
+				<h2>Judging run number: {{qualifierJudge.runNumber}}</h2>
+				<h2>{{qualifierJudge.judge.title}}: {{qualifierJudge.judge.judge.firstName}} {{qualifierJudge.judge.judge.lastName}} </h2>
+				<template is="dom-repeat" items="{{qualifierJudge.judge.pointsAllocations}}">
+					<qualifier-points-slider points-allocation="{{item}}"></qualifier-points-slider>
+				</template>
+				<template is="dom-if" if="{{canInputEntrySpeed}}">
+					<paper-input label="Entry speed" type="number" value="{{entrySpeed}}"></paper-input>
+				</template>
+				<div class="layout horizontal">
+					<comment-picker id="positiveComments" selected-comments="{{positiveComments}}" positive></comment-picker>
+					<div class="flex"></div>
+					<comment-picker id="negativeComments" selected-comments="{{negativeComments}}"></comment-picker>
+				</div>
+				<div class="controls">
+					<paper-button id="submitButton" raised colored on-click="_submitJudging">Submit</paper-button>
+				</div>
+			</paper-material>
+			<paper-dialog id="warningDialog" modal>
+				<div class="warning">You have already submitted a judging for both runs of this driver.</div>
+				<div class="controls">
+					<paper-button autofocus on-click="_endWarning">OK</paper-button>
+				</div>
+			</paper-dialog>
+		</div>
+	</template>
+	<script>
+		Polymer({
+			is: 'qualifier-judging',
+			properties: {
+				qualifierJudge: {
+					type: Object,
+					notify: true,
+					observer: '_set'
+				},
+				canInputEntrySpeed: {
+					type: Boolean,
+					value: false,
+					notify: true
+				},
+				positiveComments: {
+					type: Array,
+					notify: true
+				},
+				negativeComments: {
+					type: Array,
+					notify: true
+				}
+			},
+			_set: function(){
+				if (this.qualifierJudge.runId === null){
+					this.$.warningDialog.toggle();
+					return;
+				}
+				this.canInputEntrySpeed = this.qualifierJudge.judge.judgeType === 'STYLE';
+				var positiveComments = [];
+				var negativeComments = [];
+				var comments = this.qualifierJudge.availableComments;
+				for (var i = 0; i < comments.length; i++){
+					if (comments[i].positive){
+						positiveComments.push(comments[i]);
+					}else{
+						negativeComments.push(comments[i]);
+					}
+				}
+				this.$.positiveComments.comments = positiveComments;
+				this.$.negativeComments.comments = negativeComments;
+			},
+			_endWarning: function(){
+				this.$.warningDialog.toggle();
+				page('/round/' + this.qualifierJudge.roundId);
+			},
+			getQualifierJudge(qualifierId){
+				this.$.startJudging.url = util.build('/qualifier/' + qualifierId + '/start');
+				this.$.startJudging.generateRequest();
+				console.log('judging!');
+			},
+			_getAwardedPoints: function(){
+				var pointsElements = Polymer.dom(this.root).querySelectorAll('qualifier-points-slider');
+				var awardedPoints = [];
+				for (var i = 0; i < pointsElements.length; i++){
+					awardedPoints.push(pointsElements[i].getAwardedPoints());
+				}
+				return awardedPoints;
+			},
+			_getComments: function(){
+				var comments = [];
+				if (this.positiveComments !== undefined) {
+					for (var i = 0; i < this.positiveComments.length; i++) {
+						comments.push(this.positiveComments[i]);
+					}
+				}
+
+				if (this.negativeComments !== undefined) {
+					for (var i = 0; i < this.negativeComments.length; i++) {
+						comments.push(this.negativeComments[i]);
+					}
+				}
+				return comments;
+			},
+			_submitJudging: function(){
+				var runJudging = {};
+				runJudging.awardedPoints = this._getAwardedPoints();
+				runJudging.comments = this._getComments();
+				if (this.canInputEntrySpeed){
+					runJudging.entrySpeed = this.entrySpeed;
+				}else{
+					runJudging.entrySpeed = null;
+				}
+				this.$.submitRunJudging.body = runJudging;
+				this.$.submitRunJudging.url = util.build('/qualifier/' + this.qualifierJudge.id + '/submit/run/' + this.qualifierJudge.runId);
+				this.$.submitRunJudging.generateRequest();
+			},
+			_clear: function(){
+				var pointsElements = Polymer.dom(this.root).querySelectorAll('qualifier-points-slider');
+				for (var i = 0; i < pointsElements.length; i++){
+					pointsElements[i].clear();
+				}
+				this.$.positiveComments.clear();
+				this.$.negativeComments.clear();
+			},
+			onSubmitResponse: function(event, e){
+				page('/round/' + this.qualifierJudge.roundId);
+			}
+		});
+	</script>
+</dom-module>

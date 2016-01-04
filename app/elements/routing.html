@@ -102,6 +102,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			});
 		});
 
+		page('/qualifiers/:qualifierId', function(data){
+			checkIsLoggedIn();
+			app.route = 'qualifier-judging';
+			var id = data.params.qualifierId;
+			Polymer.Base.importHref('/elements/qualifiers/qualifier-judging.html', function(){
+				app.$.qualifierJudging.getQualifierJudge(id);
+			});
+		});
+
 		page('/users', function () {
 			checkIsLoggedIn();
 			app.route = 'users';
