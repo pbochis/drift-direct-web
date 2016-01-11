@@ -1,0 +1,46 @@
+<link rel="import" href="/styles/shared-styles.html">
+
+<link rel="import" href="/bower_components/iron-form/iron-form.html">
+<link rel="import" href="/bower_components/paper-input/paper-input.html">
+<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
+<!--private String engine;-->
+<!--private String steeringAngle;-->
+<!--private String suspensionMods;-->
+<!--private String wheels;-->
+<!--private String tires;-->
+<!--private int horsePower;-->
+<!--private String other;-->
+<dom-module id="driver-details-create">
+	<template>
+		<style is="custom-style" include="shared-styles"></style>
+		<paper-material>
+			<h2>Car details</h2>
+			<form is="iron-form" id="driverData">
+				<paper-input id="make" label="Car make(manufacturer)*" value="{{driverDetails.make}}" required></paper-input>
+				<paper-input id="model" label="Car model*" value="{{driverDetails.model}}" required></paper-input>
+				<paper-input id="engine" label="Engine*" value="{{driverDetails.engine}}" required></paper-input>
+				<paper-input id="steeringAngle" label="Steering angle*" value="{{driverDetails.steeringAngle}}" required></paper-input>
+				<paper-input id="suspensionMods" label="Suspension mods*" value="{{driverDetails.suspensionMods}}" required></paper-input>
+				<paper-input id="wheels" label="Wheels*" value="{{driverDetails.wheels}}" required></paper-input>
+				<paper-input id="tires" label="Tires*" value="{{driverDetails.tires}}" required></paper-input>
+				<paper-input id="horsePower" label="Horsepower*" value="{{driverDetails.horsePower}}" type="number" min="1" required></paper-input>
+				<paper-input id="other" label="Other information" value="{{driverDetails.other}}"></paper-input>
+			</form>
+		</paper-material>
+	</template>
+	<script>
+		Polymer({
+			is: 'driver-details-create',
+			properties: {
+				driverDetails: {
+					type: Object,
+					notify: true,
+					reflectToAttribute: true
+				}
+			},
+			validate: function(){
+				return this.$.driverData.validate();
+			}
+		});
+	</script>
+</dom-module>

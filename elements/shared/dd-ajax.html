@@ -1,0 +1,68 @@
+<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
+
+<dom-module id="dd-ajax">
+	<template>
+		<iron-ajax
+			id="ajaxRequest"
+			method="{{method}}"
+			content-type="{{contentType}}"
+			handle-as="{{handleAs}}"
+			last-response="{{lastResponse}}"
+			headers="{{headers}}"
+			url="{{url}}"
+			body="{{body}}"
+			debounce-duration="{{debounceDuration}}"
+			on-error="_onError"
+			on-response="_onResponse">
+		</iron-ajax>
+	</template>
+	<script>
+		Polymer({
+			is: 'dd-ajax',
+			properties: {
+				contentType: {
+					type: String,
+					value: 'application/json'
+				},
+				handleAs: {
+					type: String,
+					value: 'json'
+				},
+				method: String,
+				lastResponse: {
+					type: Object,
+					notify: true,
+					reflectToAttribute: true
+				},
+				headers: {
+					type: Object,
+					notify: true,
+					value: {}
+				},
+				url: {
+					type: String,
+					notify: true
+				},
+				body: {
+					type: Object,
+					notify: true
+				},
+				debounceDuration: {
+					type: Number,
+					notify: true,
+					value: 0
+				}
+			},
+			generateRequest: function () {
+				this.headers.Authorization = localStorage.token;
+				this.$.ajaxRequest.generateRequest();
+			},
+			_onError: function (e) {
+				this.fire('error', e);
+			},
+			_onResponse: function(r){
+				this.fire('response', r);
+			}
+		});
+	</script>
+</dom-module>

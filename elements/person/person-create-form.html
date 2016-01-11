@@ -1,0 +1,94 @@
+<link rel="import" href="/styles/shared-styles.html">
+
+<link rel="import" href="/bower_components/iron-form/iron-form.html">
+<link rel="import" href="/bower_components/paper-input/paper-input.html">
+<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/elements/shared/file-input.html">
+<link rel="import" href="/elements/shared/validateable-autogrow-textarea.html">
+<link rel="import" href="/elements/shared/date-picker.html">
+<link rel="import" href="/elements/shared/analog-date-picker.html">
+
+<link rel="import" href="driver/driver-details-create.html">
+<link rel="import" href="/elements/shared/country-chooser.html">
+
+
+<dom-module id="person-create-form">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			paper-material {
+				height: auto;
+			}
+		</style>
+		<paper-material>
+			<form is="iron-form" id="personData">
+				<h2>Person details</h2>
+				<paper-input id="firstName" label="First name*" value="{{person.firstName}}" required></paper-input>
+				<paper-input id="lastName" label="Last name*" value="{{person.lastName}}" required></paper-input>
+				<file-input id="profilePicture" label="Profile picture" file-id="{{person.profilePicture}}"></file-input>
+				<analog-date-picker id="birthDate" label="Birth date*" date="{{person.birthDate}}"></analog-date-picker>
+				<paper-input id="nick" label="Nick" value="{{person.nick}}"></paper-input>
+				<country-chooser selected-country-id="{{person.country}}"></country-chooser>
+				<paper-input id="telephone" label="Telephone nr" value="{{person.telephone}}"></paper-input>
+				<paper-input id="website" label="Website" value="{{person.website}}"></paper-input>
+				<analog-date-picker id="careerStartDate" label="Career start date*" date="{{person.careerStartDate}}"></analog-date-picker>
+				<validateable-autogrow-textarea id="biography"
+												place-holder="Biography"
+												bind-value="{{person.description}}"
+												rows="10"
+												max-rows="10"
+												required="false">
+				</validateable-autogrow-textarea>
+
+				<validateable-autogrow-textarea id="portfolio"
+												place-holder="Portfolio"
+												bind-value="{{person.portfolio}}"
+												rows="10"
+												max-rows="10"
+												required="false">
+				</validateable-autogrow-textarea>
+			</form>
+		</paper-material>
+		<template is="dom-if" if="{{isDriver}}">
+			<driver-details-create id="driverDetails" driver-details="{{person.driverDetails}}"></driver-details-create>
+		</template>
+	</template>
+	<script>
+		Polymer({
+			is: 'person-create-form',
+			properties: {
+				person: {
+					type: Object,
+					notify: true,
+					value: {
+						driverDetails: {}
+					}
+				},
+				personType: {
+					type: String,
+					notify: true,
+					observer: '_typeSet'
+				},
+				isDriver: {
+					type: Boolean,
+					notify: true,
+					value: false
+				}
+			},
+			_typeSet: function(){
+				console.log(this.personType);
+				this.isDriver = this.personType === 'Driver';
+				this.person.personType = this.personType;
+			},
+			validate: function(){
+				var valid = this.$.personData.validate();
+				valid = this.$.birthDate.validate() && valid;
+				valid = this.$.careerStartDate.validate() && valid;
+
+				if (this.isDriver){
+					valid = this.$.driverDetails.validate() && valid;
+				}
+				return valid;
+			}
+		});
+	</script>
+</dom-module>

@@ -1,0 +1,56 @@
+<link rel="import" href="/styles/shared-styles.html">
+<link rel="import" href="round-create.html">
+<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
+
+<dom-module id="rounds-create">
+	<template>
+		<style is="custom-style" include="shared-styles"></style>
+		<style>
+			paper-material {
+				width: calc(100% - 36px);
+				padding: 12px 18px;
+				margin: 36px auto;
+			}
+			.controls {
+				cursor: pointer;
+				@apply(--layout-horizontal);
+				@apply(--layout-center-center);
+			}
+		</style>
+		<h1>Rounds</h1>
+		<template is="dom-repeat" items="{{rounds}}">
+			<round-create round="{{item}}"></round-create>
+		</template>
+		<paper-material class="controls" on-click="_addRound">
+			<iron-icon icon="add"></iron-icon>
+			<span>Create another round</span>
+		</paper-material>
+	</template>
+	<script>
+		Polymer({
+			is: 'rounds-create',
+			properties: {
+				rounds: {
+					type: Array,
+					notify: true,
+					reflectToAttribute: true
+				}
+			},
+			ready: function(){
+				this._addRound();
+			},
+			_addRound: function(){
+				this.push('rounds', JSON.parse('{"track": {}, "scheduele": []}'));
+			},
+			validate: function(){
+				var valid = true;
+				var roundElements = Polymer.dom(this.root).querySelectorAll('round-create');
+				for (var i = 0; i < roundElements.length; i++){
+					var roundElement = roundElements[i];
+					valid = roundElement.validate() && valid;
+				}
+				return valid;
+			}
+		});
+	</script>
+</dom-module>

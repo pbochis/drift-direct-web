@@ -1,0 +1,68 @@
+<link rel="import" href="/styles/shared-styles.html">
+<link rel="import" href="/bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="/bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="/bower_components/paper-item/paper-item.html">
+
+<link rel="import" href="dd-ajax.html">
+
+<dom-module id="country-chooser">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			:host{
+				display: block;
+			}
+			paper-dropdown-menu{
+				width: 200px;
+			}
+			paper-menu {
+				background-color: white;
+			}
+		</style>
+		<dd-ajax
+			id="getCountries"
+			method="GET"
+			last-response="{{countries}}">
+		</dd-ajax>
+		<paper-dropdown-menu id="country" label="Country" selected-item="{{selectedCountry}}" required>
+			<paper-menu class="dropdown-content">
+				<template is="dom-repeat" items="{{countries}}">
+					<paper-item value="{{item.id}}">{{item.name}}</paper-item>
+				</template>
+			</paper-menu>
+		</paper-dropdown-menu>
+	</template>
+	<script>
+		Polymer({
+			is: 'country-chooser',
+			properties: {
+				countries: {
+					type: Array,
+					notify: true
+				},
+				selectedCountry: {
+					type: Object,
+					notify: true,
+					observer: '_selectionChanged'
+				},
+				selectedCountryId: {
+					type: Number,
+					notify: true,
+					reflectToAttribute: true
+				}
+			},
+			ready: function(){
+				this.$.getCountries.url = util.build('/country');
+				this.$.getCountries.generateRequest();
+			},
+			_selectionChanged: function(){
+				if (this.selectedCountry !== undefined && this.selectedCountry !== null){
+					this.selectedCountryId = this.selectedCountry.value;
+					console.log(this.selectedCountryId);
+				}
+			},
+			validate: function(){
+				return this.$.country.validate();
+			}
+		});
+	</script>
+</dom-module>

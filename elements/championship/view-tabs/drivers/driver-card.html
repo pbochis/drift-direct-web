@@ -1,0 +1,81 @@
+<link rel="import" href="/styles/shared-styles.html">
+<link rel="import" href="/bower_components/iron-image/iron-image.html">
+
+<dom-module id="driver-card">
+	<template>
+		<style include="shared-styles"></style>
+		<style>
+			:host{
+				display: block;
+			}
+			paper-material {
+				height: 300px;
+				width: 250px;
+				padding: 0;
+			}
+			.profilePicture {
+				width: 250px;
+				height: 150px;
+				margin: 0;
+				padding: 0;
+			}
+			.desc {
+				font-weight: bold;
+			}
+
+		</style>
+		<paper-material>
+			<template is="dom-if" if="{{profilePicture}}">
+				<iron-image class="profilePicture" src$="{{profilePictureUrl}}" sizing="contain"></iron-image>
+			</template>
+			<template is="dom-if" if="{{!profilePicture}}">
+				<iron-image class="profilePicture" src="/images/user.png"></iron-image>
+			</template>
+			<hr style="margin: 0">
+			<br>
+			<br>
+			<br>
+			<div class="vertical layout center">
+				<div class="desc">{{driver.firstName}} {{driver.lastName}}</div>
+				<template is="dom-if" if="{{hasNick}}">
+					<div class="desc">"{{driver.nick}}"</div>
+				</template>
+
+			</div>
+		</paper-material>
+	</template>
+	<script>
+		Polymer({
+			is: 'driver-card',
+			properties: {
+				driver: {
+					type: Object,
+					notify: true,
+					observer: 'driverSet'
+				},
+				profilePicture: {
+					type: Boolean,
+					notify: true,
+					value: false
+				},
+				profilePictureUrl: {
+					type: String,
+					notify: true
+				},
+				hasNick: {
+					type: Boolean,
+					notify: true,
+					value: true
+				}
+			},
+			driverSet: function() {
+				this.hasNick = this.driver.nick !== null;
+				if (this.driver.profilePicture !== null){
+					this.profilePictureUrl = util.imageLink(this.driver.profilePicture);
+					this.profilePicture = true;
+				}
+			}
+		})
+	</script>
+</dom-module>
+

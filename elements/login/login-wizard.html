@@ -1,0 +1,119 @@
+<link rel="import" href="/bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/bower_components/paper-input/all-imports.html">
+<link rel="import" href="/bower_components/paper-material/paper-material.html">
+<link rel="import" href="/bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
+
+<dom-module id="login-wizard">
+	<template>
+		<style>
+			iron-icon.huge {
+				--iron-icon-height: 50%;
+				--iron-icon-width: 50%;
+			}
+
+			paper-material {
+				width: 70%;
+				background-color: white;
+
+				/* three times the width of iron-icon.huge */
+				max-width: 432px;
+
+				/* places this in the middle */
+				margin: auto;
+			}
+
+			paper-material > div {
+				padding: 24px;
+			}
+
+			paper-material > div:first-child {
+				height: 15%;
+				max-height: 248px;
+				padding: 10%;
+				background: #373b50;
+				color: white;
+
+				@apply(--layout-horizontal);
+				@apply(--layout-center);
+			}
+
+			paper-material > div:first-child > div {
+				width: 100%;
+
+				@apply(--layout-vertical);
+				@apply(--layout-center);
+			}
+
+			paper-material > div > paper-button {
+				width: 100%;
+
+				margin: 0 !important;
+				margin-top: 12px !important;
+			}
+		</style>
+		<iron-ajax
+		  id="loginRequest"
+		  method="GET"
+		  on-response="onResponse"
+		  on-error="onError">
+		</iron-ajax>
+
+		<paper-material elevation="1">
+			<div>
+				<div>
+					<iron-icon class="huge" icon="account-circle"></iron-icon>
+				</div>
+			</div>
+			<div>
+				<paper-input type="text" label="Username or e-mail" value="{{email}}" autofocus="true"></paper-input>
+				<paper-input type="password" label="Password" value="{{password}}" on-keydown="onKeydown"></paper-input>
+				<paper-button flat colorful on-change="checkEmpty" on-click="login">Login</paper-button>
+			</div>
+		</paper-material>
+		<paper-toast id="toastCredentials" text="Invalid username/e-mail and password combination, please try again."></paper-toast>
+	</template>
+</dom-module>
+
+<script>
+	Polymer({
+		is: 'login-wizard',
+		properties: {
+			email: {
+				type: String,
+				notify: true
+			},
+			password: {
+				type: String,
+				notify: true
+			}
+		},
+		login: function () {
+			this.$.loginRequest.url = util.build("/user");
+			this.$.loginRequest.headers = JSON.parse('{ "Authorization" : "Basic ' + btoa(this.email + ':' + this.password) + '"}');
+			this.$.loginRequest.generateRequest();
+		},
+		onResponse: function(r){
+			console.log('SUCCESS');
+			localStorage.setItem('token', 'Basic ' + btoa(this.email + ':' + this.password));
+			localStorage.setItem('user', JSON.stringify(r.detail.response));
+			app.login();
+			page('/');
+		},
+		onError: function(e){
+			console.log('ERROR');
+			console.log(e);
+			if (e.detail.request.xhr.status === 401) {
+				console.log('401');
+				this.$.toastCredentials.show();
+			}
+		},
+		onKeydown: function (e) {
+			if (e.keyCode === 13) {
+				this.login();
+			}
+		}
+	});
+</script>

@@ -1,0 +1,145 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<script src="../bower_components/page/page.js"></script>
+<script>
+	window.addEventListener('WebComponentsReady', function () {
+
+		// We use Page.js for routing. This is a Micro
+		// client-side router inspired by the Express router
+		// More info: https://visionmedia.github.io/page.js/
+
+		// Removes end / from app.baseUrl which page.base requires for production
+		if (window.location.port === '') {  // if production
+			page.base(app.baseUrl.replace(/\/$/, ''));
+		}
+
+		// Middleware
+		function scrollToTop(ctx, next) {
+			app.scrollPageToTop();
+			next();
+		}
+
+		function closeDrawer(ctx, next) {
+			app.closeDrawer();
+			next();
+		}
+
+		function checkIsLoggedIn(){
+			if (!util.loggedIn){
+				page('/login');
+			}
+		}
+
+		// Routes
+		page('*', scrollToTop, closeDrawer, function (ctx, next) {
+			next();
+		});
+
+		page('/', function () {
+			if (!util.loggedIn()){
+				page('/login');
+			}
+			else{
+				page('/championships');
+			}
+		});
+
+		page('/login', function(){
+			app.route = 'login';
+			app.isLoggedIn = false;
+		});
+
+		page('/championships', function(){
+			checkIsLoggedIn();
+			app.header = 'Championships';
+			Polymer.Base.importHref('/elements/championship/championship-list.html', function(){
+				app.route = 'championships';
+				app.$.championships.getChampionships();
+			});
+		});
+
+		page('/championship/:championshipId', function(data){
+			checkIsLoggedIn();
+			app.route = 'championship-view';
+			var id = data.params.championshipId;
+			Polymer.Base.importHref('/elements/championship/championship-view.html', function(){
+				app.$.championship.getChampionship(id);
+			});
+		});
+
+		page('/championships/create', function(){
+			checkIsLoggedIn();
+			app.route = 'championship-create';
+			app.header = 'New championship';
+			Polymer.Base.importHref('/elements/championship/championship-create.html', function(){
+				app.$.championshipCreate.getPersons();
+			});
+		});
+
+		page('/round/:id', function(data){
+			checkIsLoggedIn();
+			app.route = 'round-view';
+			var id = data.params.id;
+			Polymer.Base.importHref('/elements/round/round-view.html', function(){
+				app.$.round.getRound(id);
+			});
+		});
+
+		page('/register/:roundId', function(data){
+			checkIsLoggedIn();
+			app.route = 'register-driver';
+			var id = data.params.roundId;
+			Polymer.Base.importHref('/elements/round/register/register-driver.html', function(){
+				app.$.register.getDrivers(id);
+			});
+		});
+
+		page('/users', function () {
+			checkIsLoggedIn();
+			app.route = 'users';
+			app.header = 'Users';
+			Polymer.Base.importHref('/elements/user/user-list.html', function(){
+				app.$.users.getUsers();
+			});
+		});
+
+		page ('/user/create', function(){
+			checkIsLoggedIn();
+			app.route = 'user-create';
+			app.header = 'Create user';
+			Polymer.Base.importHref('/elements/user/user-create.html', function(){
+				app.$.userCreate.getRoles();
+			})
+		});
+
+		page('/users/:name', function (data) {
+			app.route = 'user-info';
+			app.params = data.params;
+		});
+
+		page('/contact', function () {
+			app.route = 'contact';
+		});
+
+		// 404
+		page('*', function () {
+			app.$.toast.text = 'Can\'t find: ' + window.location.href + '. Redirected you to Home Page';
+			app.$.toast.show();
+			page.redirect(app.baseUrl);
+		});
+
+		// add #! before urls
+		page({
+			hashbang: true
+		});
+
+	});
+</script>

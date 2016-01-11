@@ -1,0 +1,57 @@
+<link rel="import" href="/styles/shared-styles.html">
+
+<dom-module id="user-card">
+	<template>
+		<style is="custom-style" include="shared-styles"></style>
+		<style>
+			:host {
+				width: 250px;
+				height: 150px;
+				margin: 30px;
+			}
+
+			paper-material {
+				width: 100%;
+				height: 100%;
+				padding: 20px 10px 20px 10px;
+
+			}
+
+		</style>
+		<paper-material animated elevation="1">
+			<p>{{name}}</p>
+			<p>{{user.username}}</p>
+			<p>{{user.email}}</p>
+		</paper-material>
+	</template>
+	<script>
+		Polymer({
+			is: 'user-card',
+			properties: {
+				user: {
+					type: Object,
+					notify: true
+				},
+				name: {
+					type: String,
+					notify: true
+				},
+			},
+			ready: function(){
+				this.name = this.user.firstName + ' ' + this.user.lastName + ', ' + this._mapRole(this.user.roles[0]);
+			},
+			_mapRole: function(role){
+				switch (role){
+					case 'ROLE_ADMIN':
+						return 'Admin';
+					case 'ROLE_ORGANIZER':
+						return 'Organizer';
+					case 'ROLE_JUDGE':
+						return 'Judge';
+				}
+			}
+
+
+		})
+	</script>
+</dom-module>

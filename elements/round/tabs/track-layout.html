@@ -1,0 +1,59 @@
+<link rel="import" href="/styles/shared-styles.html">
+<link rel="import" href="/bower_components/iron-image/iron-image.html">
+
+<dom-module id="track-layout">
+	<template>
+		<style include="shared-styles"></style>
+		<style>
+			:host {
+				display: block;
+			}
+
+			iron-image {
+				margin: auto;
+				width: 600px;
+				height: 400px;
+			}
+		</style>
+		<paper-material>
+			<template is="dom-if" if="{{videoUrl}}">
+				<dl>
+					<dt>Video</dt>
+					<dd><a href$="{{track.videoUrl}}" target="_blank">{{track.videoUrl}}</a></dd>
+				</dl>
+			</template>
+			<br>
+			<iron-image class="layout horizontal center center" src$="{{layoutUrl}}" sizing="contain"></iron-image>
+			<p style="font-weight: bold">Description:</p>
+			<div>{{track.description}}</div>
+			<p style="font-weight: bold">Judging criteria:</p>
+			<div>{{track.judgingCriteria}}</div>
+		</paper-material>
+	</template>
+	<script>
+		Polymer({
+			is: 'track-layout',
+			properties: {
+				track: {
+					type: Object,
+					notify: true,
+					observer: '_trackSet'
+				},
+				videoUrl: {
+					type: Boolean,
+					notify: true,
+					value: true
+				},
+				layoutUrl: {
+					type: String,
+					notify: true
+				}
+			},
+			_trackSet: function () {
+				console.log(this.track);
+					this.videoUrl = this.track.videoUrl !== null;
+				this.layoutUrl = util.imageLink(this.track.layout);
+			}
+		})
+	</script>
+</dom-module>

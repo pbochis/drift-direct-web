@@ -1,0 +1,57 @@
+<link rel="import" href="/styles/shared-styles.html">
+<link rel="import" href="/bower_components/paper-item/paper-icon-item.html">
+
+<dom-module id="round-schedule">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			.container {
+				@apply(--layout-vertical)
+			}
+			.schedule-entry {
+				margin: 16px 0;
+				@apply(--layout-horizontal)
+			}
+			.label {
+				width: 200px;
+				font-weight: bold;
+				margin: auto 0;
+			}
+		</style>
+		<paper-material elevation="1">
+			<div class="container">
+				<template is="dom-repeat" items="{{schedule}}">
+					<div class="schedule-entry">
+						<div class="label">{{item.name}}</div>
+						<paper-icon-item>
+							<iron-icon icon="receipt"></iron-icon>{{formatDate(item.startDate)}}
+						</paper-icon-item>
+
+						<paper-icon-item>
+							<iron-icon icon="receipt"></iron-icon>{{formatDate(item.endDate)}}
+						</paper-icon-item>
+						<!--<div>{{formatDate(item.startDate)}} - {{formatDate(item.endDate)}}</div>-->
+					</div>
+				</template>
+			</div>
+		</paper-material>
+	</template>
+	<script>
+		Polymer({
+			is: 'round-schedule',
+			properties: {
+				schedule: {
+					type: Array,
+					notify: true,
+					observer: 'sset'
+				}
+			},
+			sset: function(){
+				console.log(this.schedule);
+			},
+			formatDate: function(longDate){
+				var date = new Date(longDate);
+				return util.formatDate(date);
+			}
+		});
+	</script>
+</dom-module>

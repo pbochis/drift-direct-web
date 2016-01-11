@@ -1,0 +1,48 @@
+<link rel="import" href="/elements/shared/dd-ajax.html">
+<link rel="import" href="/styles/shared-styles.html">
+<link rel="import" href="/bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+<link rel="import" href="/bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="user-card.html">
+
+<dom-module id="user-list">
+	<template>
+		<style is="custom-style" include="shared-styles"></style>
+		<style>
+			#createUserButton{
+				--paper-fab-background: var(--dark-primary-color);
+				position: fixed;
+				right: 2%;
+				bottom: 5%;
+			}
+		</style>
+		<dd-ajax
+			id="getUsers"
+			method="GET"
+			last-response="{{users}}">
+		</dd-ajax>
+		<div class="layout horizontal wrap">
+			<template is="dom-repeat" items="{{users}}">
+				<user-card user="{{item}}"></user-card>
+			</template>
+			<paper-fab id="createUserButton" on-click="_createUser" icon="add"></paper-fab>
+		</div>
+	</template>
+	<script>
+		Polymer({
+			is: 'user-list',
+			properties: {
+				users: {
+					type: Array,
+					notify: true
+				}
+			},
+			getUsers: function(){
+				this.$.getUsers.url = util.build("/users");
+				this.$.getUsers.generateRequest();
+			},
+			_createUser: function(){
+				page('/user/create');
+			}
+		})
+	</script>
+</dom-module>
