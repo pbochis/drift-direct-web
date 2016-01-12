@@ -39,7 +39,7 @@
 				<iron-image class="profilePicture" src$="{{profilePictureUrl}}" sizing="contain"></iron-image>
 			</template>
 			<template is="dom-if" if="{{!profilePicture}}">
-				<iron-image class="profilePicture" src="/images/user.png"></iron-image>
+				<iron-image class="profilePicture" src="/images/user.png" sizing="contain"></iron-image>
 			</template>
 			<hr style="margin: 0">
 			<template is="dom-if" if="{{canJudge}}">
@@ -53,6 +53,8 @@
 				<template is="dom-if" if="{{hasNick}}">
 					<div class="desc">"{{qualifier.driver.nick}}"</div>
 				</template>
+				<div class="desc">Run 1 - {{qualifier.firstRunScore}}</div>
+				<div class="desc">Run 2 - {{qualifier.secondRunScore}}</div>
 			</div>
 		</paper-material>
 	</template>
