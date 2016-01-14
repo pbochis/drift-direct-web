@@ -70,7 +70,7 @@
 			</div>
 			<div id="commentList">
 				<iron-selector id="selector" multi selected-items="{{selectedItems}}" attr-for-selected="label">
-					<template is="dom-repeat" items="{{comments}}">
+					<template is="dom-repeat" items="{{commentList}}">
 						<div class="comment" label="{{item.comment}}" comid="{{item.id}}">{{item.comment}}</div>
 					</template>
 				</iron-selector>
@@ -90,6 +90,10 @@
 					notify: true,
 					observer: '_set'
 				},
+				commentList: {
+					type: Array,
+					notify: true
+				},
 				selectedItems: {
 					type: Array,
 					notify: true
@@ -102,8 +106,8 @@
 				positive: {
 					type: Boolean,
 					value: false,
-					notify: true,
-					observer: '_positiveSet'
+					notify: true
+//					observer: '_positiveSet'
 				},
 				buttonClass: {
 					type: String,
@@ -120,7 +124,28 @@
 					notify: true
 				}
 			},
-			_set: function(){
+			observers: [
+				'_set(comments, positive)'
+			],
+			_set: function(comments, positive){
+				if (positive === undefined) {
+					return;
+				}
+				if (positive) {
+					this.buttonClass = 'positive';
+					this.buttonText = 'Positive comments';
+
+				} else {
+					this.buttonClass = 'negative';
+					this.buttonText = 'Negative comments';
+				}
+				var commentList = [];
+				for (var i = 0; i < comments.length; i++){
+					if (comments[i].positive === positive){
+						commentList.push(comments[i]);
+					}
+				}
+				this.commentList = commentList;
 			},
 			_positiveSet: function(){
 				if (this.positive){
@@ -152,7 +177,7 @@
 				newComment.comment = this.newValue;
 				newComment.positive = this.positive;
 				newComment.id = null;
-				this.push('comments', newComment);
+				this.push('commentList', newComment);
 				this.$.selector.select(this.newValue);
 				this.newValue = '';
 			},

@@ -85,10 +85,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			});
 		});
 
+		page('/round/:id/tab/:tab', function(data){
+			checkIsLoggedIn();
+			console.log('round is good');
+			app.route = 'round-view';
+			var id = data.params.id;
+			var tab = data.params.tab;
+			localStorage.selectedRound = id;
+			Polymer.Base.importHref('/elements/round/round-view.html', function(){
+				app.$.round.getRound(id);
+				app.$.round.selectedTab = tab;
+			});
+		});
+
 		page('/round/:id', function(data){
 			checkIsLoggedIn();
 			app.route = 'round-view';
 			var id = data.params.id;
+			localStorage.selectedRound = id;
 			Polymer.Base.importHref('/elements/round/round-view.html', function(){
 				app.$.round.getRound(id);
 			});
@@ -109,6 +123,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			var id = data.params.qualifierId;
 			Polymer.Base.importHref('/elements/qualifiers/qualifier-judging.html', function(){
 				app.$.qualifierJudging.getQualifierJudge(id);
+			});
+		});
+
+		page('/playoff/battle/judge/:battleId', function(data){
+			checkIsLoggedIn();
+			app.route = 'playoff-judging';
+			var id = data.params.battleId;
+			Polymer.Base.importHref('/elements/playoff/playoff-battle-judging.html', function(){
+				app.$.playoffJudging.startJudging(id);
 			});
 		});
 

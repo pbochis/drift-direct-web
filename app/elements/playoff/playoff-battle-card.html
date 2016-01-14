@@ -1,0 +1,69 @@
+<link rel="import" href="/styles/shared-styles.html">
+<link rel="import" href="/bower_components/iron-image/iron-image.html">
+
+<dom-module id="playoff-battle-card">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			iron-image {
+				height: 200px;
+				width: 200px;
+			}
+		</style>
+		<div class$="{{layout}}">
+			<iron-image src="{{profilePictureUrl}}" sizing="contain"></iron-image>
+			<div class="layout vertical">
+				<div>{{position}}</div>
+				<h4>{{driver.driver.ranking}}. {{driver.driver.driver.firstName}} {{driver.driver.driver.lastName}}</h4>
+			</div>
+		</div>
+	</template>
+	<script>
+		Polymer({
+			is: 'playoff-battle-card',
+			properties: {
+				driver: {
+					type: Object,
+					notify: true,
+					observer: '_driverSet'
+				},
+				reverse: {
+					type: Boolean,
+					notify: true,
+					value: false,
+					observer: '_reverseChanged'
+				},
+				layout: {
+					type: String,
+					notify: true,
+					value: 'layout horizontal'
+				},
+				position: {
+					type: String,
+					notify: true
+				},
+				advantage: {
+					type: Boolean,
+					notify: true,
+					value: false
+				},
+				profilePictureUrl: {
+					type: String,
+					notify: true
+				}
+			},
+			_reverseChanged: function(){
+				console.log(this.reverse);
+				if (this.reverse){
+					this.layout = 'layout horizontal-reverse center';
+				}else{
+					this.layout = 'layout horizontal center';
+				}
+			},
+			_driverSet: function(){
+				this.advantage = this.driver.advantage;
+				this.position = this.driver.lead ? 'Lead' : 'Chase';
+				this.profilePictureUrl = util.imageLink(this.driver.driver.driver.profilePicture);
+			}
+		});
+	</script>
+</dom-module>

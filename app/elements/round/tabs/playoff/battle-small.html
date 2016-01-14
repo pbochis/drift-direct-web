@@ -1,4 +1,5 @@
 <link rel="import" href="/styles/shared-styles.html">
+<link rel="import" href="/bower_components/iron-image/iron-image.html">
 
 <dom-module id="battle-small">
 	<template>
@@ -53,7 +54,7 @@
 		</style>
 		<div class="container">
 			<div class="flex"></div>
-			<div class="battle-container">
+			<div class="battle-container" on-click="_judgeBattle">
 				<div class="driver-left">
 					<iron-image class="profilePicture" src="{{_profilePictureUrl(battle.driver1.driver.profilePicture)}}" sizing="contain"></iron-image>
 					<span class$="{{_driverNameClass(battle, battle.driver1)}}">{{battle.driver1.driver.firstName}} {{battle.driver1.driver.lastName}}</span>
@@ -84,8 +85,10 @@
 					return 'winner';
 				}
 				return '';
+			},
+			_judgeBattle: function(){
+				page('/playoff/battle/judge/' + this.battle.id);
 			}
-
 		});
 	</script>
 </dom-module>

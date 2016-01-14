@@ -46,7 +46,9 @@
 		<dd-ajax
 			id="startJudging"
 			method="GET"
-			last-response="{{qualifierJudge}}">
+			last-response="{{qualifierJudge}}"
+			on-error="onError"
+		>
 		</dd-ajax>
 		<dd-ajax
 			id="submitRunJudging"
@@ -66,9 +68,9 @@
 					<paper-input label="Entry speed" type="number" value="{{entrySpeed}}"></paper-input>
 				</template>
 				<div class="layout horizontal">
-					<comment-picker id="positiveComments" selected-comments="{{positiveComments}}" positive></comment-picker>
+					<comment-picker id="positiveComments" comments="{{qualifierJudge.availableComments}}" selected-comments="{{positiveComments}}" positive></comment-picker>
 					<div class="flex"></div>
-					<comment-picker id="negativeComments" selected-comments="{{negativeComments}}"></comment-picker>
+					<comment-picker id="negativeComments" comments="{{qualifierJudge.availableComments}}" selected-comments="{{negativeComments}}"></comment-picker>
 				</div>
 				<div class="controls">
 					<paper-button id="submitButton" raised colored on-click="_submitJudging">Submit</paper-button>
@@ -111,18 +113,6 @@
 					return;
 				}
 				this.canInputEntrySpeed = this.qualifierJudge.judge.judgeType === 'STYLE';
-				var positiveComments = [];
-				var negativeComments = [];
-				var comments = this.qualifierJudge.availableComments;
-				for (var i = 0; i < comments.length; i++){
-					if (comments[i].positive){
-						positiveComments.push(comments[i]);
-					}else{
-						negativeComments.push(comments[i]);
-					}
-				}
-				this.$.positiveComments.comments = positiveComments;
-				this.$.negativeComments.comments = negativeComments;
 			},
 			_endWarning: function(){
 				this.$.warningDialog.toggle();
@@ -143,14 +133,15 @@
 			},
 			_getComments: function(){
 				var comments = [];
+				var i;
 				if (this.positiveComments !== undefined) {
-					for (var i = 0; i < this.positiveComments.length; i++) {
+					for (i = 0; i < this.positiveComments.length; i++) {
 						comments.push(this.positiveComments[i]);
 					}
 				}
 
 				if (this.negativeComments !== undefined) {
-					for (var i = 0; i < this.negativeComments.length; i++) {
+					for (i = 0; i < this.negativeComments.length; i++) {
 						comments.push(this.negativeComments[i]);
 					}
 				}
