@@ -17,10 +17,10 @@
 			}
 		</style>
 		<div class="content">
-			<p>{{pointsAllocation.name}}</p>
+			<p>{{pointsAllocation.name}}: {{awardedPoints}}</p>
 			<div class="layout horizontal">
 				<span>0</span>
-				<paper-slider class="flex" min="0" value={{awardedPoints}} max="{{pointsAllocation.maxPoints}}" pin="true"></paper-slider>
+				<paper-slider class="flex" step="0.5" min="0" immediate-value="{{awardedPoints}}" max="{{pointsAllocation.maxPoints}}" pin="true"></paper-slider>
 				<span>{{pointsAllocation.maxPoints}}</span>
 			</div>
 		</div>
