@@ -21,7 +21,7 @@
 				@apply(--layout-center-center);
 			}
 		</style>
-		<template is="dom-if" if="{{isOrganizer}}">
+		<template is="dom-if" if="{{canAddDrivers}}">
 			<paper-material class="controls" on-click="_addDriver">
 				<iron-icon icon="add"></iron-icon>
 				<span>Register Driver</span>
@@ -45,7 +45,7 @@
 			},
 			_roundSet: function(){
 				//TODO: replace this with `canEditRound` which should be an api call to check permissions
-				this.isOrganizer = util.isOrganizer();
+				this.canAddDrivers = util.isOrganizer() || util.isJudge();
 			},
 			_addDriver: function() {
 				page('/register/' + this.round.id);

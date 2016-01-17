@@ -33,8 +33,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 		}
 
 		function checkIsLoggedIn(){
-			if (!util.loggedIn){
+			if (!util.loggedIn()){
 				page('/login');
+				return false;
 			}
 		}
 
@@ -59,7 +60,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 		});
 
 		page('/championships', function(){
-			checkIsLoggedIn();
+			if (!checkIsLoggedIn()){
+				return;
+			}
 			app.header = 'Championships';
 			Polymer.Base.importHref('/elements/championship/championship-list.html', function(){
 				app.route = 'championships';
@@ -68,7 +71,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 		});
 
 		page('/championship/:championshipId', function(data){
-			checkIsLoggedIn();
+			if (!checkIsLoggedIn()){
+				return;
+			}
 			app.route = 'championship-view';
 			var id = data.params.championshipId;
 			Polymer.Base.importHref('/elements/championship/championship-view.html', function(){
@@ -77,7 +82,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 		});
 
 		page('/championships/create', function(){
-			checkIsLoggedIn();
+			if (!checkIsLoggedIn()){
+				return;
+			}
 			app.route = 'championship-create';
 			app.header = 'New championship';
 			Polymer.Base.importHref('/elements/championship/championship-create.html', function(){
@@ -86,7 +93,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 		});
 
 		page('/round/:id/tab/:tab', function(data){
-			checkIsLoggedIn();
+			if (!checkIsLoggedIn()){
+				return;
+			}
 			console.log('round is good');
 			app.route = 'round-view';
 			var id = data.params.id;
@@ -99,7 +108,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 		});
 
 		page('/round/:id', function(data){
-			checkIsLoggedIn();
+			if (!checkIsLoggedIn()){
+				return;
+			}
 			app.route = 'round-view';
 			var id = data.params.id;
 			localStorage.selectedRound = id;
@@ -109,7 +120,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 		});
 
 		page('/register/:roundId', function(data){
-			checkIsLoggedIn();
+			if (!checkIsLoggedIn()){
+				return;
+			}
 			app.route = 'register-driver';
 			var id = data.params.roundId;
 			Polymer.Base.importHref('/elements/round/register/register-driver.html', function(){
@@ -118,7 +131,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 		});
 
 		page('/qualifiers/:qualifierId', function(data){
-			checkIsLoggedIn();
+			if (!checkIsLoggedIn()){
+				return;
+			}
 			app.route = 'qualifier-judging';
 			var id = data.params.qualifierId;
 			Polymer.Base.importHref('/elements/qualifiers/qualifier-judging.html', function(){
@@ -127,7 +142,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 		});
 
 		page('/playoff/battle/judge/:battleId', function(data){
-			checkIsLoggedIn();
+			if (!checkIsLoggedIn()){
+				return;
+			}
 			app.route = 'playoff-judging';
 			var id = data.params.battleId;
 			Polymer.Base.importHref('/elements/playoff/playoff-battle-judging.html', function(){
@@ -136,7 +153,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 		});
 
 		page('/persons', function(){
-			checkIsLoggedIn();
+			if (!checkIsLoggedIn()){
+				return;
+			}
+			console.log('wtf');
 			app.route = 'persons';
 			app.header = 'Persons';
 			Polymer.Base.importHref('/elements/person/person-list.html', function(){
@@ -145,7 +165,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 		});
 
 		page('/person/:personId', function(data){
-			checkIsLoggedIn();
+			if (!checkIsLoggedIn()){
+				return;
+			}
 			app.route = 'person-view';
 			app.header = 'Person';
 			var id = data.params.personId;
@@ -155,7 +177,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 		});
 
 		page('/users', function () {
-			checkIsLoggedIn();
+			if (!checkIsLoggedIn()){
+				return;
+			}
 			app.route = 'users';
 			app.header = 'Users';
 			Polymer.Base.importHref('/elements/user/user-list.html', function(){
@@ -164,7 +188,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 		});
 
 		page ('/user/create', function(){
-			checkIsLoggedIn();
+			if (!checkIsLoggedIn()){
+				return;
+			}
 			app.route = 'user-create';
 			app.header = 'Create user';
 			Polymer.Base.importHref('/elements/user/user-create.html', function(){
