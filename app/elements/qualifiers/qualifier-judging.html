@@ -53,7 +53,8 @@
 		<dd-ajax
 			id="submitRunJudging"
 			method="POST"
-			on-response="onSubmitResponse">
+			on-response="onSubmitResponse"
+			on-error="onSubmitError">
 		</dd-ajax>
 
 		<div class="content">
@@ -77,7 +78,7 @@
 				</div>
 			</paper-material>
 			<paper-dialog id="warningDialog" modal>
-				<div class="warning">You have already submitted a judging for both runs of this driver.</div>
+				<div class="warning">{{errorMessage}}</div>
 				<div class="controls">
 					<paper-button autofocus on-click="_endWarning">OK</paper-button>
 				</div>
@@ -105,11 +106,16 @@
 				negativeComments: {
 					type: Array,
 					notify: true
+				},
+				errorMessage: {
+					type: String,
+					notify: true
 				}
 			},
 			_set: function(){
 				if (this.qualifierJudge.runId === null){
-					this.$.warningDialog.toggle();
+					this.errorMessage = 'You already submited scores for both runs for this driver';
+					this.$.warningDialog.open();
 					return;
 				}
 				this.canInputEntrySpeed = this.qualifierJudge.judge.judgeType === 'STYLE';
@@ -169,8 +175,23 @@
 				this.$.negativeComments.clear();
 			},
 			onSubmitResponse: function(event, e){
-				page('/round/' + this.qualifierJudge.roundId);
+				console.log('DAFUQ');
+				page('/round/' + this.qualifierJudge.roundId + '/tab/2');
+			},
+			onSubmitError: function(event, e){
+				switch (e.detail.request.xhr.status){
+					case 401:
+						return;
+					case 412:
+						this.errorMessage = 'Please wait for the other judges to score the previous run.';
+						break;
+					default:
+						this.errorMessage = 'Something went wrong. Please try again.';
+						break;
+				}
+				this.$.warningDialog.open();
 			}
+
 		});
 	</script>
 </dom-module>

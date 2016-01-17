@@ -19,7 +19,7 @@
 				height: auto;
 			}
 		</style>
-		<paper-material>
+		<paper-material elevation="1">
 			<form is="iron-form" id="personData">
 				<h2>Person details</h2>
 				<paper-input id="firstName" label="First name*" value="{{person.firstName}}" required></paper-input>
@@ -27,7 +27,7 @@
 				<file-input id="profilePicture" label="Profile picture" file-id="{{person.profilePicture}}"></file-input>
 				<analog-date-picker id="birthDate" label="Birth date*" date="{{person.birthDate}}"></analog-date-picker>
 				<paper-input id="nick" label="Nick" value="{{person.nick}}"></paper-input>
-				<country-chooser selected-country-id="{{person.country}}"></country-chooser>
+				<country-chooser selected-country="{{person.country}}"></country-chooser>
 				<paper-input id="telephone" label="Telephone nr" value="{{person.telephone}}"></paper-input>
 				<paper-input id="website" label="Website" value="{{person.website}}"></paper-input>
 				<analog-date-picker id="careerStartDate" label="Career start date*" date="{{person.careerStartDate}}"></analog-date-picker>
@@ -85,7 +85,7 @@
 				valid = this.$.careerStartDate.validate() && valid;
 
 				if (this.isDriver){
-					valid = this.$.driverDetails.validate() && valid;
+					valid = this.$$('#driverDetails').validate() && valid;
 				}
 				return valid;
 			}

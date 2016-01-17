@@ -46,6 +46,8 @@
 				<h2>User details</h2>
 				<form is="iron-form" id="userForm">
 					<paper-input id="email" type="email" label="Email" value="{{user.email}}" required></paper-input>
+					<!--<paper-input id="password" type="password" label="Password" value="{{user.password}}"></paper-input>-->
+					<!--<paper-input id="passwordRepeat" type="password" label="Password(Repeat)"></paper-input>-->
 					<paper-radio-group id="roleGroup" selected-item="{{selectedRole}}">
 						<template is="dom-repeat" items="{{roles}}">
 							<paper-radio-button name="{{item.role}}" value="{{item.id}}">{{_roleName(item.role)}}</paper-radio-button><br>

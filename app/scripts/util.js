@@ -8,6 +8,9 @@ var util = {
 		return prefix + suffix;
 	},
 	imageLink: function(id, width, height){
+		if (!id){
+			return '/images/user.png';
+		}
 		if (width !== undefined && height !== undefined){
 			return this.build('/file/' + id + '?height=' + height + '&width=' + width);
 		}
@@ -40,8 +43,12 @@ var util = {
 		return false;
 	},
 
-	formatDate: function(date){
-		return date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear() + ' ' + this.getTimeField(date.getHours()) + ':' + this.getTimeField(date.getMinutes());
+	formatDate: function(date, ommitTime){
+		var formattedDate = date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear();
+		if (!ommitTime){
+			formattedDate = formattedDate + ' ' + this.getTimeField(date.getHours()) + ':' + this.getTimeField(date.getMinutes())
+		}
+		return formattedDate;
 	},
 	getTimeField: function(timeField){
 		if (timeField < 10){

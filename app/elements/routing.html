@@ -135,6 +135,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			});
 		});
 
+		page('/persons', function(){
+			checkIsLoggedIn();
+			app.route = 'persons';
+			app.header = 'Persons';
+			Polymer.Base.importHref('/elements/person/person-list.html', function(){
+				app.$.persons.getPersons();
+			});
+		});
+
+		page('/person/:personId', function(data){
+			checkIsLoggedIn();
+			app.route = 'person-view';
+			app.header = 'Person';
+			var id = data.params.personId;
+			Polymer.Base.importHref('/elements/person/person-full-view.html', function(){
+				app.$.person.getPerson(id);
+			});
+		});
+
 		page('/users', function () {
 			checkIsLoggedIn();
 			app.route = 'users';

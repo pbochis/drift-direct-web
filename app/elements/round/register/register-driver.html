@@ -98,8 +98,6 @@
 				this.$.existingDrivers.getDrivers(roundId);
 			},
 			_registerDriver: function(){
-				console.log(this.selectedTab);
-				console.log(this.selectedTab);
 				if (this.selectedTab === 0){
 					console.log('registering existing driver');
 					this.$.postRegister.url = util.build('/round/' + this.roundId +'/register/' + this.selectedDriver);

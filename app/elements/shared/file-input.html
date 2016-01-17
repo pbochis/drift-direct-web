@@ -1,5 +1,6 @@
 <link rel="import" href="/styles/shared-styles.html">
 <link rel="import" href="/bower_components/paper-input/paper-input.html">
+<link rel="import" href="dd-ajax.html">
 <!--
 	This component represents a material design file picker, posts it to the server through a multipart/form-data
 	The file is saved and the response is the id of the saved file which is binded to the fileId property.
@@ -16,6 +17,13 @@
 				cursor: pointer;
 			}
 		</style>
+		<dd-ajax
+			id="getFileName"
+			method="GET"
+			handle-as="text"
+			last-response="{{label}}">
+		</dd-ajax>
+
 		<input id="fileInput" class="none" type="file" accept="image/*"/>
 		<paper-input type="text" id="textInput" readonly label="{{label}}" on-click="_choseFile">
 			<iron-icon prefix icon="file-upload"></iron-icon>
@@ -32,8 +40,13 @@
 				fileId: {
 					type: String,
 					notify: true,
-					reflectToAttribute: true
+					reflectToAttribute: true,
+					observer: '_updateFileName'
 				}
+			},
+			_updateFileName: function(){
+				this.$.getFileName.url = util.build('/file/' + this.fileId + '/name');
+				this.$.getFileName.generateRequest();
 			},
 			ready: function(){
 				var that = this;
@@ -60,8 +73,8 @@
 
 					xhr.onreadystatechange = function(){
 						if (xhr.readyState == 4 && xhr.status == 200){
-							that.fileId = xhr.response;
 							that.label = file.name;
+							that.fileId = xhr.response;
 							that.$.textInput.invalid = false;
 						}
 					};
