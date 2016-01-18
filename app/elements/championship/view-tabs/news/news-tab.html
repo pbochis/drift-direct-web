@@ -1,0 +1,40 @@
+<link rel="import" href="/styles/shared-styles.html">
+<link rel="import" href="championship-news.html">
+
+<dom-module id="news-tab">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			.container {
+				@apply(--layout-vertical)
+			}
+			.controls {
+				cursor: pointer;
+				@apply(--layout-horizontal);
+				@apply(--layout-center-center);
+			}
+		</style>
+		<div class="container">
+			<paper-material class="controls" on-click="_addNews">
+				<iron-icon icon="add"></iron-icon>
+				<span>Create news</span>
+			</paper-material>
+			<template is="dom-repeat" items="{{championship.news}}">
+				<championship-news news="{{item}}"></championship-news>
+			</template>
+		</div>
+	</template>
+	<script>
+		Polymer({
+			is: 'news-tab',
+			properties: {
+				championship: {
+					type: Object,
+					notify: true
+				}
+			},
+			_addNews: function(){
+				page('/news/' + this.championship.id);
+			}
+		});
+	</script>
+</dom-module>

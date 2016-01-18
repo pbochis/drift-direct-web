@@ -23,7 +23,12 @@
 		<template is="dom-if" if="{{showMe}}">
 			<div class="list-item">
 				<div class="item-label">{{label}}</div>
-				<div class="item-value">{{value}}</div>
+				<template is="dom-if" if="{{link}}">
+					<a class="item-value" href$=	"{{value}}" target="_blank">{{value}}</a>
+				</template>
+				<template is="dom-if" if="{{!link}}">
+					<div class="item-value">{{value}}</div>
+				</template>
 			</div>
 		</template>
 	</template>
@@ -39,6 +44,11 @@
 					type: String,
 					notify: true,
 					observer: '_valueSet'
+				},
+				link: {
+					type: Boolean,
+					notify: true,
+					value: false
 				},
 				showMe: {
 					type: Boolean,

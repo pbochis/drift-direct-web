@@ -8,7 +8,7 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 
-<script src="../bower_components/page/page.js"></script>
+<script src="/bower_components/page/page.js"></script>
 <script>
 	window.addEventListener('WebComponentsReady', function () {
 
@@ -37,6 +37,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 				page('/login');
 				return false;
 			}
+			return true;
 		}
 
 		// Routes
@@ -81,6 +82,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			});
 		});
 
+
 		page('/championships/create', function(){
 			if (!checkIsLoggedIn()){
 				return;
@@ -89,6 +91,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			app.header = 'New championship';
 			Polymer.Base.importHref('/elements/championship/championship-create.html', function(){
 				app.$.championshipCreate.getPersons();
+			});
+		});
+
+		page('/news/:championshipId', function(data){
+			if (!checkIsLoggedIn()){
+				return;
+			}
+			var championshipId = data.params.championshipId;
+			app.route = 'news-create'
+			app.header = 'News';
+			Polymer.Base.importHref('/elements/news/news-create.html', function(){
+				app.$.newsCreate.championship = championshipId;
 			});
 		});
 
@@ -174,6 +188,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			Polymer.Base.importHref('/elements/person/person-full-view.html', function(){
 				app.$.person.getPerson(id);
 			});
+		});
+
+
+		page('/sponsors', function(){
+			if (!checkIsLoggedIn()){
+				return;
+			}
+			app.route = 'sponsors';
+			app.header = 'Sponsors';
+			Polymer.Base.importHref('/elements/sponsor/sponsor-list.html', function(){
+				app.$.sponsors.getSponsors();
+			});
+		});
+
+		page('/sponsor/new', function(){
+			if (!checkIsLoggedIn()){
+				return;
+			}
+			app.route = 'sponsor-create';
+			app.header = 'New Sponsor';
+			Polymer.Base.importHref('/elements/sponsor/sponsor-create.html');
 		});
 
 		page('/users', function () {

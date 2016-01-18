@@ -1,15 +1,16 @@
 <link rel="import" href="/styles/shared-styles.html">
 <link rel="import" href="/elements/shared/dd-ajax.html">
-<link rel="import" href="../../bower_components/paper-item/all-imports.html">
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="/bower_components/paper-item/all-imports.html">
+<link rel="import" href="/bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="view-tabs/championship-images.html">
 <link rel="import" href="view-tabs/championship-rules.html">
 <link rel="import" href="view-tabs/championship-rules.html">
 <link rel="import" href="view-tabs/judges/championship-judges.html">
 <link rel="import" href="view-tabs/rounds/round-list.html">
 <link rel="import" href="view-tabs/drivers/driver-list.html">
+<link rel="import" href="view-tabs/news/news-tab.html">
 
 <dom-module id="championship-view">
 	<template>
@@ -67,6 +68,7 @@
 				</dl>
 			</paper-material>
 			<paper-tabs noink no-slide elevation="1" selected="{{selectedTab}}">
+				<paper-tab>News</paper-tab>
 				<paper-tab>Images</paper-tab>
 				<paper-tab>Rules</paper-tab>
 				<paper-tab>Judges</paper-tab>
@@ -75,6 +77,7 @@
 			</paper-tabs>
 
 			<iron-pages selected="{{selectedTab}}">
+				<news-tab championship="{{championship}}"></news-tab>
 				<championship-images championship="{{championship}}"></championship-images>
 				<championship-rules rules="{{championship.rules}}"></championship-rules>
 				<championship-judges judges="{{championship.judges}}"></championship-judges>

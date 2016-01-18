@@ -18,7 +18,6 @@ var util = {
 	},
 	loggedIn: function(){
 		if(localStorage.getItem('user') != null){
-			console.log(JSON.parse(localStorage.getItem('user')));
 			return JSON.parse(localStorage.getItem('user'));
 		}
 	},

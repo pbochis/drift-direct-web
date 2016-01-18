@@ -1,0 +1,77 @@
+<link rel="import" href="/styles/shared-styles.html">
+<link rel="import" href="/elements/shared/dd-ajax.html">
+
+<link rel="import" href="/bower_components/iron-form/iron-form.html">
+<link rel="import" href="/bower_components/paper-input/paper-input.html">
+<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/elements/shared/validateable-autogrow-textarea.html">
+<link rel="import" href="/elements/shared/file-input.html">
+
+<dom-module id="news-create">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			.controls {
+				cursor: pointer;
+				@apply(--layout-horizontal);
+				@apply(--layout-center-center);
+			}
+		</style>
+		<dd-ajax
+			id="postNews"
+			method="POST"
+			body="{{news}}"
+			on-response="_onResponse"
+			on-error="_onError">
+		</dd-ajax>
+		<paper-material>
+			<form is="iron-form" id="newsData">
+				<h2>News data</h2>
+				<paper-input id="name" label="Name*" value="{{news.name}}" required></paper-input>
+				<paper-input id="url" label="Url*" value="{{news.url}}" required></paper-input>
+				<file-input id="logo" label="Background image" file-id="{{news.logo}}"></file-input>
+				<validateable-autogrow-textarea id="description"
+												place-holder="Description"
+												bind-value="{{news.description}}"
+												rows="5"
+												max-rows="5"
+												required="false">
+				</validateable-autogrow-textarea>
+			</form>
+		</paper-material>
+		<paper-material class="controls" on-click="_createNews">
+			<iron-icon icon="add"></iron-icon>
+			<span>Save news</span>
+		</paper-material>
+	</template>
+	<script>
+		Polymer({
+			is: 'news-create',
+			properties: {
+				championship: {
+					type: Number,
+					notify: true
+				},
+				news: {
+					type: Object,
+					notify: true,
+					value: {}
+				}
+			},
+			_createNews: function(){
+				if (!this.$.newsData.validate()){
+					return;
+				}
+				console.log(this.news);
+				this.$.postNews.url = util.build('/championship/' + this.championship + '/news');
+				this.$.postNews.generateRequest();
+			},
+			_onResponse: function(event, r){
+				this.news = {};
+				page('/championship/' + this.championship);
+			},
+			_onError: function(event, e){
+				console.log(e);
+			}
+		});
+	</script>
+</dom-module>

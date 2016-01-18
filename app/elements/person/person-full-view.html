@@ -72,6 +72,7 @@
 						<h2>Driver details</h2>
 						<description-list>
 							<description-list-item label="Team" value="{{person.driverDetails.team.name}}"></description-list-item>
+							<description-list-item label="Sponsors" value="{{sponsors}}"></description-list-item>
 							<description-list-item label="Make" value="{{person.driverDetails.make}}"></description-list-item>
 							<description-list-item label="Model" value="{{person.driverDetails.model}}"></description-list-item>
 							<description-list-item label="Engine" value="{{person.driverDetails.engine}}"></description-list-item>
@@ -111,10 +112,22 @@
 					type: Number,
 					value: 0,
 					notify: true
+				},
+				sponsors: {
+					type: String,
+					notify: true
 				}
 			},
 			_personSet: function(){
 				this.isDriver = this.person.personType === 'Driver';
+				this.sponsors = '';
+				if (this.isDriver && this.person.driverDetails.sponsors.length > 0){
+					var sponsors = this.person.driverDetails.sponsors[0].name;
+					for (var i = 1; i < this.person.driverDetails.sponsors.length; i++){
+						sponsors += ', ' + this.person.driverDetails.sponsors[i].name;
+					}
+					this.sponsors = sponsors;
+				}
 			},
 			getPerson: function(id){
 				this.$.getPerson.url = util.build('/person/' + id);
