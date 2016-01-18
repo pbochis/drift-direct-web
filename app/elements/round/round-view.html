@@ -11,6 +11,8 @@
 <link rel="import" href="tabs/qualifier-results.html">
 <link rel="import" href="tabs/playoff/round-playoff.html">
 
+<link rel="import" href="/elements/shared/description-list/description-list.html">
+<link rel="import" href="/elements/shared/description-list/description-list-item.html">
 
 <dom-module id="round-view">
 	<template>
@@ -22,7 +24,7 @@
 				width: 100%;
 			}
 			paper-material {
-				height: 270px;
+				height: auto;
 			}
 			.content {
 				width: 80%;
@@ -58,16 +60,12 @@
 					<div class="flex"></div>
 					<iron-icon icon="delete"></iron-icon>
 				</div>
-				<dl>
-					<dt>Tickets</dt>
-					<dd><a href$="{{round.ticketsUrl}}" target="_blank">{{round.ticketsUrl}}</a> </dd>
-					<dt>Livestream</dt>
-					<dd><a href$="{{round.liveStream}}" target="_blank">{{round.liveStream}}</a> </dd>
-					<dt>Start date</dt>
-					<dd>{{formatDate(round.startDate)}}</dd>
-					<dt>End date</dt>
-					<dd>{{formatDate(round.endDate)}}</dd>
-				</dl>
+				<description-list>
+					<description-list-item label="Tickets" value="{{round.ticketsUrl}}" link></description-list-item>
+					<description-list-item label="Livestream" value="{{round.liveStream}}" link></description-list-item>
+					<description-list-item label="Start date" value="{{formatDate(round.startDate)}}" ></description-list-item>
+					<description-list-item label="End date" value="{{formatDate(round.endDate)}}" ></description-list-item>
+				</description-list>
 			</paper-material>
 			<paper-tabs noink no-slide elevation="1" selected="{{selectedTab}}">
 				<paper-tab>Track</paper-tab>
@@ -103,7 +101,6 @@
 				}
 			},
 			selectedTabChanged: function(){
-				console.log(this.selectedTab);
 			},
 			getRound: function(id){
 				this.$.getRound.url = util.build('/round/' + id);
@@ -111,7 +108,6 @@
 			},
 			onResponse: function(){
 				app.header = this.round.name;
-				console.log(this.round);
 			},
 			formatDate: function(longDate){
 				var date = new Date(longDate);
