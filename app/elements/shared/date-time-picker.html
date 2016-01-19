@@ -68,7 +68,8 @@
 				this.$.dialog.toggle();
 			},
 			_setDate: function(date){
-				this.$.textInput.value = date.getFullYear() + '-' + date.getMonth() + 1 + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes();
+//				this.$.textInput.value = date.getFullYear() + '-' + date.getMonth() + 1 + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes();
+				this.$.textInput.value = util.formatDate(date);
 			},
 			validate: function(){
 				if (this.dateTime === undefined){
