@@ -4,11 +4,19 @@
 <dom-module id="app-element">
 	<template>
 		<style include="shared-styles">
+			paper-drawer-panel.loginmode{
+				--paper-drawer-panel-drawer-container: {
+					width: 0 !important;
+				};
+				--paper-drawer-panel-main-container: {
+					left: 0 !important;
+				}
+			}
 		</style>
-		<paper-drawer-panel id="paperDrawerPanel">
+		<paper-drawer-panel id="paperDrawerPanel" class$="{{drawerClass}}">
 			<!-- Drawer Scroll Header Panel -->
 			<template is="dom-if" if="{{isLoggedIn}}">
-				<paper-scroll-header-panel drawer fixed>
+				<paper-scroll-header-panel drawer fixed >
 
 					<!-- Drawer Toolbar -->
 					<paper-toolbar id="drawerToolbar">
@@ -146,7 +154,13 @@
 					type: String,
 					notify: true,
 					value: 'DriftDirect'
+				},
+				drawerClass: {
+					type: String,
+					notify: true,
+					value: ''
 				}
+
 			},
 			ready: function(){
 				var element = this;
@@ -162,7 +176,13 @@
 				this.$.paperDrawerPanel.closeDrawer();
 			},
 			login: function(){
+				this.drawerClass = '';
+				Polymer.updateStyles();
 				this.isLoggedIn = util.loggedIn();
+			},
+			hideMenu: function(){
+				this.drawerClass = 'loginmode';
+				Polymer.updateStyles();
 			},
 			_logout: function(){
 				localStorage.clear();
