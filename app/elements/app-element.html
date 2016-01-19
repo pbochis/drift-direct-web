@@ -3,7 +3,8 @@
 
 <dom-module id="app-element">
 	<template>
-		<style include="shared-styles"></style>
+		<style include="shared-styles">
+		</style>
 		<paper-drawer-panel id="paperDrawerPanel">
 			<!-- Drawer Scroll Header Panel -->
 			<template is="dom-if" if="{{isLoggedIn}}">
@@ -54,6 +55,12 @@
 						<!--<div class="bottom bottom-container center horizontal layout">-->
 							<!--<div class="bottom-title paper-font-subhead">The future of the web today</div>-->
 						<!--</div>-->
+						<paper-menu-button horizontal-align="right">
+							<paper-icon-button icon="settings" class="dropdown-trigger"></paper-icon-button>
+							<paper-menu class="dropdown-content">
+								<paper-item style="cursor: pointer" on-click="_logout">Logout</paper-item>
+							</paper-menu>
+						</paper-menu-button>
 					</paper-toolbar>
 				</template>
 				<!-- Main Content -->
@@ -156,6 +163,10 @@
 			},
 			login: function(){
 				this.isLoggedIn = util.loggedIn();
+			},
+			_logout: function(){
+				localStorage.clear();
+				page('/login');
 			}
 		});
 	</script>

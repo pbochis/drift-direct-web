@@ -45,8 +45,10 @@
 				}
 			},
 			_updateFileName: function(){
-				this.$.getFileName.url = util.build('/file/' + this.fileId + '/name');
-				this.$.getFileName.generateRequest();
+				if (this.fileId){
+					this.$.getFileName.url = util.build('/file/' + this.fileId + '/name');
+					this.$.getFileName.generateRequest();
+				}
 			},
 			ready: function(){
 				var that = this;
