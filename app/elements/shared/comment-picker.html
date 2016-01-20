@@ -36,6 +36,7 @@
 				@apply(--layout-center-center);
 				/*overflow-y: scroll;*/
 				height: 320px;
+
 			}
 			.comment{
 				margin: 7px 0;
@@ -52,12 +53,15 @@
 				color: white;
 			}
 			.buttons {
+				@apply(--layout-horizontal);
+				@apply(--layout-center-center);
 				bottom: 10px;
 			}
 			#newCommentForm {
 				@apply(--layout-horizontal)
 			}
 			#selector {
+				width: 100%;
 				height: 100%;
 				overflow-y: scroll;
 			}

@@ -47,7 +47,7 @@
 			id="startJudging"
 			method="GET"
 			last-response="{{qualifierJudge}}"
-			on-error="onError"
+			on-error="_onError"
 		>
 		</dd-ajax>
 		<dd-ajax
@@ -74,13 +74,21 @@
 					<comment-picker id="negativeComments" comments="{{qualifierJudge.availableComments}}" selected-comments="{{negativeComments}}"></comment-picker>
 				</div>
 				<div class="controls">
-					<paper-button id="submitButton" raised colored on-click="_submitJudging">Submit</paper-button>
+					<paper-button id="submitButton" raised colored on-click="_confirm">Submit</paper-button>
 				</div>
 			</paper-material>
 			<paper-dialog id="warningDialog" modal>
 				<div class="warning">{{errorMessage}}</div>
 				<div class="controls">
 					<paper-button autofocus on-click="_endWarning">OK</paper-button>
+				</div>
+			</paper-dialog>
+
+			<paper-dialog id="confirmDialog" modal>
+				<div class="warning">Are you sure you want to submit?</div>
+				<div class="controls">
+					<paper-button autofocus on-click="_submitJudging">Yes</paper-button>
+					<paper-button dialog-dismiss>No</paper-button>
 				</div>
 			</paper-dialog>
 		</div>
@@ -113,6 +121,9 @@
 				}
 			},
 			_set: function(){
+				if (!this.qualifierJudge){
+					return;
+				}
 				if (this.qualifierJudge.runId === null){
 					this.errorMessage = 'You already submited scores for both runs for this driver';
 					this.$.warningDialog.open();
@@ -122,12 +133,19 @@
 			},
 			_endWarning: function(){
 				this.$.warningDialog.toggle();
-				page('/round/' + this.qualifierJudge.roundId);
+				window.history.back();
 			},
 			getQualifierJudge(qualifierId){
 				this.$.startJudging.url = util.build('/qualifier/' + qualifierId + '/start');
 				this.$.startJudging.generateRequest();
 				console.log('judging!');
+			},
+			_onError: function(event, e){
+				if (e.detail.request.xhr.status === 412) {
+					this.errorMessage = 'Please wait for the other judges to give their result for the ended run.';
+					this.$.warningDialog.open();
+					return;
+				}
 			},
 			_getAwardedPoints: function(){
 				var pointsElements = Polymer.dom(this.root).querySelectorAll('qualifier-points-slider');
@@ -153,7 +171,11 @@
 				}
 				return comments;
 			},
+			_confirm: function(){
+				this.$.confirmDialog.open();
+			},
 			_submitJudging: function(){
+				this.$.confirmDialog.close();
 				var runJudging = {};
 				runJudging.awardedPoints = this._getAwardedPoints();
 				runJudging.comments = this._getComments();
@@ -169,13 +191,14 @@
 			_clear: function(){
 				var pointsElements = Polymer.dom(this.root).querySelectorAll('qualifier-points-slider');
 				for (var i = 0; i < pointsElements.length; i++){
+					console.log('clearing ' + pointsElements[i].awardedPoints);
 					pointsElements[i].clear();
 				}
-				this.$.positiveComments.clear();
-				this.$.negativeComments.clear();
+				this.$.positiveComments = [];
+				this.$.negativeComments = [];
 			},
 			onSubmitResponse: function(event, e){
-				console.log('DAFUQ');
+				this._clear();
 				page('/round/' + this.qualifierJudge.roundId + '/tab/2');
 			},
 			onSubmitError: function(event, e){

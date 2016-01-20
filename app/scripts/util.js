@@ -22,6 +22,10 @@ var util = {
 		}
 	},
 
+	currentUser: function(){
+		return JSON.parse(localStorage.getItem('user'));
+	},
+
 	hasRole: function(role){
 		var user = JSON.parse(localStorage.getItem('user'));
 		for (var i = 0; i < user.roles.length; i++){
@@ -53,7 +57,9 @@ var util = {
 	},
 
 	formatDate: function(date, ommitTime){
-		var formattedDate = date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear();
+		var month = Number(date.getMonth()) + 1;
+		console.log(month);
+		var formattedDate = date.getDate() + '-' + month + '-' + date.getFullYear();
 		if (!ommitTime){
 			formattedDate = formattedDate + ' ' + this.getTimeField(date.getHours()) + ':' + this.getTimeField(date.getMinutes())
 		}

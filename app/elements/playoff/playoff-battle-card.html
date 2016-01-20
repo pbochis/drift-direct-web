@@ -8,14 +8,19 @@
 				height: 200px;
 				width: 200px;
 			}
+			.reverse {
+				text-align: end;
+			}
 		</style>
-		<div class$="{{layout}}">
-			<iron-image src="{{profilePictureUrl}}" sizing="contain"></iron-image>
-			<div class="layout vertical">
-				<div>{{position}}</div>
-				<h4>{{driver.driver.ranking}}. {{driver.driver.driver.firstName}} {{driver.driver.driver.lastName}}</h4>
+			<!--<h3 class$="{{advantageClass}}"> {{advantage}}</h3>-->
+			<div class$="{{layout}}">
+				<iron-image src="{{profilePictureUrl}}" sizing="contain"></iron-image>
+				<div class="layout vertical">
+					<div>{{position}}</div>
+					<h4>{{driver.driver.ranking}}. {{driver.driver.driver.firstName}} {{driver.driver.driver.lastName}}</h4>
+					<div>{{advantage}}</div>
+				</div>
 			</div>
-		</div>
 	</template>
 	<script>
 		Polymer({
@@ -42,17 +47,21 @@
 					notify: true
 				},
 				advantage: {
-					type: Boolean,
+					type: String,
 					notify: true,
-					value: false
+					value: ''
 				},
 				profilePictureUrl: {
 					type: String,
 					notify: true
+				},
+				advantageClass: {
+					type: String,
+					notify: true,
+					value: ''
 				}
 			},
 			_reverseChanged: function(){
-				console.log(this.reverse);
 				if (this.reverse){
 					this.layout = 'layout horizontal-reverse center';
 				}else{
@@ -60,7 +69,7 @@
 				}
 			},
 			_driverSet: function(){
-				this.advantage = this.driver.advantage;
+				this.advantage = this.driver.advantage ? 'Advantage' : '';
 				this.position = this.driver.lead ? 'Lead' : 'Chase';
 				this.profilePictureUrl = util.imageLink(this.driver.driver.driver.profilePicture);
 			}
