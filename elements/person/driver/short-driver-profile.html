@@ -1,0 +1,43 @@
+<link rel="import" href="/styles/shared-styles.html">
+<link rel="import" href="/bower_components/iron-image/iron-image.html">
+
+<dom-module id="short-driver-profile">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			paper-material {
+				height: auto;
+			}
+			iron-image {
+				width: 300px;
+				height: 200px;
+			}
+		</style>
+		<paper-material>
+			<div class="layout horizontal">
+				<iron-image sizing="contain" src$="{{profilePictureUrl}}"></iron-image>
+				<h3>{{person.firstName}} {{person.lastName}}</h3>
+			</div>
+		</paper-material>
+	</template>
+	<script>
+		Polymer({
+			is: 'short-driver-profile',
+			properties: {
+				person: {
+					type: Object,
+					notify: true,
+					observer: '_personSet'
+				},
+				profilePictureUrl: {
+					type: String,
+					notify: true
+				}
+			},
+			_personSet: function(){
+				console.log('???');
+				console.log(this.person);
+				this.profilePictureUrl = util.imageLink(this.person.profilePicture);
+			}
+		});
+	</script>
+</dom-module>

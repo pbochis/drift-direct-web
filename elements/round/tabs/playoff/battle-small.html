@@ -1,0 +1,94 @@
+<link rel="import" href="/styles/shared-styles.html">
+<link rel="import" href="/bower_components/iron-image/iron-image.html">
+
+<dom-module id="battle-small">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			:host {
+				display: block;
+				width: 100%;
+			}
+
+			.battle-container {
+				width: 60%;
+				cursor: pointer;
+				@apply(--layout-horizontal);
+				@apply(--layout-center);
+				min-width: 500px;
+			}
+			.container {
+				@apply(--layout-horizontal);
+				/*background-color: #7baaf7;*/
+			}
+
+			.battle-container:hover {
+				background-color: rgba(75, 92, 255, 0.13);
+			}
+			.profilePicture {
+				width: 75px;
+				height: 75px;
+			}
+
+			span{
+				font-weight: bold;
+				overflow: hidden;
+			}
+
+			.driver-left {
+				width: 45%;
+				@apply(--layout-horizontal);
+				@apply(--layout-center);
+			}
+			.driver-right {
+				width: 45%;
+				@apply(--layout-horizontal-reverse);
+				@apply(--layout-center);
+			}
+			.versus {
+				width: 10%;
+			}
+			.winner {
+				color: green;
+			}
+
+		</style>
+		<div class="container">
+			<div class="flex"></div>
+			<div class="battle-container" on-click="_judgeBattle">
+				<div class="driver-left">
+					<iron-image class="profilePicture" src="{{_profilePictureUrl(battle.driver1.driver.profilePicture)}}" sizing="contain"></iron-image>
+					<span class$="{{_driverNameClass(battle, battle.driver1)}}">{{battle.driver1.driver.firstName}} {{battle.driver1.driver.lastName}}</span>
+				</div>
+				<div class="versus">VS</div>
+				<div class="driver-right">
+					<iron-image class="profilePicture" src="{{_profilePictureUrl(battle.driver2.driver.profilePicture)}}" sizing="contain"></iron-image>
+					<span class$="{{_driverNameClass(battle, battle.driver2)}}">{{battle.driver2.driver.firstName}} {{battle.driver2.driver.lastName}}</span>
+				</div>
+			</div>
+			<div class="flex"></div>
+		</div>
+	</template>
+	<script>
+		Polymer({
+			is: 'battle-small',
+			properties: {
+				battle: {
+					type: Object,
+					notify: true
+				}
+			},
+			_profilePictureUrl: function(id){
+				return util.imageLink(id);
+			},
+			_driverNameClass: function(battle, currentDriver){
+				if (battle.winner !== null && battle.winner.driver.id === currentDriver.driver.id){
+					return 'winner';
+				}
+				return '';
+			},
+			_judgeBattle: function(){
+				page('/playoff/battle/judge/' + this.battle.id);
+			}
+		});
+	</script>
+</dom-module>

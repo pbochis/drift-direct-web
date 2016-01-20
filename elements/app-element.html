@@ -3,11 +3,20 @@
 
 <dom-module id="app-element">
 	<template>
-		<style include="shared-styles"></style>
-		<paper-drawer-panel id="paperDrawerPanel">
+		<style include="shared-styles">
+			paper-drawer-panel.loginmode{
+				--paper-drawer-panel-drawer-container: {
+					width: 0 !important;
+				};
+				--paper-drawer-panel-main-container: {
+					left: 0 !important;
+				}
+			}
+		</style>
+		<paper-drawer-panel id="paperDrawerPanel" class$="{{drawerClass}}">
 			<!-- Drawer Scroll Header Panel -->
 			<template is="dom-if" if="{{isLoggedIn}}">
-				<paper-scroll-header-panel drawer fixed>
+				<paper-scroll-header-panel drawer fixed >
 
 					<!-- Drawer Toolbar -->
 					<paper-toolbar id="drawerToolbar">
@@ -20,6 +29,17 @@
 							<iron-icon icon="home"></iron-icon>
 							<span>Championships</span>
 						</a>
+
+						<a href="/persons">
+							<iron-icon icon="account-circle"></iron-icon>
+							<span>Persons</span>
+						</a>
+
+						<a href="/sponsors">
+							<iron-icon icon="star"></iron-icon>
+							<span>Sponsors</span>
+						</a>
+
 						<a href="/users">
 							<iron-icon icon="info"></iron-icon>
 							<span>Users</span>
@@ -43,6 +63,12 @@
 						<!--<div class="bottom bottom-container center horizontal layout">-->
 							<!--<div class="bottom-title paper-font-subhead">The future of the web today</div>-->
 						<!--</div>-->
+						<paper-menu-button horizontal-align="right">
+							<paper-icon-button icon="settings" class="dropdown-trigger"></paper-icon-button>
+							<paper-menu class="dropdown-content">
+								<paper-item style="cursor: pointer" on-click="_logout">Logout</paper-item>
+							</paper-menu>
+						</paper-menu-button>
 					</paper-toolbar>
 				</template>
 				<!-- Main Content -->
@@ -71,9 +97,36 @@
 							<register-driver id="register"></register-driver>
 						</section>
 
+						<section data-route="qualifier-judging">
+							<qualifier-judging id="qualifierJudging"></qualifier-judging>
+						</section>
+
+						<section data-route="playoff-judging">
+							<playoff-battle-judging id="playoffJudging"></playoff-battle-judging>
+						</section>
+
+						<section data-route="persons">
+							<person-list id="persons"></person-list>
+						</section>
+
+						<section data-route="person-view">
+							<person-full-view id="person"></person-full-view>
+						</section>
 
 						<section data-route="users">
 							<user-list id="users"></user-list>
+						</section>
+
+						<section data-route="news-create">
+							<news-create id="newsCreate"></news-create>
+						</section>
+
+						<section data-route="sponsors">
+							<sponsor-list id="sponsors"></sponsor-list>
+						</section>
+
+						<section data-route="sponsor-create">
+							<sponsor-create id="sponsorCreate"></sponsor-create>
 						</section>
 
 						<section data-route="user-create">
@@ -101,7 +154,13 @@
 					type: String,
 					notify: true,
 					value: 'DriftDirect'
+				},
+				drawerClass: {
+					type: String,
+					notify: true,
+					value: ''
 				}
+
 			},
 			ready: function(){
 				var element = this;
@@ -117,7 +176,17 @@
 				this.$.paperDrawerPanel.closeDrawer();
 			},
 			login: function(){
+				this.drawerClass = '';
+				Polymer.updateStyles();
 				this.isLoggedIn = util.loggedIn();
+			},
+			hideMenu: function(){
+				this.drawerClass = 'loginmode';
+				Polymer.updateStyles();
+			},
+			_logout: function(){
+				localStorage.clear();
+				page('/login');
 			}
 		});
 	</script>

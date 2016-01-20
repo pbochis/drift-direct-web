@@ -3,19 +3,15 @@
 <link rel="import" href="/bower_components/iron-form/iron-form.html">
 <link rel="import" href="/bower_components/paper-input/paper-input.html">
 <link rel="import" href="/bower_components/iron-icons/iron-icons.html">
-<!--private String engine;-->
-<!--private String steeringAngle;-->
-<!--private String suspensionMods;-->
-<!--private String wheels;-->
-<!--private String tires;-->
-<!--private int horsePower;-->
-<!--private String other;-->
+<link rel="import" href="/elements/sponsor/sponsor-picker.html">
+
 <dom-module id="driver-details-create">
 	<template>
 		<style is="custom-style" include="shared-styles"></style>
 		<paper-material>
 			<h2>Car details</h2>
 			<form is="iron-form" id="driverData">
+				<sponsor-picker selected-sponsors="{{driverDetails.sponsors}}"></sponsor-picker>
 				<paper-input id="make" label="Car make(manufacturer)*" value="{{driverDetails.make}}" required></paper-input>
 				<paper-input id="model" label="Car model*" value="{{driverDetails.model}}" required></paper-input>
 				<paper-input id="engine" label="Engine*" value="{{driverDetails.engine}}" required></paper-input>
@@ -27,6 +23,7 @@
 				<paper-input id="other" label="Other information" value="{{driverDetails.other}}"></paper-input>
 			</form>
 		</paper-material>
+
 	</template>
 	<script>
 		Polymer({

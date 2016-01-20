@@ -1,0 +1,77 @@
+<link rel="import" href="/styles/shared-styles.html">
+<link rel="import" href="/bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="/bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="/bower_components/paper-item/paper-item.html">
+
+<link rel="import" href="/elements/shared/dd-ajax.html">
+
+<dom-module id="sponsor-chooser">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			:host{
+				display: block;
+			}
+			paper-dropdown-menu{
+				width: 200px;
+			}
+			paper-menu {
+				background-color: white;
+			}
+		</style>
+		<dd-ajax
+			id="getSponsors"
+			method="GET"
+			last-response="{{sponsors}}">
+		</dd-ajax>
+		<paper-dropdown-menu id="sponsor" label="Sponsor" selected-item="{{selectedItem}}" required>
+			<paper-menu id="sponsorMenu" class="dropdown-content">
+				<template is="dom-repeat" items="{{sponsors}}">
+					<paper-item>{{item.name}}</paper-item>
+				</template>
+			</paper-menu>
+		</paper-dropdown-menu>
+	</template>
+	<script>
+		Polymer({
+			is: 'sponsor-chooser',
+			properties: {
+				sponsors: {
+					type: Array,
+					notify: true
+				},
+				selectedItem: {
+					type: Object,
+					notify: true,
+					observer: '_selectionChanged'
+				},
+				selectedSponsor: {
+					type: Object,
+					notify: true,
+					observer: '_sponsorSet'
+				}
+			},
+			_sponsorSet: function(){
+				if (this.selectedItem === undefined && this.selectedSponsor.id !== undefined){
+					for (var i = 0; i < this.sponsors.length; i++){
+						if (this.selectedSponsor.id === this.sponsors[i].id){
+							this.$.sponsorMenu.select(i);
+							break;
+						}
+					}
+				}
+			},
+			ready: function(){
+				this.$.getSponsors.url = util.build('/sponsor');
+				this.$.getSponsors.generateRequest();
+			},
+			_selectionChanged: function(){
+				if (this.selectedItem !== undefined && this.selectedItem !== null){
+					this.selectedSponsor = this.sponsors[this.$.sponsorMenu.selected];
+				}
+			},
+			validate: function(){
+				return this.$.country.validate();
+			}
+		});
+	</script>
+</dom-module>

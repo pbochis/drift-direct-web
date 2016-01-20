@@ -3,10 +3,14 @@
  */
 var util = {
 	build: function(suffix){
-		var prefix = "http://localhost:8080";
+		var prefix = "http://46.101.120.89:8080/driftdirect";
+		//var prefix = "http://localhost:8080";
 		return prefix + suffix;
 	},
 	imageLink: function(id, width, height){
+		if (!id){
+			return '/images/user.png';
+		}
 		if (width !== undefined && height !== undefined){
 			return this.build('/file/' + id + '?height=' + height + '&width=' + width);
 		}
@@ -14,13 +18,52 @@ var util = {
 	},
 	loggedIn: function(){
 		if(localStorage.getItem('user') != null){
-			console.log(JSON.parse(localStorage.getItem('user')));
 			return JSON.parse(localStorage.getItem('user'));
 		}
 	},
 
-	formatDate: function(date){
-		return date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear() + ' ' + this.getTimeField(date.getHours()) + ':' + this.getTimeField(date.getMinutes());
+	currentUser: function(){
+		return JSON.parse(localStorage.getItem('user'));
+	},
+
+	hasRole: function(role){
+		var user = JSON.parse(localStorage.getItem('user'));
+		for (var i = 0; i < user.roles.length; i++){
+			if (user.roles[i] === role){
+				return true;
+			}
+		}
+		return false;
+	},
+
+	isJudge: function(){
+		var user = JSON.parse(localStorage.getItem('user'));
+		for (var i = 0; i < user.roles.length; i++){
+			if (user.roles[i] === 'ROLE_JUDGE'){
+				return true;
+			}
+		}
+		return false;
+	},
+
+	isOrganizer: function(){
+		var user = JSON.parse(localStorage.getItem('user'));
+		for (var i = 0; i < user.roles.length; i++){
+			if (user.roles[i] === 'ROLE_ORGANIZER'){
+				return true;
+			}
+		}
+		return false;
+	},
+
+	formatDate: function(date, ommitTime){
+		var month = Number(date.getMonth()) + 1;
+		console.log(month);
+		var formattedDate = date.getDate() + '-' + month + '-' + date.getFullYear();
+		if (!ommitTime){
+			formattedDate = formattedDate + ' ' + this.getTimeField(date.getHours()) + ':' + this.getTimeField(date.getMinutes())
+		}
+		return formattedDate;
 	},
 	getTimeField: function(timeField){
 		if (timeField < 10){

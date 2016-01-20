@@ -8,7 +8,7 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 
-<script src="../bower_components/page/page.js"></script>
+<script src="/bower_components/page/page.js"></script>
 <script>
 	window.addEventListener('WebComponentsReady', function () {
 
@@ -33,9 +33,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 		}
 
 		function checkIsLoggedIn(){
-			if (!util.loggedIn){
+			if (!util.loggedIn()){
 				page('/login');
+				return false;
 			}
+			return true;
 		}
 
 		// Routes
@@ -53,12 +55,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 		});
 
 		page('/login', function(){
+			localStorage.user = null;
+			app.hideMenu();
 			app.route = 'login';
 			app.isLoggedIn = false;
 		});
 
 		page('/championships', function(){
-			checkIsLoggedIn();
+			if (!checkIsLoggedIn()){
+				return;
+			}
 			app.header = 'Championships';
 			Polymer.Base.importHref('/elements/championship/championship-list.html', function(){
 				app.route = 'championships';
@@ -67,7 +73,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 		});
 
 		page('/championship/:championshipId', function(data){
-			checkIsLoggedIn();
+			if (!checkIsLoggedIn()){
+				return;
+			}
 			app.route = 'championship-view';
 			var id = data.params.championshipId;
 			Polymer.Base.importHref('/elements/championship/championship-view.html', function(){
@@ -75,8 +83,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			});
 		});
 
+
 		page('/championships/create', function(){
-			checkIsLoggedIn();
+			if (!checkIsLoggedIn()){
+				return;
+			}
 			app.route = 'championship-create';
 			app.header = 'New championship';
 			Polymer.Base.importHref('/elements/championship/championship-create.html', function(){
@@ -84,17 +95,49 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			});
 		});
 
-		page('/round/:id', function(data){
-			checkIsLoggedIn();
+		page('/news/:championshipId', function(data){
+			if (!checkIsLoggedIn()){
+				return;
+			}
+			var championshipId = data.params.championshipId;
+			app.route = 'news-create'
+			app.header = 'News';
+			Polymer.Base.importHref('/elements/news/news-create.html', function(){
+				app.$.newsCreate.championship = championshipId;
+			});
+		});
+
+		page('/round/:id/tab/:tab', function(data){
+			if (!checkIsLoggedIn()){
+				return;
+			}
+			console.log('round is good');
 			app.route = 'round-view';
 			var id = data.params.id;
+			var tab = data.params.tab;
+			localStorage.selectedRound = id;
+			Polymer.Base.importHref('/elements/round/round-view.html', function(){
+				app.$.round.getRound(id);
+				app.$.round.selectedTab = tab;
+			});
+		});
+
+		page('/round/:id', function(data){
+			if (!checkIsLoggedIn()){
+				return;
+			}
+			app.route = 'round-view';
+			var id = data.params.id;
+			localStorage.selectedRound = id;
 			Polymer.Base.importHref('/elements/round/round-view.html', function(){
 				app.$.round.getRound(id);
 			});
 		});
 
 		page('/register/:roundId', function(data){
-			checkIsLoggedIn();
+			if (!checkIsLoggedIn()){
+				return;
+			}
 			app.route = 'register-driver';
 			var id = data.params.roundId;
 			Polymer.Base.importHref('/elements/round/register/register-driver.html', function(){
@@ -102,8 +145,77 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			});
 		});
 
+		page('/qualifiers/:qualifierId', function(data){
+			if (!checkIsLoggedIn()){
+				return;
+			}
+			app.route = 'qualifier-judging';
+			var id = data.params.qualifierId;
+			Polymer.Base.importHref('/elements/qualifiers/qualifier-judging.html', function(){
+				app.$.qualifierJudging.getQualifierJudge(id);
+			});
+		});
+
+		page('/playoff/battle/judge/:battleId', function(data){
+			if (!checkIsLoggedIn()){
+				return;
+			}
+			app.route = 'playoff-judging';
+			var id = data.params.battleId;
+			Polymer.Base.importHref('/elements/playoff/playoff-battle-judging.html', function(){
+				app.$.playoffJudging.startJudging(id);
+			});
+		});
+
+		page('/persons', function(){
+			if (!checkIsLoggedIn()){
+				return;
+			}
+			console.log('wtf');
+			app.route = 'persons';
+			app.header = 'Persons';
+			Polymer.Base.importHref('/elements/person/person-list.html', function(){
+				app.$.persons.getPersons();
+			});
+		});
+
+		page('/person/:personId', function(data){
+			if (!checkIsLoggedIn()){
+				return;
+			}
+			app.route = 'person-view';
+			app.header = 'Person';
+			var id = data.params.personId;
+			Polymer.Base.importHref('/elements/person/person-full-view.html', function(){
+				app.$.person.getPerson(id);
+			});
+		});
+
+
+		page('/sponsors', function(){
+			if (!checkIsLoggedIn()){
+				return;
+			}
+			app.route = 'sponsors';
+			app.header = 'Sponsors';
+			Polymer.Base.importHref('/elements/sponsor/sponsor-list.html', function(){
+				app.$.sponsors.getSponsors();
+			});
+		});
+
+		page('/sponsor/new', function(){
+			if (!checkIsLoggedIn()){
+				return;
+			}
+			app.route = 'sponsor-create';
+			app.header = 'New Sponsor';
+			Polymer.Base.importHref('/elements/sponsor/sponsor-create.html');
+		});
+
 		page('/users', function () {
-			checkIsLoggedIn();
+			if (!checkIsLoggedIn()){
+				return;
+			}
 			app.route = 'users';
 			app.header = 'Users';
 			Polymer.Base.importHref('/elements/user/user-list.html', function(){
@@ -112,7 +224,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 		});
 
 		page ('/user/create', function(){
-			checkIsLoggedIn();
+			if (!checkIsLoggedIn()){
+				return;
+			}
 			app.route = 'user-create';
 			app.header = 'Create user';
 			Polymer.Base.importHref('/elements/user/user-create.html', function(){
