@@ -119,7 +119,6 @@
 				}
 			},
 			_personSet: function(){
-				console.log(this.person);
 				if (!this.person){
 					return;
 				}
@@ -150,6 +149,7 @@
 			},
 			_editPerson: function(){
 				this.selectedPage = 1;
+				this.$.personForm.getData();
 			},
 			_updatePerson: function(){
 				if (!this.$.personForm.validate()){

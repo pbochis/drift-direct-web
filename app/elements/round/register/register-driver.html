@@ -75,6 +75,10 @@
 					type: Array,
 					notify: true
 				},
+				countries: {
+					type: Array,
+					notify: true
+				},
 				roundId: {
 					type: Number,
 					notify: true
@@ -93,9 +97,10 @@
 					notify: true
 				}
 			},
-			getDrivers: function(roundId){
+			getData: function(roundId){
 				this.roundId = roundId;
 				this.$.existingDrivers.getDrivers(roundId);
+				this.$.createForm.getData();
 			},
 			_registerDriver: function(){
 				if (this.selectedTab === 0){
@@ -109,6 +114,7 @@
 			},
 			onPostDriverResponse: function(event, r){
 				console.log(r);
+				this.$.createForm.clear();
 				this.$.postRegister.url = util.build('/round/' + this.roundId +'/register/' + r.detail.response);
 				this.$.postRegister.generateRequest();
 			},

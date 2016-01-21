@@ -11,7 +11,7 @@
 		<paper-material>
 			<h2>Car details</h2>
 			<form is="iron-form" id="driverData">
-				<sponsor-picker selected-sponsors="{{driverDetails.sponsors}}"></sponsor-picker>
+				<sponsor-picker id="sponsors" selected-sponsors="{{driverDetails.sponsors}}"></sponsor-picker>
 				<paper-input id="make" label="Car make(manufacturer)*" value="{{driverDetails.make}}" required></paper-input>
 				<paper-input id="model" label="Car model*" value="{{driverDetails.model}}" required></paper-input>
 				<paper-input id="engine" label="Engine*" value="{{driverDetails.engine}}" required></paper-input>
@@ -34,6 +34,9 @@
 					notify: true,
 					reflectToAttribute: true
 				}
+			},
+			getData: function(){
+				this.$.sponsors.getSponsors();
 			},
 			validate: function(){
 				return this.$.driverData.validate();

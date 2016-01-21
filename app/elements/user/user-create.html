@@ -33,6 +33,7 @@
 			method="GET"
 			last-response="{{roles}}">
 		</dd-ajax>
+
 		<dd-ajax
 			id="postUser"
 			method="POST"
@@ -41,7 +42,7 @@
 			on-error="onError">
 		</dd-ajax>
 		<div class="content">
-			<person-create-form id="person" person="{{user.person}}" person-type="{{personType}}"></person-create-form>
+			<person-create-form id="person" person="{{user.person}}" person-type="{{personType}}" countries="{{countries}}"></person-create-form>
 			<paper-material>
 				<h2>User details</h2>
 				<form is="iron-form" id="userForm">
@@ -67,6 +68,10 @@
 					type: Array,
 					notify: true
 				},
+				countries: {
+					type: Array,
+					notify: true
+				},
 				user: {
 					type: Object,
 					notify: true,
@@ -87,6 +92,7 @@
 			getRoles: function(){
 				this.$.getRoles.url = util.build('/roles');
 				this.$.getRoles.generateRequest();
+				this.$.person.getData();
 			},
 			_roleSelectionChanged: function(){
 				if (this.selectedRole !== undefined && this.selectedRole !== null){

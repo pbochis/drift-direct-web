@@ -78,7 +78,7 @@
 			<div class="controls">
 				<paper-button autofocus on-click="_getTree">Yes</paper-button>
 				<div class="flex"></div>
-				<paper-button on-click="_abortGeneration">No</paper-button>
+				<paper-button dialog-dismiss>No</paper-button>
 			</div>
 		</paper-dialog>
 	</template>
@@ -107,7 +107,7 @@
 				}
 			},
 			_confirmPlayoff: function(){
-				this.$.warningDialog.toggle();
+				this.$.warningDialog.open();
 			},
 			_getTree: function(){
 				this.$.getTree.url = util.build('/round/' + this.round.id + '/playoffs');
@@ -117,6 +117,7 @@
 				this._getTree();
 			},
 			onResponse: function(event, r){
+				this.$.warningDialog.close();
 				if (!!this.playoffTree){
 					this.shouldGeneratePlayoff = false;
 				}

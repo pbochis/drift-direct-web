@@ -3,8 +3,6 @@
 <link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 
-<link rel="import" href="dd-ajax.html">
-
 <dom-module id="country-chooser">
 	<template>
 		<style is="custom-style" include="shared-styles">
@@ -18,11 +16,6 @@
 				background-color: white;
 			}
 		</style>
-		<dd-ajax
-			id="getCountries"
-			method="GET"
-			last-response="{{countries}}">
-		</dd-ajax>
 		<paper-dropdown-menu id="country" label="Country" selected-item="{{selectedItem}}" required>
 			<paper-menu id="countryMenu" class="dropdown-content" attr-for-selected="value">
 				<template is="dom-repeat" items="{{countries}}">
@@ -51,13 +44,12 @@
 				}
 			},
 			_countrySet: function(){
+				if (!this.selectedCountry){
+					return;
+				}
 				if (this.selectedItem === undefined && this.selectedCountry.id !== undefined){
 					this.$.countryMenu.select(this.selectedCountry.id);
 				}
-			},
-			ready: function(){
-				this.$.getCountries.url = 'http://localhost:8080/country';
-				this.$.getCountries.generateRequest();
 			},
 			_selectionChanged: function(){
 				if (this.selectedItem !== undefined && this.selectedItem !== null){
