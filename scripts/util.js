@@ -9,7 +9,7 @@ var util = {
 	},
 	imageLink: function(id, width, height){
 		if (!id){
-			return '/images/user.png';
+			return '/drift-direct-web/images/user.png';
 		}
 		if (width !== undefined && height !== undefined){
 			return this.build('/file/' + id + '?height=' + height + '&width=' + width);
