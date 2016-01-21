@@ -35,11 +35,16 @@
 	<!-- build:css styles/main.css -->
 	<link rel="stylesheet" href="styles/main.css">
 	<!-- endbuild-->
-	<link rel="import" href="/bower_components/polymer/polymer.html">
+
+	<!-- build:js scripts/util.js -->
+		<script src="scripts/util.js"></script>
+	<!-- endbuild-->
+
+
 	<!-- build:js bower_components/webcomponentsjs/webcomponents-lite.min.js -->
 	<script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
 	<!-- endbuild -->
-	<link rel="import" href="elements/app-element.html">
+	<link rel="import" href="elements/elements.html">
 	<!--<link rel="import" href="styles/app-theme.html">-->
 
 	<!-- will be replaced with elements/elements.vulcanized.html -->
@@ -48,12 +53,8 @@
 </head>
 
 <body unresolved class="fullbleed layout vertical">
-	<span id="browser-sync-binding"></span>
-	<app-element id="app"></app-element>
-	<!-- build:js scripts/app.js -->
-		<!--<script src="scripts/app.js"></script>-->
-	<!-- endbuild-->
-	<script src="/scripts/util.js"></script>
-</body>
+<span id="browser-sync-binding"></span>
+<app-element id="app"></app-element>
+	</body>
 
 </html>

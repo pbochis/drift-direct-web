@@ -8,7 +8,7 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 
-<script src="/bower_components/page/page.js"></script>
+<script src="../bower_components/page/page.js"></script>
 <script>
 	window.addEventListener('WebComponentsReady', function () {
 
@@ -66,10 +66,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 				return;
 			}
 			app.header = 'Championships';
-			Polymer.Base.importHref('/elements/championship/championship-list.html', function(){
-				app.route = 'championships';
-				app.$.championships.getChampionships();
-			});
+			app.route = 'championships';
+			app.$.championships.getChampionships();
 		});
 
 		page('/championship/:championshipId', function(data){
@@ -78,9 +76,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			}
 			app.route = 'championship-view';
 			var id = data.params.championshipId;
-			Polymer.Base.importHref('/elements/championship/championship-view.html', function(){
-				app.$.championship.getChampionship(id);
-			});
+			app.$.championship.getChampionship(id);
 		});
 
 
@@ -90,9 +86,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			}
 			app.route = 'championship-create';
 			app.header = 'New championship';
-			Polymer.Base.importHref('/elements/championship/championship-create.html', function(){
-				app.$.championshipCreate.getPersons();
-			});
+			app.$.championshipCreate.getPersons();
 		});
 
 		page('/news/:championshipId', function(data){
@@ -100,11 +94,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 				return;
 			}
 			var championshipId = data.params.championshipId;
-			app.route = 'news-create'
+			app.route = 'news-create';
 			app.header = 'News';
-			Polymer.Base.importHref('/elements/news/news-create.html', function(){
-				app.$.newsCreate.championship = championshipId;
-			});
+			app.$.newsCreate.championship = championshipId;
 		});
 
 		page('/round/:id/tab/:tab', function(data){
@@ -116,10 +108,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			var id = data.params.id;
 			var tab = data.params.tab;
 			localStorage.selectedRound = id;
-			Polymer.Base.importHref('/elements/round/round-view.html', function(){
-				app.$.round.getRound(id);
-				app.$.round.selectedTab = tab;
-			});
+			app.$.round.getRound(id);
+			app.$.round.selectedTab = tab;
 		});
 
 		page('/round/:id', function(data){
@@ -129,9 +119,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			app.route = 'round-view';
 			var id = data.params.id;
 			localStorage.selectedRound = id;
-			Polymer.Base.importHref('/elements/round/round-view.html', function(){
-				app.$.round.getRound(id);
-			});
+			app.$.round.getRound(id);
 		});
 
 		page('/register/:roundId', function(data){
@@ -140,9 +128,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			}
 			app.route = 'register-driver';
 			var id = data.params.roundId;
-			Polymer.Base.importHref('/elements/round/register/register-driver.html', function(){
-				app.$.register.getDrivers(id);
-			});
+			app.$.register.getDrivers(id);
 		});
 
 		page('/qualifiers/:qualifierId', function(data){
@@ -151,9 +137,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			}
 			app.route = 'qualifier-judging';
 			var id = data.params.qualifierId;
-			Polymer.Base.importHref('/elements/qualifiers/qualifier-judging.html', function(){
-				app.$.qualifierJudging.getQualifierJudge(id);
-			});
+			app.$.qualifierJudging.getQualifierJudge(id);
 		});
 
 		page('/playoff/battle/judge/:battleId', function(data){
@@ -162,9 +146,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			}
 			app.route = 'playoff-judging';
 			var id = data.params.battleId;
-			Polymer.Base.importHref('/elements/playoff/playoff-battle-judging.html', function(){
 				app.$.playoffJudging.startJudging(id);
-			});
 		});
 
 		page('/persons', function(){
@@ -174,9 +156,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			console.log('wtf');
 			app.route = 'persons';
 			app.header = 'Persons';
-			Polymer.Base.importHref('/elements/person/person-list.html', function(){
 				app.$.persons.getPersons();
-			});
 		});
 
 		page('/person/:personId', function(data){
@@ -186,9 +166,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			app.route = 'person-view';
 			app.header = 'Person';
 			var id = data.params.personId;
-			Polymer.Base.importHref('/elements/person/person-full-view.html', function(){
 				app.$.person.getPerson(id);
-			});
 		});
 
 
@@ -198,9 +176,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			}
 			app.route = 'sponsors';
 			app.header = 'Sponsors';
-			Polymer.Base.importHref('/elements/sponsor/sponsor-list.html', function(){
 				app.$.sponsors.getSponsors();
-			});
 		});
 
 		page('/sponsor/new', function(){
@@ -209,7 +185,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			}
 			app.route = 'sponsor-create';
 			app.header = 'New Sponsor';
-			Polymer.Base.importHref('/elements/sponsor/sponsor-create.html');
 		});
 
 		page('/users', function () {
@@ -218,9 +193,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			}
 			app.route = 'users';
 			app.header = 'Users';
-			Polymer.Base.importHref('/elements/user/user-list.html', function(){
 				app.$.users.getUsers();
-			});
 		});
 
 		page ('/user/create', function(){
@@ -229,9 +202,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			}
 			app.route = 'user-create';
 			app.header = 'Create user';
-			Polymer.Base.importHref('/elements/user/user-create.html', function(){
 				app.$.userCreate.getRoles();
-			})
 		});
 
 		page('/users/:name', function (data) {

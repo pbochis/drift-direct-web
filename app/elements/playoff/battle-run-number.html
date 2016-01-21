@@ -1,5 +1,5 @@
-<link rel="import" href="/styles/shared-styles.html">
-<link rel="import" href="/bower_components/paper-badge/paper-badge.html">
+<link rel="import" href="../../styles/shared-styles.html">
+<link rel="import" href="../../bower_components/paper-badge/paper-badge.html">
 
 <dom-module id="battle-run-number">
 	<template>
@@ -57,20 +57,23 @@
 				console.log('im set');
 				console.log(this.runNumber);
 				this.numbers = [];
-				var numberLimit = this.runNumber % 2 == 0 ? this.runNumber : this.runNumber + 1;
+				var numberLimit = this.runNumber % 2 === 0 ? this.runNumber : this.runNumber + 1;
 				var numbers = [];
 				for (var i = 1; i <= numberLimit; i++){
 					var number = {};
 					number.number = i;
-					if (i < this.runNumber)
+					if (i < this.runNumber) {
 						number.class = 'ended';
-					else if (i == this.runNumber)
+					}
+					else if (i === this.runNumber) {
 						number.class = 'current';
-					else
+					}
+					else {
 						number.class = 'future';
+					}
 					numbers.push(number);
 				}
-				this.numbers = numbers;+
+				this.numbers = numbers;
 
 				console.log('render');
 				this.$.badges.render();

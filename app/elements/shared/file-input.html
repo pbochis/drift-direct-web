@@ -1,5 +1,5 @@
-<link rel="import" href="/styles/shared-styles.html">
-<link rel="import" href="/bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../styles/shared-styles.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="dd-ajax.html">
 <!--
 	This component represents a material design file picker, posts it to the server through a multipart/form-data
@@ -74,7 +74,7 @@
 					var xhr = new XMLHttpRequest();
 
 					xhr.onreadystatechange = function(){
-						if (xhr.readyState == 4 && xhr.status == 200){
+						if (xhr.readyState === 4 && xhr.status === 200){
 							that.label = file.name;
 							that.fileId = xhr.response;
 							that.$.textInput.invalid = false;
@@ -86,7 +86,7 @@
 					};
 
 
-					xhr.open("POST", util.build('/file'));
+					xhr.open('POST', util.build('/file'));
 					xhr.setRequestHeader('Authorization', localStorage.token);
 					xhr.send(formData);
 				};
@@ -98,7 +98,7 @@
 			validate: function(){
 				if (this.fileId === undefined ){
 					this.$.textInput.invalid = true;
-					this.$.textInput.errorMessage = "Please select an image";
+					this.$.textInput.errorMessage = 'Please select an image';
 					return false;
 				}
 				return true;

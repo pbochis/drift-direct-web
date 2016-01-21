@@ -1,12 +1,12 @@
-<link rel="import" href="/styles/shared-styles.html">
-<link rel="import" href="/bower_components/iron-image/iron-image.html">
-<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="/bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../styles/shared-styles.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 
-<link rel="import" href="/elements/shared/dd-ajax.html">
-<link rel="import" href="/elements/shared/description-list/description-list.html">
-<link rel="import" href="/elements/shared/description-list/description-list-item.html">
-<link rel="import" href="/elements/person/person-create-form.html">
+<link rel="import" href="../../elements/shared/dd-ajax.html">
+<link rel="import" href="../../elements/shared/description-list/description-list.html">
+<link rel="import" href="../../elements/shared/description-list/description-list-item.html">
+<link rel="import" href="../../elements/person/person-create-form.html">
 
 <dom-module id="person-full-view">
 	<template>
@@ -119,9 +119,13 @@
 				}
 			},
 			_personSet: function(){
+				console.log(this.person);
+				if (!this.person){
+					return;
+				}
 				this.isDriver = this.person.personType === 'Driver';
 				this.sponsors = '';
-				if (this.isDriver && this.person.driverDetails.sponsors.length > 0){
+				if (this.isDriver && this.person.driverDetails.sponsors && this.person.driverDetails.sponsors.length > 0){
 					var sponsors = this.person.driverDetails.sponsors[0].name;
 					for (var i = 1; i < this.person.driverDetails.sponsors.length; i++){
 						sponsors += ', ' + this.person.driverDetails.sponsors[i].name;
@@ -154,7 +158,7 @@
 				this.$.putPerson.url = util.build('/person/' + this.person.id);
 				this.$.putPerson.generateRequest();
 			},
-			_onPutResponse: function(event, r){
+			_onPutResponse: function(){
 				this.getPerson(this.person.id);
 			}
 		});

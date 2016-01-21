@@ -1,7 +1,6 @@
-<link rel="import" href="/styles/shared-styles.html">
-<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="/bower_components/iron-image/iron-image.html">
-
+<link rel="import" href="../../../styles/shared-styles.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-image/iron-image.html">
 
 <dom-module id="qualifier-results">
 	<template>
@@ -117,7 +116,7 @@
 					if (dif !== 0){
 						return dif;
 					}
-					return Math.min(b.firstRunScore, b.secondRunScore) - Math.min(a.firstRunScore, a.secondRunScore)
+					return Math.min(b.firstRunScore, b.secondRunScore) - Math.min(a.firstRunScore, a.secondRunScore);
 				});
 				this.tableData = tableData;
 			},

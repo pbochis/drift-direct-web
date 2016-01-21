@@ -1,7 +1,7 @@
-<link rel="import" href="/styles/shared-styles.html">
-<link rel="import" href="/bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
-<link rel="import" href="/bower_components/paper-menu/paper-menu.html">
-<link rel="import" href="/bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../styles/shared-styles.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
 
 <link rel="import" href="dd-ajax.html">
 
@@ -56,7 +56,7 @@
 				}
 			},
 			ready: function(){
-				this.$.getCountries.url = util.build('/country');
+				this.$.getCountries.url = 'http://localhost:8080/country';
 				this.$.getCountries.generateRequest();
 			},
 			_selectionChanged: function(){

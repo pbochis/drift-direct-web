@@ -1,4 +1,4 @@
-<link rel="import" href="/styles/shared-styles.html">
+<link rel="import" href="../../styles/shared-styles.html">
 
 <dom-module id="user-card">
 	<template>
@@ -35,7 +35,7 @@
 				name: {
 					type: String,
 					notify: true
-				},
+				}
 			},
 			ready: function(){
 				this.name = this.user.firstName + ' ' + this.user.lastName + ', ' + this._mapRole(this.user.roles[0]);
@@ -52,6 +52,6 @@
 			}
 
 
-		})
+		});
 	</script>
 </dom-module>
