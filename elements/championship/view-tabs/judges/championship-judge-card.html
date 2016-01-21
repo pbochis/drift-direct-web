@@ -1,0 +1,77 @@
+<link rel="import" href="/drift-direct-web/styles/shared-styles.html">
+<link rel="import" href="/drift-direct-web/bower_components/iron-image/iron-image.html">
+
+<dom-module id="championship-judge-card">
+	<template>
+		<style include="shared-styles"></style>
+		<style>
+			:host{
+				display: block;
+			}
+			paper-material {
+				height: 300px;
+				width: 250px;
+				padding: 0;
+			}
+			.profilePicture {
+				width: 250px;
+				height: 150px;
+				margin: 0;
+				padding: 0;
+			}
+			.desc {
+				font-weight: bold;
+			}
+
+		</style>
+		<paper-material>
+			<template is="dom-if" if="{{profilePicture}}">
+				<iron-image class="profilePicture" src$="{{profilePictureUrl}}"></iron-image>
+			</template>
+			<template is="dom-if" if="{{!profilePicture}}">
+				<iron-image class="profilePicture" src="/images/user.png"></iron-image>
+			</template>
+			<hr style="margin: 0">
+			<br>
+			<br>
+			<br>
+			<div class="vertical layout center">
+				<div class="desc">{{judge.judge.firstName}} {{judge.judge.lastName}}</div>
+				<div class="desc">{{judge.title}}</div>
+			</div>
+
+		</paper-material>
+	</template>
+	<script>
+		Polymer({
+			is: 'championship-judge-card',
+			properties: {
+				judge: {
+					type: Object,
+					notify: true,
+					observer: 'judgeSet'
+				},
+				profilePicture: {
+					type: Boolean,
+					notify: true,
+					value: false
+				},
+				profilePictureUrl: {
+					type: String,
+					notify: true
+				},
+				countryFlag: {
+					type: String,
+					notify: true
+				}
+			},
+			judgeSet: function() {
+				if (this.judge.judge.profilePicture !== null){
+					this.profilePictureUrl = util.imageLink(this.judge.judge.profilePicture, 250, 150);
+					this.profilePicture = true;
+				}
+			}
+		})
+	</script>
+</dom-module>
+

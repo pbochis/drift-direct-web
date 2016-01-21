@@ -1,0 +1,46 @@
+<link rel="import" href="/drift-direct-web/styles/shared-styles.html">
+<link rel="import" href="judge-create.html">
+<link rel="import" href="/drift-direct-web/bower_components/iron-icons/iron-icons.html">
+
+<dom-module id="judges-create-list">
+	<template>
+		<style is="custom-style" include="shared-styles"></style>
+		<h1>Judges</h1>
+		<template is="dom-repeat" items="{{judges}}">
+			<judge-create persons="{{persons}}" judge="{{item}}"></judge-create>
+		</template>
+	</template>
+	<script>
+		Polymer({
+			is: 'judges-create-list',
+			properties: {
+				judges: {
+					type: Array,
+					notify: true,
+					reflectToAttribute: true
+				},
+				persons: {
+					type: Array,
+					notify: true
+				}
+			},
+			ready: function(){
+				this._addJudge('LINE');
+				this._addJudge('ANGLE');
+				this._addJudge('STYLE');
+			},
+			_addJudge: function(judgeType){
+				this.push('judges', JSON.parse('{"judgeType": "' + judgeType + '", "pointsAllocations": []}'));
+			},
+			validate: function(){
+				var valid = true;
+				var judgeElements = Polymer.dom(this.root).querySelectorAll('judge-create');
+				for (var i = 0; i < judgeElements.length; i++){
+					var judge = judgeElements[i];
+					valid = judge.validate() && valid;
+				}
+				return valid;
+			}
+		});
+	</script>
+</dom-module>

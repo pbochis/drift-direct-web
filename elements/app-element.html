@@ -1,0 +1,193 @@
+<link rel="import" href="elements.html">
+<link rel="import" href="/drift-direct-web/styles/shared-styles.html">
+
+<dom-module id="app-element">
+	<template>
+		<style include="shared-styles">
+			paper-drawer-panel.loginmode{
+				--paper-drawer-panel-drawer-container: {
+					width: 0 !important;
+				};
+				--paper-drawer-panel-main-container: {
+					left: 0 !important;
+				}
+			}
+		</style>
+		<paper-drawer-panel id="paperDrawerPanel" class$="{{drawerClass}}">
+			<!-- Drawer Scroll Header Panel -->
+			<template is="dom-if" if="{{isLoggedIn}}">
+				<paper-scroll-header-panel drawer fixed >
+
+					<!-- Drawer Toolbar -->
+					<paper-toolbar id="drawerToolbar">
+						<span class="paper-font-title">DriftDirect - Beta</span>
+					</paper-toolbar>
+
+					<!-- Drawer Content -->
+					<paper-menu class="list">
+						<a href="/drift-direct-web/championships">
+							<iron-icon icon="home"></iron-icon>
+							<span>Championships</span>
+						</a>
+
+						<a href="/drift-direct-web/persons">
+							<iron-icon icon="account-circle"></iron-icon>
+							<span>Persons</span>
+						</a>
+
+						<a href="/drift-direct-web/sponsors">
+							<iron-icon icon="star"></iron-icon>
+							<span>Sponsors</span>
+						</a>
+
+						<a href="/drift-direct-web/users">
+							<iron-icon icon="info"></iron-icon>
+							<span>Users</span>
+						</a>
+					</paper-menu>
+				</paper-scroll-header-panel>
+			</template>
+
+			<!-- Main Area -->
+			<paper-scroll-header-panel main id="headerPanelMain" condenses keep-condensed-header>
+
+				<!-- Main Toolbar -->
+				<template is="dom-if" if="{{isLoggedIn}}">
+					<paper-toolbar id="mainToolbar">
+						<span class="flex"></span>
+						<!-- Application name -->
+						<div class="middle middle-container center horizontal layout">
+							<div class="app-name">{{header}}</div>
+						</div>
+						<!-- Application sub title -->
+						<!--<div class="bottom bottom-container center horizontal layout">-->
+							<!--<div class="bottom-title paper-font-subhead">The future of the web today</div>-->
+						<!--</div>-->
+						<paper-menu-button horizontal-align="right">
+							<paper-icon-button icon="settings" class="dropdown-trigger"></paper-icon-button>
+							<paper-menu class="dropdown-content">
+								<paper-item style="cursor: pointer" on-click="_logout">Logout</paper-item>
+							</paper-menu>
+						</paper-menu-button>
+					</paper-toolbar>
+				</template>
+				<!-- Main Content -->
+				<div class="content">
+					<iron-pages attr-for-selected="data-route" selected="{{route}}">
+
+						<section data-route="login">
+							<login-wizard></login-wizard>
+						</section>
+
+						<section data-route="championships">
+							<championship-list id="championships"></championship-list>
+						</section>
+						<section data-route="championship-view">
+							<championship-view id="championship"></championship-view>
+						</section>
+						<section data-route="championship-create">
+							<championship-create id="championshipCreate"></championship-create>
+						</section>
+
+						<section data-route="round-view">
+							<round-view id="round"></round-view>
+						</section>
+
+						<section data-route="register-driver">
+							<register-driver id="register"></register-driver>
+						</section>
+
+						<section data-route="qualifier-judging">
+							<qualifier-judging id="qualifierJudging"></qualifier-judging>
+						</section>
+
+						<section data-route="playoff-judging">
+							<playoff-battle-judging id="playoffJudging"></playoff-battle-judging>
+						</section>
+
+						<section data-route="persons">
+							<person-list id="persons"></person-list>
+						</section>
+
+						<section data-route="person-view">
+							<person-full-view id="person"></person-full-view>
+						</section>
+
+						<section data-route="users">
+							<user-list id="users"></user-list>
+						</section>
+
+						<section data-route="news-create">
+							<news-create id="newsCreate"></news-create>
+						</section>
+
+						<section data-route="sponsors">
+							<sponsor-list id="sponsors"></sponsor-list>
+						</section>
+
+						<section data-route="sponsor-create">
+							<sponsor-create id="sponsorCreate"></sponsor-create>
+						</section>
+
+						<section data-route="user-create">
+							<user-create id="userCreate"></user-create>
+						</section>
+					</iron-pages>
+				</div>
+			</paper-scroll-header-panel>
+		</paper-drawer-panel>
+
+		<paper-toast id="toast">
+			<span class="toast-hide-button" role="button" tabindex="0" onclick="app.$.toast.hide()">Ok</span>
+		</paper-toast>
+	</template>
+	<script>
+		Polymer({
+			is: 'app-element',
+			properties: {
+				isLoggedIn: {
+					type: Boolean,
+					notify: true,
+					value: true
+				},
+				header: {
+					type: String,
+					notify: true,
+					value: 'DriftDirect'
+				},
+				drawerClass: {
+					type: String,
+					notify: true,
+					value: ''
+				}
+
+			},
+			ready: function(){
+				var element = this;
+				this.baseUrl = "/drift-direct-web";
+				window.addEventListener('WebComponentsReady', function() {
+					// imports are loaded and elements have been registered
+				});
+			},
+			scrollPageToTop: function() {
+				this.$.headerPanelMain.scrollToTop(true);
+			},
+			closeDrawer: function() {
+				this.$.paperDrawerPanel.closeDrawer();
+			},
+			login: function(){
+				this.drawerClass = '';
+				Polymer.updateStyles();
+				this.isLoggedIn = util.loggedIn();
+			},
+			hideMenu: function(){
+				this.drawerClass = 'loginmode';
+				Polymer.updateStyles();
+			},
+			_logout: function(){
+				localStorage.clear();
+				page('/login');
+			}
+		});
+	</script>
+</dom-module>

@@ -1,0 +1,47 @@
+<link rel="import" href="/drift-direct-web/styles/shared-styles.html">
+<link rel="import" href="schedule-entry-create.html">
+<link rel="import" href="/drift-direct-web/bower_components/paper-button/paper-button.html">
+
+
+<dom-module id="schedule-create-list">
+	<template>
+		<style is="custom-style" include="shared-styles"></style>
+		<style>
+			#addEntry {
+				margin-top: 30px;
+				box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2)
+			}
+		</style>
+		<template is="dom-repeat" items="{{schedule}}">
+			<schedule-entry-create schedule-entry="{{item}}"></schedule-entry-create>
+		</template>
+		<paper-button id="addEntry" raised on-click="_addScheduleEntry">Add schedule entry</paper-button>
+	</template>
+	<script>
+		Polymer({
+			is: 'schedule-create-list',
+			properties: {
+				schedule: {
+					type: Array,
+					notify: true,
+					reflectToAttribute: true
+				}
+			},
+			ready: function(){
+				this._addScheduleEntry();
+			},
+			_addScheduleEntry: function(){
+				this.push('schedule', {});
+			},
+			validate: function(){
+				var valid = true;
+				var scheduleEntries = Polymer.dom(this.root).querySelectorAll('schedule-entry-create');
+				for (var i = 0; i < scheduleEntries.length; i++){
+					var entry = scheduleEntries[i];
+					valid = entry.validate() && valid;
+				}
+				return valid;
+			}
+		});
+	</script>
+</dom-module>

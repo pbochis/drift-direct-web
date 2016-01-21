@@ -1,0 +1,27 @@
+<link rel="import" href="/drift-direct-web/styles/shared-styles.html">
+<link rel="import" href="/drift-direct-web/elements/shared/description-list/description-list.html">
+<link rel="import" href="/drift-direct-web/elements/shared/description-list/description-list-item.html">
+<dom-module id="championship-news">
+	<template>
+		<style is="custom-style" include="shared-styles">
+		</style>
+		<paper-material id="container">
+			<description-list>
+				<description-list-item label="Name" value="{{news.name}}"></description-list-item>
+				<description-list-item label="Description" value="{{news.description}}"></description-list-item>
+				<description-list-item label="Link" value="{{news.url}}" link></description-list-item>
+			</description-list>
+		</paper-material>
+	</template>
+	<script>
+		Polymer({
+			is: 'championship-news',
+			properties: {
+				news: {
+					type: Object,
+					notify: true
+				}
+			}
+		});
+	</script>
+</dom-module>

@@ -1,0 +1,67 @@
+<link rel="import" href="/drift-direct-web/styles/shared-styles.html">
+<link rel="import" href="/drift-direct-web/bower_components/paper-slider/paper-slider.html">
+
+<dom-module id="playoff-points-slider">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			:host{
+				height: 100%;
+				display: block;
+				@apply(--layout-self-center);
+				@apply(--layout-flex);
+			}
+			.content {
+				height: auto;
+				@apply(--layout-vertical);
+			}
+			paper-slider {
+				--paper-slider-knob-color: red;
+				--paper-slider-knob-start-color: red;
+				--paper-slider-knob-start-border-color: red;
+				--paper-slider-active-color: transparent;
+				--paper-slider-pin-color: black;
+				--paper-slider-height: 2px;
+				width: 100%;
+			}
+		</style>
+		<div class="content">
+			<div class="flex"></div>
+			<div class="layout horizontal">
+				<div>{{driver1Score}}</div>
+				<div class="flex"></div>
+				<div>{{driver2Score}}</div>
+			</div>
+			<paper-slider class="flex" id="ratings" snaps max="10" noink max-markers="10" step="1" value="5" immediate-value="{{value}}"></paper-slider>
+			<div class="flex"></div>
+		</div>
+	</template>
+	<script>
+		Polymer({
+			is: 'playoff-points-slider',
+			properties: {
+				driver1Score: {
+					type: Number,
+					value:5,
+					notify: true,
+					reflectToAttribute: true
+				},
+				driver2Score: {
+					type: Number,
+					value:5,
+					notify: true,
+					reflectToAttribute: true
+				},
+				value: {
+					type: Number,
+					value:5,
+					notify: true,
+					observer: '_valueChanged'
+				}
+			},
+			_valueChanged: function() {
+				this.driver1Score = 10 - this.value;
+				this.driver2Score = 0 + this.value;
+			}
+		});
+	</script>
+</dom-module>

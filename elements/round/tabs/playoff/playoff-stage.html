@@ -1,0 +1,55 @@
+<link rel="import" href="/drift-direct-web/styles/shared-styles.html">
+<link rel="import" href="battle-small.html">
+
+<dom-module id="playoff-stage">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			.vertical {
+				@apply(--layout-vertical);
+			}
+
+			paper-material {
+				height: auto;
+			}
+
+			hr {
+				margin: 5px 0;
+			}
+		</style>
+
+		<paper-material>
+			<div id="table" class="vertical">
+				<template is="dom-repeat" items="{{tableData}}" as="battle">
+					<battle-small battle="{{battle}}"></battle-small>
+					<hr>
+				</template>
+			</div>
+		</paper-material>
+	</template>
+	<script>
+		Polymer({
+			is: 'playoff-stage',
+			properties: {
+				playoffStage: {
+					type: Object,
+					notify: true,
+					observer: 'playoffSet'
+				},
+				tableData: {
+					type: Array,
+					notify: true
+				}
+			},
+			playoffSet: function(){
+				var tableData = [];
+				for (var i = 0; i < this.playoffStage.battles.length; i++){
+					var battle = this.playoffStage.battles[i];
+					if (battle.driver1 !== null && battle.driver2 !== null){
+						tableData.push(battle);
+					}
+				}
+				this.tableData = tableData;
+			}
+		});
+	</script>
+</dom-module>

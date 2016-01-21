@@ -1,0 +1,53 @@
+<link rel="import" href="/drift-direct-web/styles/shared-styles.html">
+<link rel="import" href="sponsor-card.html">
+<link rel="import" href="/drift-direct-web/bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="/drift-direct-web/elements/shared/dd-ajax.html">
+
+<dom-module id="sponsor-list">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			.container {
+				width: 80%;
+				margin: 36px auto;
+				@apply(--layout-vertical)
+			}
+
+			#createSponsorButton{
+				--paper-fab-background: var(--dark-primary-color);
+				position: fixed;
+				right: 2%;
+				bottom: 5%;
+			}
+		</style>
+		<dd-ajax
+			id="getSponsors"
+			method="GET"
+			last-response="{{sponsors}}">
+		</dd-ajax>
+
+		<div class="container">
+			<template is="dom-repeat" items="{{sponsors}}">
+				<sponsor-card sponsor="{{item}}"></sponsor-card>
+			</template>
+		</div>
+		<paper-fab id="createSponsorButton" on-click="_createSponsor" icon="add"></paper-fab>
+	</template>
+	<script>
+		Polymer({
+			is: 'sponsor-list',
+			properties: {
+				sponsors: {
+					type: Array,
+					notify: true
+				}
+			},
+			getSponsors: function(){
+				this.$.getSponsors.url = util.build('/sponsor');
+				this.$.getSponsors.generateRequest();
+			},
+			_createSponsor: function(){
+				page('/sponsor/new');
+			}
+		});
+	</script>
+</dom-module>

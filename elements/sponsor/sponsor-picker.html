@@ -1,0 +1,147 @@
+<link rel="import" href="/drift-direct-web/styles/shared-styles.html">
+<link rel="import" href="/drift-direct-web/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/drift-direct-web/bower_components/paper-input/paper-input.html">
+
+<link rel="import" href="/drift-direct-web/bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="/drift-direct-web/bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+
+<link rel="import" href="/drift-direct-web/bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="/drift-direct-web/elements/shared/dd-ajax.html">
+
+<dom-module id="sponsor-picker">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			paper-button {
+				margin-top: 20px;
+				color: white;
+			}
+
+			paper-dialog {
+				position: fixed;
+				top: 10%;
+				width: 400px;
+				height: 500px;
+				background-color: white;
+			}
+
+			#sponsorList {
+				@apply(--layout-vertical);
+				@apply(--layout-center-center);
+				/*overflow-y: scroll;*/
+				height: 320px;
+			}
+			.sponsor{
+				width: 100%;
+				margin: 7px 0;
+				cursor: pointer;
+				text-align: center;
+				vertical-align: middle;
+			}
+
+			.sponsor.iron-selected {
+				color: #002faa;
+			}
+			paper-button {
+				background-color: #3F51B5;
+				color: white;
+			}
+			.buttons {
+				bottom: 10px;
+			}
+			#selector {
+				height: 100%;
+				width: 100%;
+				overflow-y: scroll;
+			}
+		</style>
+		<dd-ajax
+			id="getSponsors"
+			method="GET"
+			last-response="{{sponsors}}"
+			on-response="onResponse">
+		</dd-ajax>
+
+		<paper-input  value="{{inputValue}}" readonly on-click="_chooseSponsors" label="Sponsors"></paper-input>
+		<paper-dialog id="sponsorDialog" modal>
+			<h3>Select the sponsors</h3>
+			<div id="sponsorList">
+				<iron-selector id="selector" multi selected-items="{{selectedItems}}">
+					<template is="dom-repeat" items="{{sponsors}}">
+						<div class="sponsor">{{item.name}}</div>
+					</template>
+				</iron-selector>
+			</div>
+			<div class="buttons">
+				<paper-button dialog-dismiss>Cancel</paper-button>
+				<paper-button autofocus on-click="_selectSponsors">OK</paper-button>
+			</div>
+		</paper-dialog>
+	</template>
+	<script>
+		Polymer({
+			is: 'sponsor-picker',
+			properties: {
+				sponsors: {
+					type: Array,
+					notify: true
+				},
+				selectedItems: {
+					type: Array,
+					notify: true
+				},
+				selectedSponsors: {
+					type: Array,
+					notify: true,
+					reflectToAttribute: true,
+				},
+				inputValue: {
+					type: String,
+					notify: true
+				}
+			},
+			ready: function(){
+				this.$.getSponsors.url = util.build('/sponsor');
+				this.$.getSponsors.generateRequest();
+			},
+			onResponse: function(event, r){
+				if (!!this.selectedSponsors && !this.selectedItems) {
+					var selectedIndexes = [];
+					for (var i = 0; i < this.sponsors.length; i++) {
+						for (var j = 0; j < this.selectedSponsors.length; j++) {
+							if (this.selectedSponsors[j].id === this.sponsors[i].id) {
+								selectedIndexes.push(i);
+							}
+						}
+					}
+					this.$.selector.selectedValues = selectedIndexes;
+					this._updateInput();
+				}
+			},
+			_chooseSponsors: function(){
+				this.$.sponsorDialog.open();
+			},
+			_updateInput: function(){
+				this.inputValue = '';
+				if (this.selectedSponsors.length > 0){
+					var inputValue = this.selectedSponsors[0].name;
+					for(var i = 1; i < this.selectedSponsors.length; i++){
+						inputValue += ', ' + this.selectedSponsors[i].name;
+					}
+					this.inputValue = inputValue;
+				}
+			},
+			_selectSponsors: function(){
+				var selectedSponsors = [];
+				for (var i = 0; i < this.$.selector.selectedValues.length; i++){
+					selectedSponsors.push(this.sponsors[this.$.selector.selectedValues[i]]);
+				}
+				this.selectedSponsors = selectedSponsors;
+				this._updateInput();
+				this.$.sponsorDialog.close();
+			},
+			_clear: function(){
+				this.selectedItems = [];
+			}
+		});
+	</script>
+</dom-module>

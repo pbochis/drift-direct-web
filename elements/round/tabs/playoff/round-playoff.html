@@ -1,0 +1,127 @@
+<link rel="import" href="/drift-direct-web/styles/shared-styles.html">
+<link rel="import" href="/drift-direct-web/elements/shared/dd-ajax.html">
+<link rel="import" href="/drift-direct-web/bower_components/paper-item/all-imports.html">
+<link rel="import" href="/drift-direct-web/bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="/drift-direct-web/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/drift-direct-web/bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="/drift-direct-web/bower_components/paper-dialog/paper-dialog.html">
+
+<link rel="import" href="playoff-battle.html">
+<link rel="import" href="playoff-stage.html">
+
+<dom-module id="round-playoff">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			:host{
+				display: block;
+				margin-top:50px;
+			}
+			paper-tabs{
+				box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+				background-color: white;
+			}
+
+			paper-tabs paper-tab.iron-selected {
+				color: rgba(0, 0, 0, 1);
+				background-color: rgba(0, 0, 0, 0.05);
+			}
+
+			.controls {
+				cursor: pointer;
+				@apply(--layout-horizontal);
+				@apply(--layout-center-justified);
+			}
+			.warning {
+				text-align: center;
+				vertical-align: middle;
+				font-weight: bold;
+			}
+
+			paper-dialog paper-button {
+				background-color: white;
+				color: black;
+			}
+		</style>
+
+		<dd-ajax
+			id="getTree"
+			method="GET"
+			last-response="{{playoffTree}}"
+			on-response="onResponse">
+		</dd-ajax>
+
+		<paper-tabs noink no-slide elevation="1" selected="{{selectedTab}}">
+			<paper-tab>Top 32</paper-tab>
+			<paper-tab>Top 16</paper-tab>
+			<paper-tab>Top 8</paper-tab>
+			<paper-tab>Top 4</paper-tab>
+			<paper-tab>Finals</paper-tab>
+			<paper-tab>Results</paper-tab>
+		</paper-tabs>
+
+		<template is="dom-if" if="{{shouldGeneratePlayoff}}">
+			<paper-material class="controls" elevation="1" on-click="_confirmPlayoff">
+				<iron-icon icon="check"></iron-icon>
+				<div>Generate the battle tree for playoffs</div>
+			</paper-material>
+		</template>
+
+		<iron-pages selected="{{selectedTab}}">
+			<template is="dom-repeat" items="{{playoffTree.stages}}">
+				<playoff-stage playoff-stage="{{item}}"></playoff-stage>
+			</template>
+		</iron-pages>
+
+		<paper-dialog id="warningDialog" modal>
+			<div class="warning">You should only generate the playoff tree after _ALL_ the drivers have completed both of their qualification runs.</div>
+			<div class="warning">Are you sure you want to complete this action?</div>
+			<div class="controls">
+				<paper-button autofocus on-click="_getTree">Yes</paper-button>
+				<div class="flex"></div>
+				<paper-button on-click="_abortGeneration">No</paper-button>
+			</div>
+		</paper-dialog>
+	</template>
+	<script>
+		Polymer({
+			is: 'round-playoff',
+			properties: {
+				round: {
+					type: Object,
+					notify: true,
+					observer: '_roundSet'
+				},
+				playoffTree: {
+					type: Object,
+					notify: true
+				},
+				shouldGeneratePlayoff: {
+					type: Boolean,
+					notify: true,
+					value: true
+				},
+				selectedTab: {
+					type: Number,
+					notify: true,
+					value: 0
+				}
+			},
+			_confirmPlayoff: function(){
+				this.$.warningDialog.toggle();
+			},
+			_getTree: function(){
+				this.$.getTree.url = util.build('/round/' + this.round.id + '/playoffs');
+				this.$.getTree.generateRequest();
+			},
+			_roundSet: function(){
+				this._getTree();
+			},
+			onResponse: function(event, r){
+				if (!!this.playoffTree){
+					this.shouldGeneratePlayoff = false;
+				}
+			}
+
+		});
+	</script>
+</dom-module>

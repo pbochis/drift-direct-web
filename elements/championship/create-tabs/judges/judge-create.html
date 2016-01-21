@@ -1,0 +1,49 @@
+<link rel="import" href="/drift-direct-web/styles/shared-styles.html">
+
+<link rel="import" href="/drift-direct-web/bower_components/iron-form/iron-form.html">
+<link rel="import" href="/drift-direct-web/bower_components/paper-input/paper-input.html">
+<link rel="import" href="/drift-direct-web/elements/person/person-chooser.html">
+<link rel="import" href="points-allocation-list.html">
+
+<dom-module id="judge-create">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			paper-material {
+				width: calc(100% - 36px);
+				padding: 12px 18px;
+				margin: 36px auto;
+			}
+		</style>
+		<paper-material elevation="1">
+			<form is="iron-form" id="judgeCreate">
+				<person-chooser id="person" label="Judge" persons="{{persons}}" selected-person-id="{{judge.judge}}" required></person-chooser>
+				<paper-input id="judgeType" readonly label="Judge Type" value="{{judge.judgeType}}"></paper-input>
+				<paper-input id="title" label="Display title(if empty, it will be the judge type)" value="{{judge.title}}"></paper-input>
+				<h2>Points allocations</h2>
+				<points-allocation-list id="pointsAllocations" points-allocations="{{judge.pointsAllocations}}"></points-allocation-list>
+			</form>
+		</paper-material>
+	</template>
+	<script>
+		Polymer({
+			is: 'judge-create',
+			properties: {
+				persons: {
+					type: Array,
+					notify: true
+				},
+				judge: {
+					type: Object,
+					notify: true,
+					reflectToAttribute: true
+				}
+			},
+			validate: function(){
+				var valid = this.$.judgeCreate.validate();
+				valid = this.$.person.validate() && valid;
+				valid = this.$.pointsAllocations.validate();
+				return valid;
+			}
+		});
+	</script>
+</dom-module>

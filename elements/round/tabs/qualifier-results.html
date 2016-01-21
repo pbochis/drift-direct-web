@@ -1,0 +1,145 @@
+<link rel="import" href="/drift-direct-web/styles/shared-styles.html">
+<link rel="import" href="/drift-direct-web/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/drift-direct-web/bower_components/iron-image/iron-image.html">
+
+
+<dom-module id="qualifier-results">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			.vertical {
+				@apply(--layout-vertical);
+			}
+
+			.horizontal-center {
+				@apply(--layout-horizontal);
+				@apply(--layout-center);
+			}
+			#row {
+				cursor: pointer;
+			}
+
+			#row:hover {
+				background-color: rgba(75, 92, 255, 0.13);
+			}
+
+			#row.horizontal-center div {
+				@apply(--layout-flex);
+			}
+
+			.tableHeader {
+				@apply(--layout-horizontal);
+			}
+
+			.tableHeader div {
+				@apply(--layout-flex);
+			}
+
+			.rows .tableHeader div {
+				font-weight: bold;
+			}
+
+			paper-material {
+				height: auto;
+			}
+
+			hr {
+				margin: 5px 0;
+			}
+
+			.profilePicture {
+				width: 50px;
+				height: 50px;
+			}
+
+			#picture-name > span{
+				font-weight: bold;
+			}
+
+		</style>
+		<paper-material elevation="1">
+			<!--Trying to mimic a table here-->
+			<div id="table" class="vertical">
+				<div class="tableHeader">
+					<div>Driver</div>
+					<div>Run 1 score</div>
+					<div>Run 2 score</div>
+					<div>Best qualification score</div>
+				</div>
+				<hr>
+				<template is="dom-repeat" items="{{tableData}}">
+					<div id="row" class="horizontal-center">
+						<div id="picture-name" class="horizontal-center">
+							<iron-image class="profilePicture" src="{{_profilePictureUrl(item.driver.profilePicture)}}" sizing="contain"></iron-image>
+							<span>{{_getTableIndex(index)}}. {{item.driver.firstName}} {{item.driver.lastName}}</span>
+						</div>
+						<div>{{item.firstRunScore}}</div>
+						<div>{{item.secondRunScore}}</div>
+						<div>{{item.points}}</div>
+					</div>
+					<hr>
+				</template>
+			</div>
+		</paper-material>
+	</template>
+	<script>
+		Polymer({
+			is: 'qualifier-results',
+			properties: {
+				round: {
+					type: Object,
+					notify: true,
+					observer: '_roundSet'
+				},
+				qualifiers: {
+					type: Array,
+					notify: true,
+					observer: '_qualifiersSet'
+				},
+				tableData: {
+					type: Array,
+					notify: true
+				}
+			},
+			_roundSet: function(){
+				this.qualifiers = this.round.qualifiers;
+			},
+			_qualifiersSet: function(){
+				var tableData = [];
+				var i;
+				for (i = 0; i < this.qualifiers.length; i++){
+					var qualifier = this.qualifiers[i];
+					if (qualifier.firstRunScore > 0 && qualifier.secondRunScore > 0){
+						tableData.push(qualifier);
+					}
+				}
+				tableData.sort(function(a, b){
+					var dif = b.points - a.points;
+					if (dif !== 0){
+						return dif;
+					}
+					return Math.min(b.firstRunScore, b.secondRunScore) - Math.min(a.firstRunScore, a.secondRunScore)
+				});
+				this.tableData = tableData;
+			},
+			_profilePictureUrl: function(id){
+				return util.imageLink(id);
+			},
+			_getTableIndex: function(index){
+				return index + 1;
+			},
+			_generateTree: function(){
+				this.$.warningDialog.toggle();
+			},
+			_completeGeneration: function(){
+				console.log('going ahead');
+				this.$.generateTree.url = util.build('/round/' + this.round.id + '/playoff/start');
+				this.$.generateTree.generateRequest();
+				this.$.warningDialog.toggle();
+			},
+			_abortGeneration: function(){
+				console.log('not sure');
+				this.$.warningDialog.toggle();
+			}
+		});
+	</script>
+</dom-module>

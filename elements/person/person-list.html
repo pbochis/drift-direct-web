@@ -1,0 +1,118 @@
+<link rel="import" href="/drift-direct-web/styles/shared-styles.html">
+<link rel="import" href="/drift-direct-web/elements/shared/dd-ajax.html">
+<link rel="import" href="/drift-direct-web/bower_components/iron-image/iron-image.html">
+
+
+<dom-module id="person-list">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			:host{
+				display: block;
+			}
+			.content {
+				width: 80%;
+				margin: 36px auto;
+			}
+
+			.vertical {
+				@apply(--layout-vertical);
+			}
+
+			.horizontal-center {
+				@apply(--layout-horizontal);
+				@apply(--layout-center);
+			}
+			#row {
+				cursor: pointer;
+			}
+
+			#row:hover {
+				background-color: rgba(75, 92, 255, 0.13);
+			}
+
+			#row.horizontal-center div {
+				@apply(--layout-flex);
+			}
+
+			.tableHeader {
+				@apply(--layout-horizontal);
+			}
+
+			.tableHeader * {
+				@apply(--layout-flex);
+			}
+
+			#table .tableHeader div {
+				font-weight: bold;
+			}
+
+			paper-material {
+				height: auto;
+			}
+
+			hr {
+				margin: 5px 0;
+			}
+
+			.profilePicture {
+				width: 50px;
+				height: 50px;
+			}
+
+			#picture-name > span{
+				font-weight: bold;
+			}
+		</style>
+		<dd-ajax
+			id="getPersons"
+			method="GET"
+			last-response="{{persons}}">
+		</dd-ajax>
+
+		<div class="content">
+			<paper-material elevation="1">
+				<div id="table" class="vertical">
+					<div class="tableHeader">
+						<h3>Person</h3>
+						<h3>Person Type</h3>
+					</div>
+					<hr>
+					<template is="dom-repeat" items="{{persons}}">
+						<div id="row" class="horizontal-center" on-click="_viewPerson">
+							<div id="picture-name" class="horizontal-center">
+								<iron-image class="profilePicture" src="{{_profilePictureUrl(item.profilePicture)}}" sizing="contain"></iron-image>
+								<span>{{item.firstName}} {{item.lastName}}</span>
+							</div>
+							<div>{{item.personType}}</div>
+						</div>
+						<hr>
+					</template>
+				</div>
+			</paper-material>
+		</div>
+
+	</template>
+	<script>
+		Polymer({
+			is: 'person-list',
+			properties: {
+				persons: {
+					type: Array,
+					notify: true
+				}
+			},
+			getPersons: function(){
+				this.$.getPersons.url = util.build('/person');
+				this.$.getPersons.generateRequest();
+			},
+			_profilePictureUrl: function(id){
+				var link = util.imageLink(id, 100, 100);
+				return link;
+			},
+			_viewPerson: function(e){
+				var person = e.model.item;
+				page('/person/' + person.id);
+			}
+		});
+	</script>
+</dom-module>

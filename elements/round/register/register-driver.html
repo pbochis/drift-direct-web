@@ -1,0 +1,121 @@
+<link rel="import" href="/drift-direct-web/styles/shared-styles.html">
+<link rel="import" href="/drift-direct-web/bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="/drift-direct-web/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/drift-direct-web/bower_components/iron-pages/iron-pages.html">
+
+<link rel="import" href="existing-driver.html">
+<link rel="import" href="/drift-direct-web/elements/person/person-create-form.html">
+
+<dom-module id="register-driver">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			paper-tabs{
+				box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+				background-color: white;
+			}
+
+			paper-tabs paper-tab.iron-selected {
+				color: rgba(0, 0, 0, 1);
+				background-color: rgba(0, 0, 0, 0.05);
+			}
+			.content {
+				width: 80%;
+				margin: 36px auto;
+			}
+
+			.controls {
+				cursor: pointer;
+				height: auto;
+				@apply(--layout-horizontal);
+				@apply(--layout-center-center);
+			}
+		</style>
+		<dd-ajax
+			id="getDrivers"
+			method="GET"
+			last-response="{{drivers}}"
+			on-response="onResponse">
+		</dd-ajax>
+
+		<dd-ajax
+			id="postRegister"
+			method="POST"
+			on-response="onRegisterResponse">
+		</dd-ajax>
+
+		<dd-ajax
+			id="postDriver"
+			method="POST"
+			body="{{person}}"
+			on-response="onPostDriverResponse">
+		</dd-ajax>
+
+		<div class="content">
+			<paper-tabs noink no-slide elevation="1" selected="{{selectedTab}}">
+				<paper-tab>Previously participated</paper-tab>
+				<paper-tab>New driver</paper-tab>
+			</paper-tabs>
+
+			<iron-pages selected="{{selectedTab}}">
+				<existing-driver id="existingDrivers" selected-driver="{{selectedDriver}}"></existing-driver>
+				<person-create-form person="{{person}}" id="createForm" person-type="Driver"></person-create-form>
+			</iron-pages>
+
+			<paper-material class="controls" on-click="_registerDriver">
+				<iron-icon icon="check"></iron-icon>
+				<span>Register driver</span>
+			</paper-material>
+		</div>
+	</template>
+	<script>
+		Polymer({
+			is: 'register-driver',
+			properties: {
+				drivers: {
+					type: Array,
+					notify: true
+				},
+				roundId: {
+					type: Number,
+					notify: true
+				},
+				selectedTab: {
+					type: Number,
+					notify: true,
+					value: 0
+				},
+				selectedDriver: {
+					type: Number,
+					notify: true
+				},
+				person: {
+					type: Object,
+					notify: true
+				}
+			},
+			getDrivers: function(roundId){
+				this.roundId = roundId;
+				this.$.existingDrivers.getDrivers(roundId);
+			},
+			_registerDriver: function(){
+				if (this.selectedTab === 0){
+					console.log('registering existing driver');
+					this.$.postRegister.url = util.build('/round/' + this.roundId +'/register/' + this.selectedDriver);
+					this.$.postRegister.generateRequest();
+				}else{
+					this.$.postDriver.url = util.build('/person');
+					this.$.postDriver.generateRequest();
+				}
+			},
+			onPostDriverResponse: function(event, r){
+				console.log(r);
+				this.$.postRegister.url = util.build('/round/' + this.roundId +'/register/' + r.detail.response);
+				this.$.postRegister.generateRequest();
+			},
+			onRegisterResponse: function(event, r){
+				this.person = JSON.parse('{"driverDetails": {}}');
+				page('/round/' + this.roundId);
+			}
+		});
+	</script>
+</dom-module>

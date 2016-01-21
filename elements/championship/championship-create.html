@@ -1,0 +1,128 @@
+<link rel="import" href="/drift-direct-web/styles/shared-styles.html">
+<link rel="import" href="/drift-direct-web/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/drift-direct-web/bower_components/iron-pages/iron-pages.html">
+
+<link rel="import" href="create-tabs/general-data.html">
+<link rel="import" href="create-tabs/rules-create.html">
+<link rel="import" href="create-tabs/rounds/rounds-create.html">
+<link rel="import" href="create-tabs/judges/judges-create-list.html">
+
+<link rel="import" href="/drift-direct-web/elements/shared/dd-ajax.html">
+
+<dom-module id="championship-create">
+	<template>
+		<style include="shared-styles"></style>
+		<style>
+			:host{
+				display: block;
+				width: 70%;
+				margin: 0 auto;
+			}
+
+		</style>
+
+		<dd-ajax
+			id="getJudges"
+			method="GET"
+			last-response="{{persons}}">
+		</dd-ajax>
+
+		<dd-ajax
+			id="postChampionship"
+			method="POST"
+			body="{{championship}}">
+		</dd-ajax>
+
+		<h1>Step {{currentStep}} of 4</h1>
+		<iron-pages id="steps" selected="{{step}}">
+			<general-data championship="{{championship}}"></general-data>
+			<rules-create rules="{{championship.rules}}"></rules-create>
+			<rounds-create rounds="{{championship.rounds}}"></rounds-create>
+			<judges-create-list persons="{{persons}}" judges="{{championship.judges}}"></judges-create-list>
+		</iron-pages>
+		<div class="layout horizontal">
+			<template is="dom-if" if="{{hasPrevious}}">
+				<paper-button class="colorful" id="previous" raised on-click="_previous">Previous</paper-button>
+			</template>
+			<div class="flex"></div>
+			<template is="dom-if" if="{{hasNext}}">
+				<paper-button class="colorful" id="next" raised on-click="_next">Next</paper-button>
+			</template>
+			<template is="dom-if" if="{{canFinish}}">
+				<paper-button class="colorful" id="finish" raised on-click="_finish">Finish</paper-button>
+			</template>
+		</div>
+	</template>
+	<script>
+		Polymer({
+			is: 'championship-create',
+			properties: {
+				championship: {
+					type: Object,
+					value: {
+						rules: {},
+						rounds: [],
+						judges: []
+					},
+					notify: true
+				},
+				persons: {
+					type: Array,
+					notify: true
+				},
+				step: {
+					type: Number,
+					notify: true,
+					value: 0
+				},
+				hasPrevious: {
+					type: Boolean,
+					notify: true,
+					value: false
+				},
+				hasNext: {
+					type: Boolean,
+					notify: true,
+					value: true
+				},
+				currentStep: {
+					type: Number,
+					notify: true,
+					value: 1
+				}
+			},
+			getPersons: function(){
+				this.$.getJudges.url = util.build('/person?personType=Judge');
+				this.$.getJudges.generateRequest();
+			},
+			_next: function(){
+				console.log(this.championship);
+				if (!this.$.steps.selectedItem.validate()){
+					return;
+				}
+				this.hasPrevious = true;
+				this.step += 1;
+				if (this.step === 3){
+					this.hasNext = false;
+					this.canFinish = true;
+				}
+				this.currentStep += 1;
+			},
+			_previous: function(){
+				this.step -=1;
+				this.hasNext = true;
+				this.canFinish = false;
+				if (this.step === 0){
+					this.hasPrevious = false;
+				}
+				this.currentStep -=1;
+			},
+			_finish: function(){
+				console.log('FINISHED!');
+				this.$.postChampionship.url = util.build('/championship');
+				this.$.postChampionship.generateRequest();
+				console.log('created');
+			}
+		});
+	</script>
+</dom-module>

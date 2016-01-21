@@ -1,0 +1,77 @@
+<link rel="import" href="/drift-direct-web/styles/shared-styles.html">
+<link rel="import" href="/drift-direct-web/elements/shared/dd-ajax.html">
+
+<link rel="import" href="/drift-direct-web/bower_components/iron-form/iron-form.html">
+<link rel="import" href="/drift-direct-web/bower_components/paper-input/paper-input.html">
+<link rel="import" href="/drift-direct-web/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/drift-direct-web/elements/shared/validateable-autogrow-textarea.html">
+<link rel="import" href="/drift-direct-web/elements/shared/file-input.html">
+
+<dom-module id="sponsor-create">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			.controls {
+				cursor: pointer;
+				@apply(--layout-horizontal);
+				@apply(--layout-center-center);
+			}
+			paper-material {
+				width: 80%;
+				margin: 36px auto;
+			}
+		</style>
+		<dd-ajax
+			id="postSponsor"
+			method="POST"
+			body="{{sponsor}}"
+			on-response="_onResponse"
+			on-error="_onError">
+		</dd-ajax>
+		<paper-material>
+			<form is="iron-form" id="sponsorData">
+				<h2>Sponsor data</h2>
+				<paper-input id="name" label="Name*" value="{{sponsor.name}}" required></paper-input>
+				<paper-input id="url" label="Url*" value="{{sponsor.url}}" required></paper-input>
+				<file-input id="logo" label="Background image" file-id="{{sponsor.logo}}"></file-input>
+				<validateable-autogrow-textarea id="description"
+												place-holder="Description"
+												bind-value="{{sponsor.description}}"
+												rows="5"
+												max-rows="5"
+												required="false">
+				</validateable-autogrow-textarea>
+			</form>
+		</paper-material>
+		<paper-material class="controls" on-click="_createSponsor">
+			<iron-icon icon="add"></iron-icon>
+			<span>Save news</span>
+		</paper-material>
+	</template>
+	<script>
+		Polymer({
+			is: 'sponsor-create',
+			properties: {
+				sponsor: {
+					type: Object,
+					notify: true,
+					value: {}
+				}
+			},
+			_createSponsor: function(){
+				if (!this.$.sponsorData.validate()){
+					return;
+				}
+				console.log(this.sponsor);
+				this.$.postSponsor.url = util.build('/sponsor');
+				this.$.postSponsor.generateRequest();
+			},
+			_onResponse: function(event, r){
+				this.sponsor = {};
+				page('/sponsors');
+			},
+			_onError: function(event, e){
+				console.log(e);
+			}
+		});
+	</script>
+</dom-module>

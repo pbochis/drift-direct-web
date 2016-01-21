@@ -1,0 +1,113 @@
+<link rel="import" href="/drift-direct-web/styles/shared-styles.html">
+<link rel="import" href="/drift-direct-web/elements/shared/dd-ajax.html">
+<link rel="import" href="/drift-direct-web/bower_components/paper-item/all-imports.html">
+<link rel="import" href="/drift-direct-web/bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="/drift-direct-web/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/drift-direct-web/bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="view-tabs/championship-images.html">
+<link rel="import" href="view-tabs/championship-rules.html">
+<link rel="import" href="view-tabs/championship-rules.html">
+<link rel="import" href="view-tabs/judges/championship-judges.html">
+<link rel="import" href="view-tabs/rounds/round-list.html">
+<link rel="import" href="view-tabs/drivers/driver-list.html">
+<link rel="import" href="view-tabs/news/news-tab.html">
+
+<dom-module id="championship-view">
+	<template>
+		<style include="shared-styles"></style>
+		<style>
+			:host {
+				display: block;
+				height: 100%;
+				width: 100%;
+			}
+			paper-material {
+				height: 200px;
+			}
+			.content {
+				width: 80%;
+				margin: 36px auto;
+			}
+			iron-icon {
+				cursor: pointer;
+			}
+			iron-icon:active {
+				background-color: rgba(148, 167, 206, 0.5);
+			}
+			paper-tabs{
+				box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+				background-color: white;
+			}
+
+			paper-tabs paper-tab.iron-selected {
+				color: rgba(0, 0, 0, 1);
+				background-color: rgba(0, 0, 0, 0.05);
+			}
+		</style>
+		<dd-ajax
+			id="getChampionship"
+			method="GET"
+			last-response="{{championship}}"
+			on-response="onResponse">
+		</dd-ajax>
+		<div class="content">
+			<paper-material id="generalInfo">
+				<div class="layout horizontal">
+					<h1>{{championship.name}}</h1>
+					<div class="flex"></div>
+					<iron-icon icon="create"></iron-icon>
+					<iron-icon icon="delete"></iron-icon>
+				</div>
+				<dl>
+					<dt>Tickets</dt>
+					<dd><a href$="{{championship.ticketsUrl}}" target="_blank">{{championship.ticketsUrl}}</a> </dd>
+					<dt>Published</dt>
+					<dd>{{championship.published}}</dd>
+					<dt>Organizer</dt>
+					<dd>{{championship.organizer.firstName}} {{championship.organizer.lastName}}</dd>
+				</dl>
+			</paper-material>
+			<paper-tabs noink no-slide elevation="1" selected="{{selectedTab}}">
+				<paper-tab>News</paper-tab>
+				<paper-tab>Images</paper-tab>
+				<paper-tab>Rules</paper-tab>
+				<paper-tab>Judges</paper-tab>
+				<paper-tab>Rounds</paper-tab>
+				<paper-tab>Drivers</paper-tab>
+			</paper-tabs>
+
+			<iron-pages selected="{{selectedTab}}">
+				<news-tab championship="{{championship}}"></news-tab>
+				<championship-images championship="{{championship}}"></championship-images>
+				<championship-rules rules="{{championship.rules}}"></championship-rules>
+				<championship-judges judges="{{championship.judges}}"></championship-judges>
+				<round-list rounds="{{championship.rounds}}"></round-list>
+				<driver-list drivers="{{championship.drivers}}"></driver-list>
+			</iron-pages>
+		</div>
+
+	</template>
+	<script>
+		Polymer({
+			is: 'championship-view',
+			properties: {
+				championship: {
+					type: Object,
+					notify: true
+				},
+				selectedTab: {
+					type: Number,
+					notify: true,
+					value: 0
+				}
+			},
+			getChampionship: function(championshipId){
+				this.$.getChampionship.url = util.build('/championship/' + championshipId);
+				this.$.getChampionship.generateRequest();
+			},
+			onResponse: function(){
+				app.header = this.championship.name;
+			}
+		});
+	</script>
+</dom-module>

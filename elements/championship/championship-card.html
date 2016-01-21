@@ -1,0 +1,46 @@
+<link rel="import" href="/drift-direct-web/styles/shared-styles.html">
+<link rel="import" href="/drift-direct-web/bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="/drift-direct-web/bower_components/paper-material/paper-material.html">
+<link rel="import" href="/drift-direct-web/bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="/drift-direct-web/bower_components/iron-image/iron-image.html">
+
+<dom-module id="championship-card">
+	<template>
+		<style include="shared-styles"></style>
+		<style>
+			:host {
+				width: 500px;
+				height: 333px;
+				margin: 10px auto;
+			}
+
+			iron-image {
+				height: 100%;
+				width: 100%;
+				cursor: pointer;
+			}
+		</style>
+		<iron-image src$="{{backgroundImage}}" sizing="contain" on-click="_viewChampionship"></iron-image>
+	</template>
+	<script>
+		Polymer({
+			is: 'championship-card',
+			properties: {
+				championship: {
+					type: Object,
+					notify: true
+				},
+				backgroundImage: {
+					type: String,
+					notify: true
+				}
+			},
+			ready: function () {
+				this.backgroundImage = util.imageLink(this.championship.logo);
+			},
+			_viewChampionship: function(){
+				page('/championship/' + this.championship.id);
+			}
+		});
+	</script>
+</dom-module>

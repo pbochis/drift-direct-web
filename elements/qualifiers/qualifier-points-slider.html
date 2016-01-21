@@ -1,0 +1,54 @@
+<link rel="import" href="/drift-direct-web/styles/shared-styles.html">
+<link rel="import" href="/drift-direct-web/bower_components/paper-slider/paper-slider.html">
+
+<dom-module id="qualifier-points-slider">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			:host{
+				display: block;
+			}
+			.content {
+				height: auto;
+				@apply(--layout-vertical)
+			}
+			paper-slider {
+				--paper-slider-secondary-color: #000000;
+				--paper-slider-height: 3px;
+			}
+		</style>
+		<div class="content">
+			<p>{{pointsAllocation.name}}: {{awardedPoints}}</p>
+			<div class="layout horizontal">
+				<span>0</span>
+				<paper-slider id="pointsSlider" class="flex" step="0.5" min="0" immediate-value="{{awardedPoints}}" max="{{pointsAllocation.maxPoints}}" pin="true"></paper-slider>
+				<span>{{pointsAllocation.maxPoints}}</span>
+			</div>
+		</div>
+
+	</template>
+	<script>
+		Polymer({
+			is: 'qualifier-points-slider',
+			properties: {
+				pointsAllocation: {
+					type: Object,
+					notify: true
+				},
+				awardedPoints: {
+					type: Number,
+					notify: true
+				}
+			},
+			clear: function(){
+				this.$.pointsSlider.value = 0;
+				this.awardedPoints = 0;
+			},
+			getAwardedPoints(){
+				var awardedPoints = {};
+				awardedPoints.pointsAllocation = this.pointsAllocation.id;
+				awardedPoints.awardedPoints = this.awardedPoints;
+				return awardedPoints;
+			}
+		});
+	</script>
+</dom-module>

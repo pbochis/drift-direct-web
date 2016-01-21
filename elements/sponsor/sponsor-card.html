@@ -1,0 +1,28 @@
+<link rel="import" href="/drift-direct-web/styles/shared-styles.html">
+<link rel="import" href="/drift-direct-web/elements/shared/description-list/description-list.html">
+<link rel="import" href="/drift-direct-web/elements/shared/description-list/description-list-item.html">
+
+<dom-module id="sponsor-card">
+	<template>
+		<style is="custom-style" include="shared-styles">
+		</style>
+		<paper-material elevation="1" id="container">
+			<description-list>
+				<description-list-item label="Name" value="{{sponsor.name}}"></description-list-item>
+				<description-list-item label="Description" value="{{sponsor.description}}"></description-list-item>
+				<description-list-item label="Link" value="{{sponsor.url}}" link></description-list-item>
+			</description-list>
+		</paper-material>
+	</template>
+	<script>
+		Polymer({
+			is: 'sponsor-card',
+			properties: {
+				sponsor: {
+					type: Object,
+					notify: true
+				}
+			}
+		});
+	</script>
+</dom-module>

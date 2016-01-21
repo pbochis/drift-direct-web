@@ -1,0 +1,62 @@
+<link rel="import" href="/drift-direct-web/styles/shared-styles.html">
+<link rel="import" href="/drift-direct-web/bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="/drift-direct-web/bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="/drift-direct-web/bower_components/paper-item/paper-item.html">
+
+<dom-module id="person-chooser">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			:host{
+				display: block;
+				width: 100%;
+			}
+			paper-dropdown-menu{
+				width: 200px;
+			}
+			paper-menu {
+				background-color: white;
+			}
+		</style>
+		<paper-dropdown-menu id="person" label="{{label}}" selected-item="{{selectedPerson}}" required>
+			<paper-menu class="dropdown-content">
+				<template is="dom-repeat" items="{{persons}}">
+					<paper-item value="{{item.id}}">{{item.firstName}} {{item.lastName}}</paper-item>
+				</template>
+			</paper-menu>
+		</paper-dropdown-menu>
+	</template>
+	<script>
+		Polymer({
+			is: 'person-chooser',
+			properties: {
+				persons: {
+					type: Array,
+					notify: true
+				},
+				label : {
+					type: String,
+					notify: true,
+					value: 'Person'
+				},
+				selectedPerson: {
+					type: Object,
+					notify: true,
+					observer: '_selectionChanged'
+				},
+				selectedPersonId: {
+					type: Number,
+					notify: true,
+					reflectToAttribute: true
+				}
+			},
+			_selectionChanged: function(){
+				if (this.selectedPerson !== undefined){
+					this.selectedPersonId = this.selectedPerson.value;
+				}
+			},
+			validate: function(){
+				return this.$.person.validate();
+			}
+		});
+	</script>
+</dom-module>

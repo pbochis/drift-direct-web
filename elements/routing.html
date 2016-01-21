@@ -1,0 +1,259 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<script src="/drift-direct-web/bower_components/page/page.js"></script>
+<script>
+	window.addEventListener('WebComponentsReady', function () {
+
+		// We use Page.js for routing. This is a Micro
+		// client-side router inspired by the Express router
+		// More info: https://visionmedia.github.io/page.js/
+
+		// Removes end / from app.baseUrl which page.base requires for production
+		if (window.location.port === '') {  // if production
+			page.base(app.baseUrl.replace(/\/$/, ''));
+		}
+
+		// Middleware
+		function scrollToTop(ctx, next) {
+			app.scrollPageToTop();
+			next();
+		}
+
+		function closeDrawer(ctx, next) {
+			app.closeDrawer();
+			next();
+		}
+
+		function checkIsLoggedIn(){
+			if (!util.loggedIn()){
+				page('/login');
+				return false;
+			}
+			return true;
+		}
+
+		// Routes
+		page('*', scrollToTop, closeDrawer, function (ctx, next) {
+			next();
+		});
+
+		page('/', function () {
+			if (!util.loggedIn()){
+				page('/login');
+			}
+			else{
+				page('/championships');
+			}
+		});
+
+		page('/login', function(){
+			localStorage.user = null;
+			app.hideMenu();
+			app.route = 'login';
+			app.isLoggedIn = false;
+		});
+
+		page('/championships', function(){
+			if (!checkIsLoggedIn()){
+				return;
+			}
+			app.header = 'Championships';
+			Polymer.Base.importHref('/drift-direct-web/elements/championship/championship-list.html', function(){
+				app.route = 'championships';
+				app.$.championships.getChampionships();
+			});
+		});
+
+		page('/championship/:championshipId', function(data){
+			if (!checkIsLoggedIn()){
+				return;
+			}
+			app.route = 'championship-view';
+			var id = data.params.championshipId;
+			Polymer.Base.importHref('/drift-direct-web/elements/championship/championship-view.html', function(){
+				app.$.championship.getChampionship(id);
+			});
+		});
+
+
+		page('/championships/create', function(){
+			if (!checkIsLoggedIn()){
+				return;
+			}
+			app.route = 'championship-create';
+			app.header = 'New championship';
+			Polymer.Base.importHref('/drift-direct-web/elements/championship/championship-create.html', function(){
+				app.$.championshipCreate.getPersons();
+			});
+		});
+
+		page('/news/:championshipId', function(data){
+			if (!checkIsLoggedIn()){
+				return;
+			}
+			var championshipId = data.params.championshipId;
+			app.route = 'news-create'
+			app.header = 'News';
+			Polymer.Base.importHref('/drift-direct-web/elements/news/news-create.html', function(){
+				app.$.newsCreate.championship = championshipId;
+			});
+		});
+
+		page('/round/:id/tab/:tab', function(data){
+			if (!checkIsLoggedIn()){
+				return;
+			}
+			console.log('round is good');
+			app.route = 'round-view';
+			var id = data.params.id;
+			var tab = data.params.tab;
+			localStorage.selectedRound = id;
+			Polymer.Base.importHref('/drift-direct-web/elements/round/round-view.html', function(){
+				app.$.round.getRound(id);
+				app.$.round.selectedTab = tab;
+			});
+		});
+
+		page('/round/:id', function(data){
+			if (!checkIsLoggedIn()){
+				return;
+			}
+			app.route = 'round-view';
+			var id = data.params.id;
+			localStorage.selectedRound = id;
+			Polymer.Base.importHref('/drift-direct-web/elements/round/round-view.html', function(){
+				app.$.round.getRound(id);
+			});
+		});
+
+		page('/register/:roundId', function(data){
+			if (!checkIsLoggedIn()){
+				return;
+			}
+			app.route = 'register-driver';
+			var id = data.params.roundId;
+			Polymer.Base.importHref('/drift-direct-web/elements/round/register/register-driver.html', function(){
+				app.$.register.getDrivers(id);
+			});
+		});
+
+		page('/qualifiers/:qualifierId', function(data){
+			if (!checkIsLoggedIn()){
+				return;
+			}
+			app.route = 'qualifier-judging';
+			var id = data.params.qualifierId;
+			Polymer.Base.importHref('/drift-direct-web/elements/qualifiers/qualifier-judging.html', function(){
+				app.$.qualifierJudging.getQualifierJudge(id);
+			});
+		});
+
+		page('/playoff/battle/judge/:battleId', function(data){
+			if (!checkIsLoggedIn()){
+				return;
+			}
+			app.route = 'playoff-judging';
+			var id = data.params.battleId;
+			Polymer.Base.importHref('/drift-direct-web/elements/playoff/playoff-battle-judging.html', function(){
+				app.$.playoffJudging.startJudging(id);
+			});
+		});
+
+		page('/persons', function(){
+			if (!checkIsLoggedIn()){
+				return;
+			}
+			console.log('wtf');
+			app.route = 'persons';
+			app.header = 'Persons';
+			Polymer.Base.importHref('/drift-direct-web/elements/person/person-list.html', function(){
+				app.$.persons.getPersons();
+			});
+		});
+
+		page('/person/:personId', function(data){
+			if (!checkIsLoggedIn()){
+				return;
+			}
+			app.route = 'person-view';
+			app.header = 'Person';
+			var id = data.params.personId;
+			Polymer.Base.importHref('/drift-direct-web/elements/person/person-full-view.html', function(){
+				app.$.person.getPerson(id);
+			});
+		});
+
+
+		page('/sponsors', function(){
+			if (!checkIsLoggedIn()){
+				return;
+			}
+			app.route = 'sponsors';
+			app.header = 'Sponsors';
+			Polymer.Base.importHref('/drift-direct-web/elements/sponsor/sponsor-list.html', function(){
+				app.$.sponsors.getSponsors();
+			});
+		});
+
+		page('/sponsor/new', function(){
+			if (!checkIsLoggedIn()){
+				return;
+			}
+			app.route = 'sponsor-create';
+			app.header = 'New Sponsor';
+			Polymer.Base.importHref('/drift-direct-web/elements/sponsor/sponsor-create.html');
+		});
+
+		page('/users', function () {
+			if (!checkIsLoggedIn()){
+				return;
+			}
+			app.route = 'users';
+			app.header = 'Users';
+			Polymer.Base.importHref('/drift-direct-web/elements/user/user-list.html', function(){
+				app.$.users.getUsers();
+			});
+		});
+
+		page ('/user/create', function(){
+			if (!checkIsLoggedIn()){
+				return;
+			}
+			app.route = 'user-create';
+			app.header = 'Create user';
+			Polymer.Base.importHref('/drift-direct-web/elements/user/user-create.html', function(){
+				app.$.userCreate.getRoles();
+			})
+		});
+
+		page('/users/:name', function (data) {
+			app.route = 'user-info';
+			app.params = data.params;
+		});
+
+		page('/contact', function () {
+			app.route = 'contact';
+		});
+
+		// 404
+		page('*', function () {
+			app.$.toast.text = 'Can\'t find: ' + window.location.href + '. Redirected you to Home Page';
+			app.$.toast.show();
+			page.redirect(app.baseUrl);
+		});
+
+		// add #! before urls
+		page({
+			hashbang: true
+		});
+
+	});
+</script>

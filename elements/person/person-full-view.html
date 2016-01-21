@@ -1,0 +1,162 @@
+<link rel="import" href="/drift-direct-web/styles/shared-styles.html">
+<link rel="import" href="/drift-direct-web/bower_components/iron-image/iron-image.html">
+<link rel="import" href="/drift-direct-web/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/drift-direct-web/bower_components/iron-pages/iron-pages.html">
+
+<link rel="import" href="/drift-direct-web/elements/shared/dd-ajax.html">
+<link rel="import" href="/drift-direct-web/elements/shared/description-list/description-list.html">
+<link rel="import" href="/drift-direct-web/elements/shared/description-list/description-list-item.html">
+<link rel="import" href="/drift-direct-web/elements/person/person-create-form.html">
+
+<dom-module id="person-full-view">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			.content {
+				width: 80%;
+				margin: 36px auto;
+			}
+
+			.profile-picture {
+				height: 200px;
+				width: 300px;
+			}
+			paper-material {
+				height: auto;
+			}
+
+			.controls {
+				cursor: pointer;
+				height: auto;
+				@apply(--layout-horizontal);
+				@apply(--layout-center-center);
+			}
+
+			iron-icon:hover {
+				cursor: pointer;
+			}
+		</style>
+		<dd-ajax
+			id="getPerson"
+			method="GET"
+			last-response="{{person}}">
+		</dd-ajax>
+
+		<dd-ajax
+			id="putPerson"
+			method="PUT"
+			body="{{person}}"
+			on-response="_onPutResponse">
+		</dd-ajax>
+
+		<div class="content">
+			<iron-pages selected="{{selectedPage}}">
+				<paper-material elevation="1">
+
+					<div class="layout horizontal">
+						<iron-image class="profile-picture" src="{{_profilePictureUrl(person.profilePicture)}}" sizing="contain"></iron-image>
+						<h2>{{person.firstName}} {{person.lastName}}, {{person.personType}}</h2>
+						<div class="flex"></div>
+						<iron-icon icon="create" on-click="_editPerson"></iron-icon>
+					</div>
+					<h1>Personal details</h1>
+					<description-list>
+						<description-list-item label="Telephone" value="{{person.telephone}}"></description-list-item>
+						<description-list-item label="Website" value="{{person.website}}"></description-list-item>
+						<description-list-item label="Country" value="{{person.country.name}}"></description-list-item>
+						<description-list-item label="Birth date" value="{{_formatDate(person.birthDate)}}"></description-list-item>
+						<description-list-item label="Career start date" value="{{_formatDate(person.careerStartDate)}}"></description-list-item>
+						<description-list-item label="Portfolio" value="{{person.portfolio}}"></description-list-item>
+						<description-list-item label="Biography" value="{{person.description}}"></description-list-item>
+					</description-list>
+					<template is="dom-if" if="{{isDriver}}">
+						<h2>Driver details</h2>
+						<description-list>
+							<description-list-item label="Team" value="{{person.driverDetails.team.name}}"></description-list-item>
+							<description-list-item label="Sponsors" value="{{sponsors}}"></description-list-item>
+							<description-list-item label="Make" value="{{person.driverDetails.make}}"></description-list-item>
+							<description-list-item label="Model" value="{{person.driverDetails.model}}"></description-list-item>
+							<description-list-item label="Engine" value="{{person.driverDetails.engine}}"></description-list-item>
+							<description-list-item label="Steering angle" value="{{person.driverDetails.steeringAngle}}"></description-list-item>
+							<description-list-item label="Suspension mods" value="{{person.driverDetails.suspensionMods}}"></description-list-item>
+							<description-list-item label="Wheels" value="{{person.driverDetails.wheels}}"></description-list-item>
+							<description-list-item label="Tires" value="{{person.driverDetails.tires}}"></description-list-item>
+							<description-list-item label="Horse power" value="{{person.driverDetails.horsePower}}"></description-list-item>
+							<description-list-item label="Other" value="{{person.driverDetails.other}}"></description-list-item>
+						</description-list>
+					</template>
+				</paper-material>
+				<div>
+					<person-create-form id="personForm" person="{{person}}" person-type="{{person.personType}}"></person-create-form>
+					<paper-material class="controls" on-click="_updatePerson">
+						<iron-icon icon="create"></iron-icon>
+						<span>Update person</span>
+					</paper-material>
+				</div>
+			</iron-pages>
+		</div>
+	</template>
+	<script>
+		Polymer({
+			is: 'person-full-view',
+			properties: {
+				person: {
+					type: Object,
+					notify: true,
+					observer: '_personSet'
+				},
+				isDriver: {
+					type: Boolean,
+					notify: true
+				},
+				selectedPage: {
+					type: Number,
+					value: 0,
+					notify: true
+				},
+				sponsors: {
+					type: String,
+					notify: true
+				}
+			},
+			_personSet: function(){
+				this.isDriver = this.person.personType === 'Driver';
+				this.sponsors = '';
+				if (this.isDriver && this.person.driverDetails.sponsors.length > 0){
+					var sponsors = this.person.driverDetails.sponsors[0].name;
+					for (var i = 1; i < this.person.driverDetails.sponsors.length; i++){
+						sponsors += ', ' + this.person.driverDetails.sponsors[i].name;
+					}
+					this.sponsors = sponsors;
+				}
+			},
+			getPerson: function(id){
+				this.$.getPerson.url = util.build('/person/' + id);
+				this.$.getPerson.generateRequest();
+				this.selectedPage = 0;
+			},
+			_formatDate: function(date){
+				if (!!date){
+					return util.formatDate(new Date(date), true);
+				}
+				return null;
+			},
+			_profilePictureUrl: function(id){
+				var link = util.imageLink(id, 300, 300);
+				return link;
+			},
+			_editPerson: function(){
+				this.selectedPage = 1;
+			},
+			_updatePerson: function(){
+				if (!this.$.personForm.validate()){
+					return;
+				}
+				this.$.putPerson.url = util.build('/person/' + this.person.id);
+				this.$.putPerson.generateRequest();
+			},
+			_onPutResponse: function(event, r){
+				this.getPerson(this.person.id);
+			}
+		});
+	</script>
+</dom-module>
