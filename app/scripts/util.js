@@ -3,8 +3,8 @@
  */
 var util = {
 	build: function(suffix){
-		//var prefix = "http://46.101.120.89:8080/driftdirect";
-		var prefix = "http://localhost:8080";
+		var prefix = "http://46.101.120.89:8080/driftdirect";
+		//var prefix = "http://localhost:8080";
 		return prefix + suffix;
 	},
 	imageLink: function(id, width, height){
@@ -30,6 +30,15 @@ var util = {
 		var user = JSON.parse(localStorage.getItem('user'));
 		for (var i = 0; i < user.roles.length; i++){
 			if (user.roles[i] === role){
+				return true;
+			}
+		}
+		return false;
+	},
+	isAdmin: function(){
+		var user = JSON.parse(localStorage.getItem('user'));
+		for (var i = 0; i < user.roles.length; i++){
+			if (user.roles[i] === 'ROLE_ADMIN'){
 				return true;
 			}
 		}

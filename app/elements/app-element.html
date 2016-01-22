@@ -40,25 +40,54 @@
 
 					<!-- Drawer Content -->
 					<paper-menu class="list">
-						<a href="/championships">
-							<iron-icon icon="home"></iron-icon>
-							<span>Championships</span>
-						</a>
+						<template is="dom-if" if="{{isAdmin}}">
+							<a href="/championships">
+								<iron-icon icon="home"></iron-icon>
+								<span>Championships</span>
+							</a>
 
-						<a href="/persons">
-							<iron-icon icon="account-circle"></iron-icon>
-							<span>Persons</span>
-						</a>
+							<a href="/persons">
+								<iron-icon icon="account-circle"></iron-icon>
+								<span>Persons</span>
+							</a>
 
-						<a href="/sponsors">
-							<iron-icon icon="star"></iron-icon>
-							<span>Sponsors</span>
-						</a>
+							<a href="/sponsors">
+								<iron-icon icon="star"></iron-icon>
+								<span>Sponsors</span>
+							</a>
 
-						<a href="/users">
-							<iron-icon icon="info"></iron-icon>
-							<span>Users</span>
-						</a>
+							<a href="/users">
+								<iron-icon icon="info"></iron-icon>
+								<span>Users</span>
+							</a>
+						</template>
+						<template is="dom-if" if="{{isOrganizer}}">
+							<a href="/championships">
+								<iron-icon icon="home"></iron-icon>
+								<span>Championships</span>
+							</a>
+
+							<a href="/persons">
+								<iron-icon icon="account-circle"></iron-icon>
+								<span>Persons</span>
+							</a>
+
+							<a href="/sponsors">
+								<iron-icon icon="star"></iron-icon>
+								<span>Sponsors</span>
+							</a>
+
+							<a href="/users">
+								<iron-icon icon="info"></iron-icon>
+								<span>Users</span>
+							</a>
+						</template>
+						<template is="dom-if" if="{{isJudge}}">
+							<a href="/championships">
+								<iron-icon icon="home"></iron-icon>
+								<span>Championships</span>
+							</a>
+						</template>
 					</paper-menu>
 				</paper-scroll-header-panel>
 			</template>
@@ -74,16 +103,15 @@
 						<div class="middle middle-container center horizontal layout">
 							<div class="app-name">{{header}}</div>
 						</div>
-						<!-- Application sub title -->
-						<!--<div class="bottom bottom-container center horizontal layout">-->
-							<!--<div class="bottom-title paper-font-subhead">The future of the web today</div>-->
-						<!--</div>-->
-						<paper-menu-button horizontal-align="right">
-							<paper-icon-button icon="settings" class="dropdown-trigger"></paper-icon-button>
-							<paper-menu class="dropdown-content">
-								<paper-item style="cursor: pointer" on-click="_logout">Logout</paper-item>
-							</paper-menu>
-						</paper-menu-button>
+						<paper-item>
+							<div>Signed in as {{userName}}</div>
+							<paper-menu-button horizontal-align="right">
+								<paper-icon-button icon="settings" class="dropdown-trigger"></paper-icon-button>
+								<paper-menu class="dropdown-content">
+									<paper-item style="cursor: pointer" on-click="_logout">Logout</paper-item>
+								</paper-menu>
+							</paper-menu-button>
+						</paper-item>
 					</paper-toolbar>
 				</template>
 				<!-- Main Content -->
@@ -174,6 +202,21 @@
 					type: String,
 					notify: true,
 					value: ''
+				},
+				isAdmin: {
+					type: Boolean,
+					notify: true,
+					value: false
+				},
+				isOrganizer: {
+					type: Boolean,
+					notify: true,
+					value: false
+				},
+				isJudge: {
+					type: Boolean,
+					notify: true,
+					value: false
 				}
 
 			},
@@ -189,10 +232,17 @@
 			closeDrawer: function() {
 				this.$.paperDrawerPanel.closeDrawer();
 			},
+			buildMenu: function(){
+				this.userName = util.currentUser().username;
+				this.isAdmin = util.isAdmin();
+				this.isOrganizer = util.isOrganizer();
+				this.isJudge = util.isJudge();
+			},
 			login: function(){
 				this.drawerClass = '';
 				Polymer.updateStyles();
 				this.isLoggedIn = util.loggedIn();
+				this.buildMenu();
 			},
 			hideMenu: function(){
 				this.drawerClass = 'loginmode';
