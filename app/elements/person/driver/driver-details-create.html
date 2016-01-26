@@ -39,7 +39,11 @@
 				this.$.sponsors.getSponsors();
 			},
 			validate: function(){
-				return this.$.driverData.validate();
+				if (!this.$.horsePower.validate()){
+					this.driverDetails.horsePower = 0;
+				}
+//				return this.$.driverData.validate();
+				return true;
 			}
 		});
 	</script>

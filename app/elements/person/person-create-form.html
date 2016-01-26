@@ -101,9 +101,12 @@
 				this.set('person.driverDetails', {});
 			},
 			validate: function(){
-				var valid = this.$.personData.validate();
-				valid = this.$.birthDate.validate() && valid;
-				valid = this.$.careerStartDate.validate() && valid;
+//				var valid = this.$.personData.validate();
+				var valid = this.$.firstName.validate();
+				valid = this.$.lastName.validate() && valid;
+				//FML we wont have data, so we cannot do validation. This is utter shit.
+//				valid = this.$.birthDate.validate() && valid;
+//				valid = this.$.careerStartDate.validate() && valid;
 
 				if (this.isDriver){
 					valid = this.$$('#driverDetails').validate() && valid;
