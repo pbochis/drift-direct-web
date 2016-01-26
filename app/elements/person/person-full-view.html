@@ -123,7 +123,6 @@
 					return;
 				}
 				this.isDriver = this.person.personType === 'Driver';
-				this.sponsors = '';
 				if (this.isDriver && this.person.driverDetails.sponsors && this.person.driverDetails.sponsors.length > 0){
 					var sponsors = this.person.driverDetails.sponsors[0].name;
 					for (var i = 1; i < this.person.driverDetails.sponsors.length; i++){
@@ -138,6 +137,7 @@
 				this.selectedPage = 0;
 			},
 			_formatDate: function(date){
+				console.log(date);
 				if (!!date){
 					return util.formatDate(new Date(date), true);
 				}

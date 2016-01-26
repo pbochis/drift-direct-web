@@ -4,7 +4,7 @@
 var util = {
 	build: function(suffix){
 		var prefix = "http://46.101.120.89:8080/driftdirect";
-		//var prefix = "http://localhost:8080";
+		//var prefix = "http://localhost:8080/driftdirect";
 		return prefix + suffix;
 	},
 	imageLink: function(id, width, height){
@@ -67,7 +67,6 @@ var util = {
 
 	formatDate: function(date, ommitTime){
 		var month = Number(date.getMonth()) + 1;
-		console.log(month);
 		var formattedDate = date.getDate() + '-' + month + '-' + date.getFullYear();
 		if (!ommitTime){
 			formattedDate = formattedDate + ' ' + this.getTimeField(date.getHours()) + ':' + this.getTimeField(date.getMinutes())

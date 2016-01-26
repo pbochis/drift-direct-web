@@ -54,10 +54,12 @@
 				}
 			},
 			generateRequest: function () {
+				app.startLoading();
 				this.headers.Authorization = localStorage.token;
 				this.$.ajaxRequest.generateRequest();
 			},
 			_onError: function (e) {
+				app.stopLoading();
 				if (e.detail.request.xhr.status === 401){
 					console.log('must redirect to login');
 					page('/login');
@@ -65,6 +67,7 @@
 				this.fire('error', e);
 			},
 			_onResponse: function(r){
+				app.stopLoading();
 				this.fire('response', r);
 			}
 		});

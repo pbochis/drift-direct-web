@@ -88,11 +88,13 @@
 				this.$.getCountries.url = util.build('/country');
 				this.$.getCountries.generateRequest();
 				this.$$('#driverDetails').getData();
+				this._typeSet();
 			},
 			_typeSet: function(){
-				console.log(this.personType);
-				this.isDriver = this.personType === 'Driver';
-				this.person.personType = this.personType;
+				if (!!this.personType){
+					this.isDriver = this.personType === 'Driver';
+					this.person.personType = this.personType;
+				}
 			},
 			clear: function(){
 				this.person = {};

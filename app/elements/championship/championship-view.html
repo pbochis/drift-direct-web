@@ -10,6 +10,9 @@
 <link rel="import" href="view-tabs/rounds/round-list.html">
 <link rel="import" href="view-tabs/drivers/driver-list.html">
 <link rel="import" href="view-tabs/news/news-tab.html">
+<link rel="import" href="../../elements/shared/description-list/description-list-item.html">
+<link rel="import" href="../../elements/shared/description-list/description-list.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 
 <dom-module id="championship-view">
 	<template>
@@ -42,6 +45,24 @@
 				color: rgba(0, 0, 0, 1);
 				background-color: rgba(0, 0, 0, 0.05);
 			}
+			.horizontal-center {
+				@apply(--layout-horizontal);
+				@apply(--layout-center);
+			}
+
+			.controls {
+				cursor: pointer;
+				@apply(--layout-horizontal);
+				@apply(--layout-center-justified);
+			}
+			.warning {
+				text-align: center;
+				vertical-align: middle;
+				font-weight: bold;
+			}
+			.controls > paper-button {
+				background-color: whitesmoke;
+			}
 		</style>
 		<dd-ajax
 			id="getChampionship"
@@ -49,22 +70,29 @@
 			last-response="{{championship}}"
 			on-response="onResponse">
 		</dd-ajax>
+
+		<dd-ajax
+			id="publishChampionship"
+			method="POST"
+			on-response="_onPublishResponse">
+		</dd-ajax>
+
 		<div class="content">
 			<paper-material id="generalInfo">
-				<div class="layout horizontal">
+				<div class="horizontal-center">
 					<h1>{{championship.name}}</h1>
 					<div class="flex"></div>
+					<template is="dom-if" if="{{canPublish}}">
+						<paper-button raised on-click="_confirmPublish">Publish</paper-button>
+					</template>
 					<iron-icon icon="create"></iron-icon>
 					<iron-icon icon="delete"></iron-icon>
 				</div>
-				<dl>
-					<dt>Tickets</dt>
-					<dd><a href$="{{championship.ticketsUrl}}" target="_blank">{{championship.ticketsUrl}}</a> </dd>
-					<dt>Published</dt>
-					<dd>{{championship.published}}</dd>
-					<dt>Organizer</dt>
-					<dd>{{championship.organizer.firstName}} {{championship.organizer.lastName}}</dd>
-				</dl>
+				<description-list>
+					<description-list-item label="Tickets" value="{{championship.ticketsUrl}}" link></description-list-item>
+					<description-list-item label="Published" value="{{championship.published}}"></description-list-item>
+					<description-list-item label="Organizer" value="{{_organizerName(championship.organizer.firstName, championship.organizer.lastName)}}"></description-list-item>
+				</description-list>
 			</paper-material>
 			<paper-tabs noink no-slide elevation="1" selected="{{selectedTab}}">
 				<paper-tab>News</paper-tab>
@@ -84,7 +112,13 @@
 				<driver-list drivers="{{championship.drivers}}"></driver-list>
 			</iron-pages>
 		</div>
-
+		<paper-dialog id="confirmDialog" modal>
+			<div class="warning">Are you sure you want to publish the championship? It will be visible for any users of the app</div>
+			<div class="controls">
+				<paper-button raised autofocus on-click="_publish">Yes</paper-button>
+				<paper-button raised dialog-dismiss>No</paper-button>
+			</div>
+		</paper-dialog>
 	</template>
 	<script>
 		Polymer({
@@ -98,7 +132,15 @@
 					type: Number,
 					notify: true,
 					value: 0
+				},
+				canPublish: {
+					type: Boolean,
+					notify: true,
+					value: false
 				}
+			},
+			_organizerName: function(firstName, lastName){
+				return firstName + ' ' + lastName;
 			},
 			getChampionship: function(championshipId){
 				this.$.getChampionship.url = util.build('/championship/' + championshipId);
@@ -106,6 +148,18 @@
 			},
 			onResponse: function(){
 				app.header = this.championship.name;
+				this.canPublish = util.isOrganizer() && this.championship.published === false;
+			},
+			_confirmPublish: function(){
+				this.$.confirmDialog.open();
+			},
+			_publish: function(){
+				this.$.confirmDialog.close();
+				this.$.publishChampionship.url = util.build('/championship/' + this.championship.id + '/publish');
+				this.$.publishChampionship.generateRequest();
+			},
+			_onPublishResponse: function(){
+				this.getChampionship(this.championship.id);
 			}
 		});
 	</script>

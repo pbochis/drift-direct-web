@@ -61,6 +61,9 @@
 			_valueChanged: function() {
 				this.driver1Score = 10 - this.value;
 				this.driver2Score = 0 + this.value;
+			},
+			clear: function(){
+				this.$.ratings.value = 5;
 			}
 		});
 	</script>

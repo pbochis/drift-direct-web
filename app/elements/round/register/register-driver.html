@@ -108,12 +108,14 @@
 					this.$.postRegister.url = util.build('/round/' + this.roundId +'/register/' + this.selectedDriver);
 					this.$.postRegister.generateRequest();
 				}else{
+					if (!this.$.createForm().validate()){
+						return;
+					}
 					this.$.postDriver.url = util.build('/person');
 					this.$.postDriver.generateRequest();
 				}
 			},
 			onPostDriverResponse: function(event, r){
-				console.log(r);
 				this.$.createForm.clear();
 				this.$.postRegister.url = util.build('/round/' + this.roundId +'/register/' + r.detail.response);
 				this.$.postRegister.generateRequest();

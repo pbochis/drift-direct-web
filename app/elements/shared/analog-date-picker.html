@@ -102,6 +102,9 @@
 				}
 			},
 			_dateSet: function(){
+				if (!this.date){
+					return;
+				}
 				if (!(this.date instanceof Date)){
 					this.date = new Date(this.date);
 					this.$.yearMenu.selected = this.date.getFullYear();

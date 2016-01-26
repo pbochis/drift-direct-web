@@ -27,6 +27,10 @@
 					left: 0 !important;
 				}
 			}
+
+			#progressBar {
+				width: 100%;
+			}
 		</style>
 		<paper-drawer-panel id="paperDrawerPanel" class$="{{drawerClass}}">
 			<!-- Drawer Scroll Header Panel -->
@@ -113,10 +117,11 @@
 							</paper-menu-button>
 						</paper-item>
 					</paper-toolbar>
+					<paper-progress id="progressBar" indeterminate style$="{{progressStyle}}"></paper-progress>
 				</template>
 				<!-- Main Content -->
 				<div class="content">
-					<iron-pages attr-for-selected="data-route" selected="{{route}}">
+					<iron-pages attr-for-selected="data-route" selected="{{route}}" style$="{{pagesStyle}}">
 
 						<section data-route="login">
 							<login-wizard></login-wizard>
@@ -217,6 +222,21 @@
 					type: Boolean,
 					notify: true,
 					value: false
+				},
+				progressStyle: {
+					type: String,
+					notify: true,
+					value: ''
+				},
+				pagesStyle: {
+					type: String,
+					notify: true,
+					value: ''
+				},
+				pendingRequests: {
+					type: Number,
+					notify: true,
+					value: 0
 				}
 
 			},
@@ -225,6 +245,26 @@
 				window.addEventListener('WebComponentsReady', function() {
 					// imports are loaded and elements have been registered
 				});
+			},
+			startLoading: function(){
+				if(this.pendingRequests === 0){
+					this._showProgress();
+				}
+				this.pendingRequests ++;
+			},
+			stopLoading: function(){
+				this.pendingRequests --;
+				if(this.pendingRequests === 0){
+					this._hideProgress();
+				}
+			},
+			_showProgress: function(){
+				this.progressStyle = '';
+				this.pagesStyle = 'display: none;';
+			},
+			_hideProgress: function(){
+				this.progressStyle = 'display: none;';
+				this.pagesStyle = '';
 			},
 			scrollPageToTop: function() {
 				this.$.headerPanelMain.scrollToTop(true);

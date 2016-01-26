@@ -44,17 +44,21 @@
 				@apply(--layout-horizontal-reverse);
 				@apply(--layout-center);
 			}
+			.omt {
+				@apply(--layout-flex);
+				@apply(--layout-horizontal);
+				@apply(--layout-center);
+			}
 			.versus {
 				width: 10%;
 			}
 			.winner {
 				color: green;
 			}
-
 		</style>
 		<div class="container">
 			<div class="flex"></div>
-			<div class="battle-container" on-click="_judgeBattle">
+			<div class="battle-container" on-click="_judgeBattle" style$="{{battleStyle}}">
 				<div class="driver-left">
 					<iron-image class="profilePicture" src="{{_profilePictureUrl(battle.driver1.driver.profilePicture)}}" sizing="contain"></iron-image>
 					<span class$="{{_driverNameClass(battle, battle.driver1)}}">{{battle.driver1.driver.firstName}} {{battle.driver1.driver.lastName}}</span>
@@ -65,7 +69,7 @@
 					<span class$="{{_driverNameClass(battle, battle.driver2)}}">{{battle.driver2.driver.firstName}} {{battle.driver2.driver.lastName}}</span>
 				</div>
 			</div>
-			<div class="flex"></div>
+			<div class="omt">{{omt}}</div>
 		</div>
 	</template>
 	<script>
@@ -74,8 +78,48 @@
 			properties: {
 				battle: {
 					type: Object,
-					notify: true
+					notify: true,
+					observer: '_battleSet'
+				},
+				battleStyle: {
+					type: String,
+					notify: true,
+					value: ''
+				},
+				omt: {
+					type: String,
+					notify: true,
+					value: ''
 				}
+			},
+			_battleSet: function(){
+				if (!this.battle){
+					return;
+				}
+				var omts;
+				if (this.battle.runsCompleted % 2 == 0){
+					if (!!this.battle.winner){
+						//battle has ended and winner was set -> color will be green
+						this.battleStyle = 'background-color: rgba(82, 255, 39, 0.35)';
+						omts = (this.battle.runsCompleted / 2) - 1;
+						if (omts > 0){
+							this.omt = 'OMT x ' + omts;
+						}
+					}else{
+						this.battleStyle = '';
+						omts = (this.battle.runsCompleted / 2);
+						if (omts > 0){
+							this.omt = 'OMT x ' + omts;
+						}
+					}
+				}else{
+					this.battleStyle = 'background-color: rgba(252, 255, 32, 0.35)';
+					omts = (this.battle.runsCompleted - 1) / 2;
+					if (omts > 0){
+						this.omt = 'OMT x ' + omts;
+					}
+				}
+
 			},
 			_profilePictureUrl: function(id){
 				return util.imageLink(id);

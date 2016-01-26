@@ -150,6 +150,7 @@
 					}
 				}
 				this.commentList = commentList;
+				this.$.selector.selectedValues = [];
 			},
 			_positiveSet: function(){
 				if (this.positive){
@@ -185,7 +186,8 @@
 				this.$.selector.select(this.newValue);
 				this.newValue = '';
 			},
-			_clear: function(){
+			clear: function(){
+				this.selectedComments = [];
 				this.selectedItems = [];
 			}
 		});

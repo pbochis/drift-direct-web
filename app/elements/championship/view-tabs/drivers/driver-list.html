@@ -65,7 +65,7 @@
 				</div>
 				<hr>
 				<template is="dom-repeat" items="{{drivers}}">
-					<div id="row" class="horizontal-center">
+					<div id="row" class="horizontal-center" on-click="_viewPerson">
 						<div id="picture-name" class="horizontal-center">
 							<iron-image class="profilePicture" src="{{_profilePictureUrl(item.driver.profilePicture)}}" sizing="contain"></iron-image>
 							<span>{{item.driver.firstName}} {{item.driver.lastName}}</span>
@@ -95,6 +95,10 @@
 			},
 			_getTableIndex: function(index){
 				return index + 1;
+			},
+			_viewPerson: function(e){
+				var person = e.model.item.driver;
+				page('/person/' + person.id);
 			}
 		});
 	</script>
