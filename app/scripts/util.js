@@ -3,8 +3,8 @@
  */
 var util = {
 	build: function(suffix){
-		var prefix = "http://46.101.120.89:8080/driftdirect";
-		//var prefix = "http://localhost:8080/driftdirect";
+		//var prefix = "http://46.101.120.89:8080/driftdirect";
+		var prefix = "http://localhost:8080";
 		return prefix + suffix;
 	},
 	imageLink: function(id, width, height){

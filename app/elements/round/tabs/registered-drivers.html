@@ -1,11 +1,12 @@
 <link rel="import" href="../../../styles/shared-styles.html">
 <link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
 
 <link rel="import" href="../../../elements/championship/view-tabs/drivers/driver-card.html">
 <link rel="import" href="../../../elements/qualifiers/qualified-driver-card.html">
-
-
+<link rel="import" href="../../../elements/shared/dd-ajax.html">
 
 <dom-module id="registered-drivers">
 	<template>
@@ -26,18 +27,18 @@
 			}
 
 			#row.horizontal-center div {
-				@apply(--layout-flex);
+				/*@apply(--layout-flex);*/
 			}
-			.tableHeader {
+			#tableHeader {
 				@apply(--layout-horizontal);
 			}
 
-			.tableHeader div {
-				@apply(--layout-flex);
+			#tableHeader div {
+				/*@apply(--layout-flex);*/
 			}
 
-			#row {
-				cursor: pointer;
+			#row:hover {
+				background-color: rgba(75, 92, 255, 0.13) !important;
 			}
 
 			.profilePicture {
@@ -45,14 +46,12 @@
 				height: 50px;
 			}
 
-			.tableHeader div {
+			#tableHeader div {
 				font-weight: bold;
 			}
 
 			paper-material {
 				height: auto;
-				/*background-color: rgba(252, 255, 32, 0.35);*/
-				/*background-color: rgba(82, 255, 39, 0.35);*/
 			}
 
 			hr {
@@ -62,7 +61,36 @@
 			#picture-name > span{
 				font-weight: bold;
 			}
+
+			#tableHeader div:nth-child(1),
+			#tableHeader div:nth-child(2),
+			#row div:nth-child(1),
+			#row div:nth-child(2) {
+				width: 40%;
+
+			}
+
+			#tableHeader div:nth-child(3) {
+				text-align: center;
+			}
+
+			#tableHeader div:nth-child(3),
+			#row div:nth-child(3) {
+				width: 20%;
+			}
+
+			.warning {
+				text-align: center;
+				vertical-align: middle;
+				font-weight: bold;
+			}
 		</style>
+		<dd-ajax
+			id="deleteQualifier"
+			method="DELETE"
+			on-response="_onDeleteResponse"
+			on-error="_onDeleteError">
+		</dd-ajax>
 		<template is="dom-if" if="{{canAddDrivers}}">
 			<paper-material class="controls" on-click="_addDriver">
 				<iron-icon icon="add"></iron-icon>
@@ -72,23 +100,38 @@
 		<paper-material elevation="1">
 			<!--Trying to mimic a table here-->
 			<div id="table" class="vertical">
-				<div class="tableHeader">
+				<div id="tableHeader">
 					<div>Driver</div>
 					<div>Car</div>
+					<div>Actions</div>
 				</div>
 				<hr>
 				<template is="dom-repeat" items="{{round.qualifiers}}">
-					<div id="row" class="horizontal-center" style$="{{_getRowStyle(item)}}" on-click="_judgeDriver">
+					<div id="row" class="horizontal-center" style$="{{_getRowStyle(item)}}">
 						<div id="picture-name" class="horizontal-center">
 							<iron-image class="profilePicture" src="{{_profilePictureUrl(item.driver.profilePicture)}}" sizing="contain"></iron-image>
 							<span>{{_getTableIndex(index)}}. {{item.driver.firstName}} {{item.driver.lastName}}</span>
 						</div>
 						<div>{{_getCarDetails(item.driver)}}</div>
+						<div id="actions" class="horizontal around-justified layout">
+							<template is="dom-if" if="{{_canDelete(item)}}">
+								<paper-icon-button icon="delete" title="Delete" on-click="_confirmDelete"></paper-icon-button>
+							</template>
+							<paper-icon-button icon="forward" title="Judge" on-click="_judgeDriver"></paper-icon-button>
+						</div>
 					</div>
 					<hr>
 				</template>
 			</div>
 		</paper-material>
+		<paper-dialog id="confirmDialog" modal>
+			<div class="warning">{{warningMessage}}</div>
+			<div class="controls">
+				<paper-button autofocus on-click="_deleteQualifier">Yes</paper-button>
+				<paper-button dialog-dismiss>No</paper-button>
+			</div>
+		</paper-dialog>
+		<paper-toast id="cannotDelete" text="Cannot delete qualifier that has already started!"></paper-toast>
 	</template>
 	<script>
 		Polymer({
@@ -98,6 +141,35 @@
 					type: Object,
 					notify: true,
 					observer: '_roundSet'
+				},
+				warningMessage: {
+					type: String,
+					notify: true
+				},
+				selectedQualifier: {
+					type: Object,
+					notify: true
+				}
+			},
+			_canDelete: function(item){
+				return item.runsCompleted === 0;
+			},
+			_confirmDelete: function(e){
+				this.selectedQualifier = e.model.dataHost.dataHost.__data__.item;
+				this.warningMessage = 'Are you sure you want to remove ' + this.selectedQualifier.driver.firstName + ' ' + this.selectedQualifier.driver.lastName + ' from the qualification list?';
+				this.$.confirmDialog.open();
+			},
+			_deleteQualifier: function(){
+				this.$.deleteQualifier.url = util.build('/qualifier/' + this.selectedQualifier.id);
+				this.$.deleteQualifier.generateRequest();
+				this.$.confirmDialog.close();
+			},
+			_onDeleteResponse: function(){
+				page('/round/' + this.round.id);
+			},
+			_onDeleteError: function(event, e){
+				if (e.detail.request.xhr.status === 412) {
+					this.$.cannotDelete.show();
 				}
 			},
 			_roundSet: function(){
@@ -133,17 +205,19 @@
 			},
 			_getRowStyle: function(qualifier){
 				if (qualifier.runsCompleted === 2){
-					return 'background-color: rgba(82, 255, 39, 0.35)';
+					return 'background-color: rgba(82, 255, 39, 0.25)';
 				}
 				if (qualifier.runsCompleted === 1){
-					return 'background-color: rgba(252, 255, 32, 0.35)';
+					return 'background-color: rgba(252, 255, 32, 0.25)';
 				}
 				return '';
 
 			},
 			_judgeDriver: function(e){
 				var qualifier = e.model.item;
-				page('/qualifiers/' + qualifier.id);
+				if (util.isJudge()){
+					page('/qualifiers/' + qualifier.id);
+				}
 			}
 		});
 	</script>
