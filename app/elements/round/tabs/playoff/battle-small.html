@@ -61,12 +61,12 @@
 			<div class="battle-container" on-click="_judgeBattle" style$="{{battleStyle}}">
 				<div class="driver-left">
 					<iron-image class="profilePicture" src="{{_profilePictureUrl(battle.driver1.driver.profilePicture)}}" sizing="contain"></iron-image>
-					<span class$="{{_driverNameClass(battle, battle.driver1)}}">{{battle.driver1.driver.firstName}} {{battle.driver1.driver.lastName}}</span>
+					<span class$="{{_driverNameClass(battle, battle.driver1)}}">{{battle.driver1.ranking}}. {{battle.driver1.driver.firstName}} {{battle.driver1.driver.lastName}}</span>
 				</div>
 				<div class="versus">VS</div>
 				<div class="driver-right">
 					<iron-image class="profilePicture" src="{{_profilePictureUrl(battle.driver2.driver.profilePicture)}}" sizing="contain"></iron-image>
-					<span class$="{{_driverNameClass(battle, battle.driver2)}}">{{battle.driver2.driver.firstName}} {{battle.driver2.driver.lastName}}</span>
+					<span class$="{{_driverNameClass(battle, battle.driver2)}}">{{battle.driver2.ranking}}. {{battle.driver2.driver.firstName}} {{battle.driver2.driver.lastName}}</span>
 				</div>
 			</div>
 			<div class="omt">{{omt}}</div>

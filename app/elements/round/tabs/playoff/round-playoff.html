@@ -8,6 +8,7 @@
 
 <link rel="import" href="playoff-battle.html">
 <link rel="import" href="playoff-stage.html">
+<link rel="import" href="round-results.html">
 
 <dom-module id="round-playoff">
 	<template>
@@ -70,6 +71,7 @@
 			<template is="dom-repeat" items="{{playoffTree.stages}}">
 				<playoff-stage playoff-stage="{{item}}"></playoff-stage>
 			</template>
+			<round-results round-results="{{playoffTree.roundResults}}"></round-results>
 		</iron-pages>
 
 		<paper-dialog id="warningDialog" modal>
@@ -121,6 +123,7 @@
 				if (!!this.playoffTree){
 					this.shouldGeneratePlayoff = false;
 				}
+				console.log(this.playoffTree);
 			}
 
 		});
