@@ -74,18 +74,28 @@
 					var xhr = new XMLHttpRequest();
 
 					xhr.onreadystatechange = function(){
+						console.log(xhr.readyState);
+						console.log(xhr.status);
 						if (xhr.readyState === 4 && xhr.status === 200){
 							that.label = file.name;
 							that.fileId = xhr.response;
 							that.$.textInput.invalid = false;
+							app.stopLoading();
+						}
+						if (xhr.readyState === 4 && xhr.status !== 200) {
+							that.$.textInput.invalid = true;
+							that.$.textInput.errorMessage = 'There was an error. Please select a different file.';
+							app.stopLoading();
 						}
 					};
 
 					xhr.onerror = function(e){
 						console.log(e);
+						app.stopLoading();
 					};
 
 
+					app.startLoading();
 					xhr.open('POST', util.build('/file'));
 					xhr.setRequestHeader('Authorization', localStorage.token);
 					xhr.send(formData);
