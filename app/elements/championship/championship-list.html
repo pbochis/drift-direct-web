@@ -48,7 +48,7 @@
 				}
 			},
 			getChampionships: function(){
-				this.$.getChampionships.url = util.build('/championship/short');
+				this.$.getChampionships.url = util.build('/championship/short?onlyEditable=true');
 				this.$.getChampionships.generateRequest();
 			},
 			_createChampionship: function(){
