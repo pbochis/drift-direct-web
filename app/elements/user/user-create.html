@@ -47,8 +47,8 @@
 				<h2>User details</h2>
 				<form is="iron-form" id="userForm">
 					<paper-input id="email" type="email" label="Email" value="{{user.email}}" required></paper-input>
-					<!--<paper-input id="password" type="password" label="Password" value="{{user.password}}"></paper-input>-->
-					<!--<paper-input id="passwordRepeat" type="password" label="Password(Repeat)"></paper-input>-->
+					<paper-input id="password" type="password" label="Password" value="{{user.password}}" required></paper-input>
+					<paper-input id="passwordRepeat" type="password" label="Repeat password" value="{{passwordRepeat}}" error-message="Passwords do not match"></paper-input>
 					<paper-radio-group id="roleGroup" selected-item="{{selectedRole}}">
 						<template is="dom-repeat" items="{{roles}}">
 							<paper-radio-button name="{{item.role}}" value="{{item.id}}">{{_roleName(item.role)}}</paper-radio-button><br>
@@ -87,6 +87,11 @@
 				personType: {
 					type: String,
 					notify: true
+				},
+				passwordRepeat: {
+					type: String,
+					notify: true,
+					observer: '_passwordsMatch'
 				}
 			},
 			getRoles: function(){
@@ -110,9 +115,21 @@
 						return 'Judge';
 				}
 			},
+			_passwordsMatch: function(){
+				if (!this.passwordRepeat){
+					return false;
+				}
+				if (this.user.password === this.passwordRepeat){
+					this.$.passwordRepeat.invalid = false;
+					return true;
+				}
+				this.$.passwordRepeat.invalid = true;
+				return false;
+			},
 			_createUser: function(){
 				var valid = this.$.userForm.validate();
 				valid = this.$.person.validate() && valid;
+				valid = this._passwordsMatch() && valid;
 				if (!valid){
 					return;
 				}
