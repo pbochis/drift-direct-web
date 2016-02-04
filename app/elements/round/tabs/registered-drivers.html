@@ -174,7 +174,7 @@
 			},
 			_roundSet: function(){
 				//TODO: replace this with `canEditRound` which should be an api call to check permissions
-				this.canAddDrivers = util.isOrganizer() || util.isJudge();
+				this.canAddDrivers = util.isOrganizer() || util.isJudge() || util.isAdmin();
 			},
 			_addDriver: function() {
 				page('/register/' + this.round.id);

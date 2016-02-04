@@ -148,7 +148,7 @@
 			},
 			onResponse: function(){
 				app.header = this.championship.name;
-				this.canPublish = util.isOrganizer() && this.championship.published === false;
+				this.canPublish = util.isOrganizer() || util.isAdmin() && this.championship.published === false;
 			},
 			_confirmPublish: function(){
 				this.$.confirmDialog.open();
