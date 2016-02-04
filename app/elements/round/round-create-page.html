@@ -1,0 +1,58 @@
+<link rel="import" href="../../styles/shared-styles.html">
+<link rel="import" href="../shared/dd-ajax.html">
+<link rel="import" href="../championship/create-tabs/rounds/round-create.html">
+
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<dom-module id="round-create-page">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			.controls {
+				cursor: pointer;
+				@apply(--layout-horizontal);
+				@apply(--layout-center-center);
+			}
+		</style>
+		<dd-ajax
+			id="addRound"
+			method="POST"
+			on-response="_onResponse"
+			body="{{round}}">
+		</dd-ajax>
+		<round-create id="roundForm" round="{{round}}"></round-create>
+		<paper-material class="controls" on-click="_createRound">
+			<iron-icon icon="add"></iron-icon>
+			<span>Create round</span>
+		</paper-material>
+	</template>
+	<script>
+		Polymer({
+			is: 'round-create-page',
+			properties: {
+				round: {
+					type: Object,
+					notify: true,
+					value: {
+						track: {},
+						scheduele: []
+					}
+				},
+				championshipId: {
+					type: Number,
+					notify: true
+				}
+			},
+			_createRound: function(){
+				if (!this.$.roundForm.validate()){
+					return;
+				}
+				this.$.addRound.url = util.build('/championship/' + this.championshipId + '/rounds');
+				this.$.addRound.generateRequest();
+			},
+			_onResponse: function(){
+				this.round = JSON.parse('{"track": {}, "scheduele": []}');
+				page('/championship/' + this.championshipId);
+			}
+		});
+	</script>
+</dom-module>

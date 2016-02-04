@@ -90,6 +90,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			app.$.championshipCreate.getPersons();
 		});
 
+		page('/championship/:championshipId/round', function(data){
+			if (!checkIsLoggedIn()){
+				return;
+			}
+			var championshipId = data.params.championshipId;
+			app.route = 'round-create';
+			app.header = 'New round';
+			app.$.roundCreate.championshipId = championshipId;
+		});
+
 		page('/news/:championshipId', function(data){
 			if (!checkIsLoggedIn()){
 				return;

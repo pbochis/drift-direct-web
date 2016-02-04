@@ -46,7 +46,6 @@
 				<file-input id="layout" label="Track layout" file-id="{{round.track.layout}}"></file-input>
 				<h2>Round schedule</h2>
 				<schedule-create-list id="scheduleList" schedule="{{round.scheduele}}"></schedule-create-list>
-
 			</form>
 		</paper-material>
 	</template>
@@ -69,7 +68,6 @@
 				valid = this.$.scheduleList.validate() && valid;
 				console.log(this.round);
 				return valid;
-
 			}
 		});
 	</script>
