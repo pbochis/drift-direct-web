@@ -1,34 +1,54 @@
 <link rel="import" href="../../../styles/shared-styles.html">
-<link rel="import" href="../../../bower_components/paper-radio-group/paper-radio-group.html">
-<link rel="import" href="../../../bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../../elements/shared/dd-ajax.html">
-
+<link rel="import" href="selectable-driver.html">
+<!--TODO: do multiple choice of drivers here.-->
 <dom-module id="existing-driver">
 	<template>
 		<style is="custom-style" include="shared-styles">
-			.container{
-				@apply(--layout-horizontal);
-				@apply(--layout-wrap);
-				@apply(--layout-justified);
-			}
 			paper-radio-button {
 				margin: 10px;
 			}
+			.vertical {
+				@apply(--layout-vertical);
+			}
+
+			.tableHeader {
+				@apply(--layout-horizontal);
+			}
+
+			.tableHeader div {
+				@apply(--layout-flex);
+			}
+
+			paper-material {
+				height: auto;
+			}
+
+			hr {
+				margin: 5px 0;
+			}
 		</style>
+
 		<dd-ajax
 			id="getDrivers"
 			method="GET"
 			last-response="{{drivers}}">
 		</dd-ajax>
-		<paper-material>
-			<paper-radio-group selected-item="{{selectedItem}}">
-				<template is="dom-repeat" items="{{drivers}}">
-					<paper-radio-button name="{{item.id}}" value="{{item.id}}">{{item.firstName}} {{item.lastName}}</paper-radio-button>
-				</template>
-			</paper-radio-group>
 
-			<!--</div>-->
-			<paper-toast id="noDriverSelected" text="Please select a driver"></paper-toast>
+		<paper-material elevation="1">
+			<!--Trying to mimic a table here-->
+			<div id="table" class="vertical">
+				<div class="tableHeader">
+					<div>Driver</div>
+					<div></div>
+				</div>
+				<hr>
+				<template is="dom-repeat" items="{{drivers}}">
+					<selectable-driver driver="{{item}}" on-selected-driver="_selectedDriver" on-removed-driver="_removedDriver"></selectable-driver>
+					<hr>
+				</template>
+			</div>
 		</paper-material>
 	</template>
 	<script>
@@ -39,9 +59,11 @@
 					type: Array,
 					notify: true
 				},
-				selectedDriver: {
-					type: Number,
-					notify: true
+				selectedDrivers: {
+					type: Array,
+					notify: true,
+					reflectToAttribute: true,
+					value: []
 				},
 				selectedItem : {
 					type: Object,
@@ -53,11 +75,19 @@
 				this.$.getDrivers.url = util.build('/round/' + roundId + '/desk');
 				this.$.getDrivers.generateRequest();
 			},
-			_selectionChanged: function(){
-				if (this.selectedItem !== undefined){
-					this.set('selectedDriver', this.selectedItem.value);
-					console.log(this.selectedDriver);
+			_selectedDriver: function(event){
+				this.push('selectedDrivers', event.detail.id);
+				console.log(this.selectedDrivers);
+			},
+			_removedDriver: function(event){
+				var index = this.selectedDrivers.indexOf(event.detail.id);
+				if (index >= 0){
+					this.splice('selectedDrivers', index, 1);
 				}
+			},
+			clear: function(){
+				this.selectedDrivers = [];
+				this.drivers = [];
 			},
 			validate: function(){
 				if (this.selectedItem === undefined){

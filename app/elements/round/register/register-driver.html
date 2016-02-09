@@ -40,6 +40,7 @@
 		<dd-ajax
 			id="postRegister"
 			method="POST"
+			body="{{selectedDrivers}}"
 			on-response="onRegisterResponse">
 		</dd-ajax>
 
@@ -57,7 +58,7 @@
 			</paper-tabs>
 
 			<iron-pages selected="{{selectedTab}}">
-				<existing-driver id="existingDrivers" selected-driver="{{selectedDriver}}"></existing-driver>
+				<existing-driver id="existingDrivers" selected-drivers="{{selectedDrivers}}"></existing-driver>
 				<person-create-form person="{{person}}" id="createForm" person-type="Driver"></person-create-form>
 			</iron-pages>
 
@@ -88,8 +89,8 @@
 					notify: true,
 					value: 0
 				},
-				selectedDriver: {
-					type: Number,
+				selectedDrivers: {
+					type: Array,
 					notify: true
 				},
 				person: {
@@ -104,8 +105,8 @@
 			},
 			_registerDriver: function(){
 				if (this.selectedTab === 0){
-					console.log('registering existing driver');
-					this.$.postRegister.url = util.build('/round/' + this.roundId +'/register/' + this.selectedDriver);
+					console.log('registering existing drivers');
+					this.$.postRegister.url = util.build('/round/' + this.roundId +'/register');
 					this.$.postRegister.generateRequest();
 				}else{
 					if (!this.$.createForm.validate()){
@@ -117,11 +118,13 @@
 			},
 			onPostDriverResponse: function(event, r){
 				this.$.createForm.clear();
-				this.$.postRegister.url = util.build('/round/' + this.roundId +'/register/' + r.detail.response);
+				this.selectedDrivers = [r.detail.response];
+				this.$.postRegister.url = util.build('/round/' + this.roundId +'/register');
 				this.$.postRegister.generateRequest();
 			},
 			onRegisterResponse: function(event, r){
 				this.person = JSON.parse('{"driverDetails": {}}');
+				this.$.existingDrivers.clear();
 				page('/round/' + this.roundId);
 			}
 		});

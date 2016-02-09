@@ -1,0 +1,69 @@
+<link rel="import" href="../../../styles/shared-styles.html">
+<link rel="import" href="../../../bower_components/iron-image/iron-image.html">
+
+<dom-module id="selectable-driver">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			.horizontal-center {
+				@apply(--layout-horizontal);
+				@apply(--layout-center);
+			}
+			.horizontal-center div {
+				@apply(--layout-flex);
+			}
+
+			#fmm {
+				@apply(--layout-self-center);
+			}
+
+			.profilePicture {
+				width: 50px;
+				height: 50px;
+			}
+
+			#row:hover {
+				background-color: rgba(75, 92, 255, 0.13);
+			}
+
+			#picture-name > span{
+				font-weight: bold;
+			}
+		</style>
+		<div id="row" class="horizontal-center">
+			<div id="picture-name" class="horizontal-center">
+				<iron-image class="profilePicture" src="{{_profilePictureUrl(driver.profilePicture)}}" sizing="contain"></iron-image>
+				<span>{{driver.firstName}} {{driver.lastName}}</span>
+			</div>
+			<div class="horizontal around-justified layout">
+				<paper-checkbox checked="{{checked}}"></paper-checkbox>
+			</div>
+		</div>
+	</template>
+	<script>
+		Polymer({
+			is: 'selectable-driver',
+			properties: {
+				driver: {
+					type: Object,
+					notify: true
+				},
+				checked: {
+					type: Boolean,
+					notify: true,
+					value: false,
+					observer: '_selectionChanged'
+				}
+			},
+			_profilePictureUrl: function(id){
+				return util.imageLink(id);
+			},
+			_selectionChanged: function(){
+				if (this.checked){
+					this.fire('selected-driver', this.driver);
+				}else{
+					this.fire('removed-driver', this.driver);
+				}
+			}
+		});
+	</script>
+</dom-module>
