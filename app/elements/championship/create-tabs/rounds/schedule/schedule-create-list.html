@@ -13,7 +13,7 @@
 			}
 		</style>
 		<template is="dom-repeat" items="{{schedule}}">
-			<schedule-entry-create schedule-entry="{{item}}"></schedule-entry-create>
+			<schedule-entry-create schedule-entry="{{item}}" on-entry-removed="_entryRemoved"></schedule-entry-create>
 		</template>
 		<paper-button id="addEntry" raised on-click="_addScheduleEntry">Add schedule entry</paper-button>
 	</template>
@@ -41,6 +41,12 @@
 					valid = entry.validate() && valid;
 				}
 				return valid;
+			},
+			_entryRemoved: function(event){
+				var index = this.schedule.indexOf(event.detail);
+				if (index >= 0){
+					this.splice('schedule', index, 1);
+				}
 			}
 		});
 	</script>

@@ -3,6 +3,7 @@
 <link rel="import" href="../../../../../bower_components/paper-date-picker/paper-calendar.html">
 <link rel="import" href="../../../../../bower_components/paper-date-picker/paper-date-picker.html">
 <link rel="import" href="../../../../../bower_components/paper-date-picker/paper-date-picker-dialog-style.html">
+<link rel="import" href="../../../../../bower_components/iron-icons/iron-icons.html">
 
 <link rel="import" href="../../../../../elements/shared/date-time-picker.html">
 
@@ -19,12 +20,18 @@
 			date-time-picker {
 				width: 30%;
 			}
+			iron-icon {
+				cursor: pointer;
+			}
 		</style>
 
 		<div class="container">
 			<paper-input id="name" label="Schedule entry name" value="{{scheduleEntry.name}}" required></paper-input>
 			<date-time-picker id="startDate" label="Start date and time" date-time="{{scheduleEntry.startDate}}"></date-time-picker>
 			<date-time-picker id="endDate" label="End date and time" date-time="{{scheduleEntry.endDate}}"></date-time-picker>
+			<div class="vertical around-justified layout">
+				<iron-icon icon="delete" on-click="_remove"></iron-icon>
+			</div>
 		</div>
 	</template>
 	<script>
@@ -50,6 +57,9 @@
 					return false;
 				}
 				return true;
+			},
+			_remove: function(){
+				this.fire('entry-removed', this.scheduleEntry);
 			}
 		});
 	</script>
