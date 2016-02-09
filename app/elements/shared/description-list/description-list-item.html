@@ -1,5 +1,13 @@
 <link rel="import" href="../../../styles/shared-styles.html">
+<link rel="import" href="../../../bower_components/iron-image/iron-image.html">
 
+<!--
+	This element displays data under the form
+	Label Value
+	Use the attribute link, if value is a link
+	Use the attribute image if value is an image. Default height=400, width=600.
+	They can be changed by setting different attributes
+-->
 <dom-module id="description-list-item">
 	<template>
 		<style is="custom-style" include="shared-styles">
@@ -23,10 +31,13 @@
 		<template is="dom-if" if="{{showMe}}">
 			<div class="list-item">
 				<div class="item-label">{{label}}</div>
+				<template is="dom-if" if="{{image}}">
+					<iron-image id="image" height="{{height}}" width="{{width}}" src="{{_pictureUrl(value)}}" sizing="contain"></iron-image>
+				</template>
 				<template is="dom-if" if="{{link}}">
 					<a class="item-value" href$="{{value}}" target="_blank">{{value}}</a>
 				</template>
-				<template is="dom-if" if="{{!link}}">
+				<template is="dom-if" if="{{textOnly}}">
 					<div class="item-value">{{value}}</div>
 				</template>
 			</div>
@@ -50,11 +61,36 @@
 					notify: true,
 					value: false
 				},
+				image: {
+					type: Boolean,
+					notify: true,
+					value: false
+				},
+				textOnly: {
+					type: Boolean,
+					notify: true
+				},
 				showMe: {
 					type: Boolean,
 					notify: true,
 					value: false
+				},
+				height: {
+					type: Number,
+					notify: true,
+					value: 400
+				},
+				width: {
+					type: Number,
+					notify: true,
+					value: 600
 				}
+			},
+			observers: [
+				'_set(image, link)'
+			],
+			_set: function(){
+				this.textOnly = !this.image && !this.link;
 			},
 			_valueSet: function(){
 				if (this.value !== undefined && this.value !== null){
@@ -62,6 +98,9 @@
 				}else{
 					this.showMe = false;
 				}
+			},
+			_pictureUrl: function(id){
+				return util.imageLink(id);
 			}
 		});
 	</script>

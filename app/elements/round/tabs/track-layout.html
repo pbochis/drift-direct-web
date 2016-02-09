@@ -1,5 +1,7 @@
 <link rel="import" href="../../../styles/shared-styles.html">
 <link rel="import" href="../../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../shared/description-list/description-list.html">
+<link rel="import" href="../../shared/description-list/description-list-item.html">
 
 <dom-module id="track-layout">
 	<template>
@@ -16,18 +18,13 @@
 			}
 		</style>
 		<paper-material>
-			<template is="dom-if" if="{{videoUrl}}">
-				<dl>
-					<dt>Video</dt>
-					<dd><a href$="{{track.videoUrl}}" target="_blank">{{track.videoUrl}}</a></dd>
-				</dl>
-			</template>
+			<description-list>
+				<description-list-item label="Video" value="{{track.videoUrl}}" link></description-list-item>
+				<description-list-item label="Description" value="{{track.description}}"></description-list-item>
+				<description-list-item label="Judging criteria" value="{{track.judgingCriteria}}"></description-list-item>
+				<description-list-item label="Layout" value="{{track.layout}}" image height="400" width="600"></description-list-item>
+			</description-list>
 			<br>
-			<iron-image class="layout horizontal center center" src$="{{layoutUrl}}" sizing="contain"></iron-image>
-			<p style="font-weight: bold">Description:</p>
-			<div>{{track.description}}</div>
-			<p style="font-weight: bold">Judging criteria:</p>
-			<div>{{track.judgingCriteria}}</div>
 		</paper-material>
 	</template>
 	<script>

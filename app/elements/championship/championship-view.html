@@ -7,9 +7,9 @@
 <link rel="import" href="view-tabs/championship-images.html">
 <link rel="import" href="view-tabs/championship-rules.html">
 <link rel="import" href="view-tabs/judges/championship-judges.html">
-<link rel="import" href="view-tabs/rounds/round-list.html">
-<link rel="import" href="view-tabs/drivers/driver-list.html">
-<link rel="import" href="view-tabs/news/news-tab.html">
+<link rel="import" href="view-tabs/rounds/championship-round-list.html">
+<link rel="import" href="view-tabs/drivers/championship-driver-list.html">
+<link rel="import" href="view-tabs/news/championship-news-list.html">
 <link rel="import" href="../../elements/shared/description-list/description-list-item.html">
 <link rel="import" href="../../elements/shared/description-list/description-list.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
@@ -24,7 +24,7 @@
 				width: 100%;
 			}
 			paper-material {
-				height: 200px;
+				height: auto;
 			}
 			.content {
 				width: 80%;
@@ -95,21 +95,21 @@
 				</description-list>
 			</paper-material>
 			<paper-tabs noink no-slide elevation="1" selected="{{selectedTab}}">
-				<paper-tab>News</paper-tab>
-				<paper-tab>Images</paper-tab>
-				<paper-tab>Rules</paper-tab>
-				<paper-tab>Judges</paper-tab>
 				<paper-tab>Rounds</paper-tab>
 				<paper-tab>Drivers</paper-tab>
+				<paper-tab>Judges</paper-tab>
+				<paper-tab>News</paper-tab>
+				<paper-tab>Rules</paper-tab>
+				<paper-tab>Images</paper-tab>
 			</paper-tabs>
 
 			<iron-pages selected="{{selectedTab}}">
-				<news-tab championship="{{championship}}"></news-tab>
-				<championship-images championship="{{championship}}"></championship-images>
-				<championship-rules rules="{{championship.rules}}"></championship-rules>
+				<championship-round-list championship="{{championship}}"></championship-round-list>
+				<championship-driver-list drivers="{{championship.drivers}}"></championship-driver-list>
 				<championship-judges judges="{{championship.judges}}"></championship-judges>
-				<round-list championship="{{championship}}"></round-list>
-				<driver-list drivers="{{championship.drivers}}"></driver-list>
+				<championship-news-list championship="{{championship}}"></championship-news-list>
+				<championship-rules rules="{{championship.rules}}"></championship-rules>
+				<championship-images championship="{{championship}}"></championship-images>
 			</iron-pages>
 		</div>
 		<paper-dialog id="confirmDialog" modal>

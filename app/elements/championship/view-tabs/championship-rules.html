@@ -1,4 +1,6 @@
 <link rel="import" href="../../../styles/shared-styles.html">
+<link rel="import" href="../../shared/description-list/description-list.html">
+<link rel="import" href="../../shared/description-list/description-list-item.html">
 <dom-module id="championship-rules">
 	<template>
 		<style include="shared-styles"></style>
@@ -8,16 +10,10 @@
 			}
 		</style>
 		<paper-material>
-			<template is="dom-if" if="{{videoUrl}}">
-				<dl>
-					<dt>Video</dt>
-					<dd><a href$="{{rules.videoUrl}}" target="_blank">{{rules.videoUrl}}</a></dd>
-				</dl>
-			</template>
-			<br>
-			<p style="font-weight: bold">Rules:</p>
-			<div>{{rules.rules}}</div>
-
+			<description-list>
+				<description-list-item label="Video" value="{{rules.videoUrl}}" link></description-list-item>
+				<description-list-item label="Rules" value="{{rules.rules}}"></description-list-item>
+			</description-list>
 		</paper-material>
 	</template>
 	<script>
