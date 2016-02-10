@@ -1,0 +1,63 @@
+<link rel="import" href="../../../styles/shared-styles.html">
+<link rel="import" href="../../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+
+<dom-module id="removable-thumbnail">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			:host{
+				display: block;
+			}
+			.thumbnail {
+				height: 60px;
+				width: 100px;
+				margin: 10px;
+			}
+			iron-icon{
+				@apply(--layout-self-center);
+				cursor: pointer;
+			}
+			.invisible {
+				display: none;
+			}
+		</style>
+		<div class="layout vertical" on-mouseover="_onHover" on-mouseout="_onUnHover">
+			<iron-image class="thumbnail" sizing="contain" src="{{imageUrl}}"></iron-image>
+			<iron-icon class$="{{iconClass}}" icon="delete" on-click="_deleteImage"></iron-icon>
+		</div>
+	</template>
+	<script>
+		Polymer({
+			is: 'removable-thumbnail',
+			properties: {
+				imageUrl: {
+					type: String,
+					notify: true
+				},
+				iconClass: {
+					type: String,
+					notify: true,
+					value: 'invisible'
+				},
+				removable: {
+					type: Boolean,
+					notify: true,
+					value: false
+				}
+			},
+			_onHover: function(){
+				if (this.removable){
+					this.iconClass = '';
+				}
+			},
+			_onUnHover: function(){
+				this.iconClass = 'invisible';
+			},
+			_deleteImage: function(){
+				if (this.removable){
+					this.fire('image-deleted', this.imageUrl);
+				}
+			}
+		});
+	</script>
+</dom-module>

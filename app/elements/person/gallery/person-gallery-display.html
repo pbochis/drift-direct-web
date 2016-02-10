@@ -1,0 +1,81 @@
+<link rel="import" href="../../../styles/shared-styles.html">
+<link rel="import" href="../../../bower_components/iron-image/iron-image.html">
+
+<dom-module id="person-gallery-display">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			iron-image {
+				height: 60px;
+				width: 100px;
+				margin: 10px;
+			}
+			paper-material {
+				height: auto;
+			}
+		</style>
+		<template is="dom-if" if="{{showGallery}}">
+			<paper-material elevation="1">
+				<h4>Gallery</h4>
+				<div class="layout horizontal wrap">
+					<template is="dom-repeat" items="{{localUrls}}">
+						<iron-image src="{{item}}" sizing="contain"></iron-image>
+					</template>
+				</div>
+			</paper-material>
+		</template>
+	</template>
+	<script>
+		Polymer({
+			is: 'person-gallery-display',
+			properties: {
+				gallery: {
+					type: Array,
+					notify: true,
+					observer: '_gallerySet'
+				},
+				localUrls: {
+					type: Array,
+					notify: true,
+					observer: '_urlAdded'
+				},
+				showGallery: {
+					type: Boolean,
+					notify: true
+				}
+			},
+			_urlAdded: function(){
+				console.log(this.localUrls);
+			},
+			_gallerySet: function() {
+				if (!this.gallery || this.gallery.length === 0) {
+					this.showGallery = false;
+					return;
+				}
+				this.showGallery = true;
+				this.localUrls = [];
+				var that = this;
+				for (var i = 0; i < this.gallery.length; i++) {
+					var fileId = this.gallery[i];
+					console.log(fileId);
+					this._doRequest(fileId);
+				}
+			},
+			_doRequest: function(fileId){
+				var that = this;
+				var url = util.imageLink(fileId);
+				var xhr = new XMLHttpRequest();
+				xhr.onreadystatechange = function () {
+					if (xhr.readyState === 4 && xhr.status === 200) {
+						var blob = new Blob([xhr.response]);
+						var file = new File([blob], 'file' + fileId);
+						var localUrl = URL.createObjectURL(file);
+						that.push('localUrls', localUrl);
+					}
+				};
+				xhr.open("GET", url, true);
+				xhr.responseType = "arraybuffer";
+				xhr.send();
+			}
+		});
+	</script>
+</dom-module>

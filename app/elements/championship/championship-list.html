@@ -48,6 +48,7 @@
 				}
 			},
 			getChampionships: function(){
+				this.championships = [];
 				this.$.getChampionships.url = util.build('/championship/short?onlyEditable=true');
 				this.$.getChampionships.generateRequest();
 			},

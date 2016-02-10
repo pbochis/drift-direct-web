@@ -9,6 +9,8 @@
 <link rel="import" href="../../elements/shared/analog-date-picker.html">
 
 <link rel="import" href="driver/driver-details-create.html">
+<link rel="import" href="gallery/person-gallery-create.html">
+<link rel="import" href="gallery/thumbnail-list.html">
 <link rel="import" href="../../elements/shared/country-chooser.html">
 
 <dom-module id="person-create-form">
@@ -54,6 +56,7 @@
 				</validateable-autogrow-textarea>
 			</form>
 		</paper-material>
+		<thumbnail-list gallery="{{person.gallery}}" editable></thumbnail-list>
 		<template is="dom-if" if="{{isDriver}}">
 			<driver-details-create id="driverDetails" driver-details="{{person.driverDetails}}"></driver-details-create>
 		</template>
@@ -66,7 +69,8 @@
 					type: Object,
 					notify: true,
 					value: {
-						driverDetails: {}
+						driverDetails: {},
+						gallery: []
 					}
 				},
 				countries: {
@@ -84,11 +88,16 @@
 					value: false
 				}
 			},
-			getData: function(){
+			getData: function(skipClear){
+				if (!skipClear){
+					this.clear();
+				}
 				this.$.getCountries.url = util.build('/country');
 				this.$.getCountries.generateRequest();
-				this.$$('#driverDetails').getData();
 				this._typeSet();
+				if (this.idDriver){
+					this.$$('#driverDetails').getData();
+				}
 			},
 			_typeSet: function(){
 				if (!!this.personType){
@@ -99,6 +108,7 @@
 			clear: function(){
 				this.person = {};
 				this.set('person.driverDetails', {});
+				this.set('person.gallery', []);
 			},
 			validate: function(){
 //				var valid = this.$.personData.validate();

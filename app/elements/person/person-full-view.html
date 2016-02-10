@@ -6,7 +6,10 @@
 <link rel="import" href="../../elements/shared/dd-ajax.html">
 <link rel="import" href="../../elements/shared/description-list/description-list.html">
 <link rel="import" href="../../elements/shared/description-list/description-list-item.html">
-<link rel="import" href="../../elements/person/person-create-form.html">
+
+<link rel="import" href="person-create-form.html">
+<link rel="import" href="gallery/person-gallery-display.html">
+<link rel="import" href="gallery/thumbnail-list.html">
 
 <dom-module id="person-full-view">
 	<template>
@@ -50,41 +53,43 @@
 
 		<div class="content">
 			<iron-pages selected="{{selectedPage}}">
-				<paper-material elevation="1">
-
-					<div class="layout horizontal">
-						<iron-image class="profile-picture" src="{{_profilePictureUrl(person.profilePicture)}}" sizing="contain"></iron-image>
-						<h2>{{person.firstName}} {{person.lastName}}, {{person.personType}}</h2>
-						<div class="flex"></div>
-						<iron-icon icon="create" on-click="_editPerson"></iron-icon>
-					</div>
-					<h1>Personal details</h1>
-					<description-list>
-						<description-list-item label="Telephone" value="{{person.telephone}}"></description-list-item>
-						<description-list-item label="Website" value="{{person.website}}"></description-list-item>
-						<description-list-item label="Country" value="{{person.country.name}}"></description-list-item>
-						<description-list-item label="Birth date" value="{{_formatDate(person.birthDate)}}"></description-list-item>
-						<description-list-item label="Career start date" value="{{_formatDate(person.careerStartDate)}}"></description-list-item>
-						<description-list-item label="Portfolio" value="{{person.portfolio}}"></description-list-item>
-						<description-list-item label="Biography" value="{{person.description}}"></description-list-item>
-					</description-list>
-					<template is="dom-if" if="{{isDriver}}">
-						<h2>Driver details</h2>
+				<div>
+					<paper-material elevation="1">
+						<div class="layout horizontal">
+							<iron-image class="profile-picture" src="{{_profilePictureUrl(person.profilePicture)}}" sizing="contain"></iron-image>
+							<h2>{{person.firstName}} {{person.lastName}}, {{person.personType}}</h2>
+							<div class="flex"></div>
+							<iron-icon icon="create" on-click="_editPerson"></iron-icon>
+						</div>
+						<h1>Personal details</h1>
 						<description-list>
-							<description-list-item label="Team" value="{{person.driverDetails.team.name}}"></description-list-item>
-							<description-list-item label="Sponsors" value="{{sponsors}}"></description-list-item>
-							<description-list-item label="Make" value="{{person.driverDetails.make}}"></description-list-item>
-							<description-list-item label="Model" value="{{person.driverDetails.model}}"></description-list-item>
-							<description-list-item label="Engine" value="{{person.driverDetails.engine}}"></description-list-item>
-							<description-list-item label="Steering angle" value="{{person.driverDetails.steeringAngle}}"></description-list-item>
-							<description-list-item label="Suspension mods" value="{{person.driverDetails.suspensionMods}}"></description-list-item>
-							<description-list-item label="Wheels" value="{{person.driverDetails.wheels}}"></description-list-item>
-							<description-list-item label="Tires" value="{{person.driverDetails.tires}}"></description-list-item>
-							<description-list-item label="Horse power" value="{{person.driverDetails.horsePower}}"></description-list-item>
-							<description-list-item label="Other" value="{{person.driverDetails.other}}"></description-list-item>
+							<description-list-item label="Telephone" value="{{person.telephone}}"></description-list-item>
+							<description-list-item label="Website" value="{{person.website}}"></description-list-item>
+							<description-list-item label="Country" value="{{person.country.name}}"></description-list-item>
+							<description-list-item label="Birth date" value="{{_formatDate(person.birthDate)}}"></description-list-item>
+							<description-list-item label="Career start date" value="{{_formatDate(person.careerStartDate)}}"></description-list-item>
+							<description-list-item label="Portfolio" value="{{person.portfolio}}"></description-list-item>
+							<description-list-item label="Biography" value="{{person.description}}"></description-list-item>
 						</description-list>
-					</template>
-				</paper-material>
+						<template is="dom-if" if="{{isDriver}}">
+							<h2>Driver details</h2>
+							<description-list>
+								<description-list-item label="Team" value="{{person.driverDetails.team.name}}"></description-list-item>
+								<description-list-item label="Sponsors" value="{{sponsors}}"></description-list-item>
+								<description-list-item label="Make" value="{{person.driverDetails.make}}"></description-list-item>
+								<description-list-item label="Model" value="{{person.driverDetails.model}}"></description-list-item>
+								<description-list-item label="Engine" value="{{person.driverDetails.engine}}"></description-list-item>
+								<description-list-item label="Steering angle" value="{{person.driverDetails.steeringAngle}}"></description-list-item>
+								<description-list-item label="Suspension mods" value="{{person.driverDetails.suspensionMods}}"></description-list-item>
+								<description-list-item label="Wheels" value="{{person.driverDetails.wheels}}"></description-list-item>
+								<description-list-item label="Tires" value="{{person.driverDetails.tires}}"></description-list-item>
+								<description-list-item label="Horse power" value="{{person.driverDetails.horsePower}}"></description-list-item>
+								<description-list-item label="Other" value="{{person.driverDetails.other}}"></description-list-item>
+							</description-list>
+						</template>
+					</paper-material>
+					<thumbnail-list gallery="{{person.gallery}}"></thumbnail-list>
+				</div>
 				<div>
 					<person-create-form id="personForm" person="{{person}}" person-type="{{person.personType}}"></person-create-form>
 					<paper-material class="controls" on-click="_updatePerson">
@@ -148,7 +153,7 @@
 			},
 			_editPerson: function(){
 				this.selectedPage = 1;
-				this.$.personForm.getData();
+				this.$.personForm.getData(true);
 			},
 			_updatePerson: function(){
 				if (!this.$.personForm.validate()){

@@ -1,0 +1,85 @@
+<link rel="import" href="../../../styles/shared-styles.html">
+<link rel="import" href="../../shared/file-input.html">
+<link rel="import" href="../../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="removable-thumbnail.html">
+
+<dom-module id="person-gallery-create">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			paper-material{
+				height: auto;
+			}
+			.thumbnail {
+				height: 60px;
+				width: 100px;
+				margin: 10px;
+			}
+			file-input {
+				display: none;
+			}
+		</style>
+		<paper-material>
+			<h4>Gallery</h4>
+			<div id="thumbnail-container" class="layout horizontal wrap">
+				<template is="dom-repeat" items="{{localUrls}}">
+					<removable-thumbnail image-url="{{item}}" on-image-deleted="_imageDeleted"></removable-thumbnail>
+				</template>
+			</div>
+			<paper-button raised colorful on-click="_addImage">Upload image</paper-button>
+		</paper-material>
+		<file-input id="fileInput" file-id="{{photoId}}" local-url="{{photoUrl}}"></file-input>
+	</template>
+	<script>
+		Polymer({
+			is: 'person-gallery-create',
+			properties: {
+				gallery: {
+					type: Array,
+					notify: true,
+					reflectToAttribute: true,
+					value: [],
+					observer: ''
+				},
+				localUrls: {
+					type: Array,
+					notify: true,
+					value: []
+				},
+				photoId: {
+					type: Number,
+					notify: true
+				},
+				photoUrl: {
+					type: String,
+					notify: true
+				}
+			},
+			observers: [
+				'_imageAdded(photoId, photoUrl)'
+			],
+			_addImage: function(){
+				this.$.fileInput.choseFile();
+			},
+			_imageAdded: function(){
+				if (!this.photoId || !this.photoUrl){
+					return;
+				}
+				if (this.gallery.indexOf(this.photoId) > -1){
+					return;
+				}
+				this.push('gallery', this.photoId);
+				this.push('localUrls', this.photoUrl);
+			},
+			_imageDeleted: function(event){
+				var index = this.localUrls.indexOf(event.detail);
+				if (index > -1){
+					this.splice('gallery', index, 1);
+					this.splice('localUrls', index, 1);
+				}
+			}
+		});
+	</script>
+</dom-module>

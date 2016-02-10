@@ -1,0 +1,134 @@
+<link rel="import" href="/styles/shared-styles.html">
+
+<dom-module id="thumbnail-list">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			paper-material{
+				height: auto;
+			}
+			.thumbnail {
+				height: 60px;
+				width: 100px;
+				margin: 10px;
+			}
+			file-input {
+				display: none;
+			}
+		</style>
+		<paper-material>
+			<h4>Gallery</h4>
+			<div id="thumbnail-container" class="layout horizontal wrap">
+				<template is="dom-repeat" items="{{localUrls}}">
+					<removable-thumbnail image-url="{{item.localUrl}}" on-image-deleted="_imageDeleted" removable="{{editable}}"></removable-thumbnail>
+				</template>
+			</div>
+			<template is="dom-if" if="{{editable}}">
+				<paper-button raised colorful on-click="_addImage">Upload image</paper-button>
+			</template>
+		</paper-material>
+		<file-input id="fileInput" file-id="{{photoId}}" local-url="{{photoUrl}}"></file-input>
+	</template>
+	<script>
+		Polymer({
+			is: 'thumbnail-list',
+			properties: {
+				gallery: {
+					type: Array,
+					notify: true,
+					reflectToAttribute: true,
+					observer: '_gallerySet'
+				},
+				editable: {
+					type: Boolean,
+					notify: true,
+					value: false
+				},
+				localUrls: {
+					type: Array,
+					notify: true,
+					value: []
+				},
+				photoId: {
+					type: Number,
+					notify: true
+				},
+				photoUrl: {
+					type: String,
+					notify: true
+				}
+			},
+			observers: [
+				'_imageAdded(photoId, photoUrl)'
+			],
+			_addImage: function(){
+				this.$.fileInput.choseFile();
+			},
+			_imageAdded: function(){
+				if (!this.photoId || !this.photoUrl){
+					return;
+				}
+				if (this.gallery.indexOf(this.photoId) > -1){
+					return;
+				}
+				var url = {};
+				url.photoId = this.photoId;
+				url.localUrl = this.photoUrl;
+				this.push('gallery', this.photoId);
+				this.push('localUrls', url);
+			},
+			_imageDeleted: function(event){
+				var url = event.detail;
+				var urlIndex = -1;
+				var galleryId = -1;
+				for (var i = 0; i < this.localUrls.length; i++){
+					if (this.localUrls[i].localUrl === url){
+						console.log(this.localUrls[i]);
+						urlIndex = i;
+						galleryId = this.localUrls[i].photoId;
+						break;
+					}
+				}
+				if (urlIndex > -1){
+					this.splice('localUrls', urlIndex, 1);
+				}else{
+					return;
+				}
+				var galleryIndex = this.gallery.indexOf(galleryId);
+				if (galleryIndex > -1) {
+					this.splice('gallery', galleryIndex, 1);
+				}
+			},
+			_gallerySet: function() {
+				if (!this.gallery || this.gallery.length === 0) {
+					this.showGallery = this.editable;
+					return;
+				}
+				this.showGallery = true;
+				this.localUrls = [];
+				var that = this;
+				for (var i = 0; i < this.gallery.length; i++) {
+					var fileId = this.gallery[i];
+					this._doRequest(fileId);
+				}
+			},
+			_doRequest: function(fileId){
+				var that = this;
+				var url = util.imageLink(fileId);
+				var xhr = new XMLHttpRequest();
+				xhr.onreadystatechange = function () {
+					if (xhr.readyState === 4 && xhr.status === 200) {
+						var blob = new Blob([xhr.response]);
+						var file = new File([blob], 'file' + fileId);
+						var url = {};
+						url.photoId = fileId;
+						url.localUrl = URL.createObjectURL(file);
+						that.push('localUrls', url);
+					}
+				};
+				xhr.open("GET", url, true);
+				xhr.responseType = "arraybuffer";
+				xhr.send();
+			}
+		});
+	</script>
+</dom-module>

@@ -117,7 +117,9 @@
 							<template is="dom-if" if="{{_canDelete(item)}}">
 								<paper-icon-button icon="delete" title="Delete" on-click="_confirmDelete"></paper-icon-button>
 							</template>
-							<paper-icon-button icon="forward" title="Judge" on-click="_judgeDriver"></paper-icon-button>
+							<template is="dom-if" if="{{_canJudge(item)}}">
+								<paper-icon-button icon="forward" title="Judge" on-click="_judgeDriver"></paper-icon-button>
+							</template>
 						</div>
 					</div>
 					<hr>
@@ -153,6 +155,9 @@
 			},
 			_canDelete: function(item){
 				return item.runsCompleted === 0;
+			},
+			_canJudge: function(item){
+				return item.runsCompleted < 2 && util.isJudge();
 			},
 			_confirmDelete: function(e){
 				this.selectedQualifier = e.model.dataHost.dataHost.__data__.item;
