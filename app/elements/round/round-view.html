@@ -58,7 +58,7 @@
 				<div class="layout horizontal">
 					<h1>{{round.name}}</h1>
 					<div class="flex"></div>
-					<iron-icon icon="delete"></iron-icon>
+					<iron-icon icon="create" on-click="_edit"></iron-icon>
 				</div>
 				<description-list>
 					<description-list-item label="Tickets" value="{{round.ticketsUrl}}" link></description-list-item>
@@ -112,6 +112,9 @@
 			formatDate: function(longDate){
 				var date = new Date(longDate);
 				return util.formatDate(date);
+			},
+			_edit: function(){
+				page('/round/' + this.round.id + '/edit');
 			}
 		});
 	</script>

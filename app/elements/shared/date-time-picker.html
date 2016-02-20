@@ -37,7 +37,8 @@
 				dateTime: {
 					type: Object,
 					notify: true,
-					reflectToAttribute: true
+					reflectToAttribute: true,
+					observer: '_dateTimeSet'
 				},
 				label: {
 					type: String,
@@ -49,9 +50,18 @@
 					value: 0
 				}
 			},
+			_dateTimeSet: function(){
+				if (!(this.dateTime instanceof Date)){
+					var date = new Date(this.dateTime);
+					this.$.datePicker.date = date;
+					this.$.timePicker.hour = date.getHours();
+					this.$.timePicker.minute = date.getMinutes();
+					this._confirm();
+				}
+			},
 			_showPicker: function() {
 				this.step = 0;
-				this.$.dialog.toggle();
+				this.$.dialog.open();
 			},
 			_nextStep: function(){
 				if (this.step === 1){
@@ -65,7 +75,7 @@
 				var date = this.$.datePicker.date;
 				this.dateTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), this.$.timePicker.hour, this.$.timePicker.minute, 0, 0);
 				this._setDate(this.dateTime);
-				this.$.dialog.toggle();
+				this.$.dialog.close();
 			},
 			_setDate: function(date){
 //				this.$.textInput.value = date.getFullYear() + '-' + date.getMonth() + 1 + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes();

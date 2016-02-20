@@ -18,13 +18,29 @@
 				@apply(--layout-center-center);
 			}
 		</style>
+
 		<dd-ajax
 			id="addRound"
 			method="POST"
 			on-response="_onResponse"
 			body="{{round}}">
 		</dd-ajax>
+
+		<dd-ajax
+			id="getEditModel"
+			method="GET"
+			last-response="{{round}}">
+		</dd-ajax>
+
+		<dd-ajax
+			id="updateRound"
+			method="PUT"
+			on-response="_onResponse"
+			body="{{round}}">
+		</dd-ajax>
+
 		<round-create id="roundForm" round="{{round}}"></round-create>
+
 		<paper-material class="controls" on-click="_createRound">
 			<iron-icon icon="add"></iron-icon>
 			<span>Create round</span>
@@ -45,18 +61,38 @@
 				championshipId: {
 					type: Number,
 					notify: true
+				},
+				editMode: {
+					type: Boolean,
+					notify: true,
+					value: false
 				}
+			},
+			getRound: function(roundId){
+				this.$.getEditModel.url = util.build('/round/' + roundId + '/edit');
+				this.$.getEditModel.generateRequest();
+				this.editMode = true;
 			},
 			_createRound: function(){
 				if (!this.$.roundForm.validate()){
 					return;
 				}
-				this.$.addRound.url = util.build('/championship/' + this.championshipId + '/rounds');
-				this.$.addRound.generateRequest();
+				if (this.editMode){
+					this.$.updateRound.url = util.build('/round/' + this.round.id);
+					this.$.updateRound.generateRequest();
+				}else{
+					this.$.addRound.url = util.build('/championship/' + this.championshipId + '/rounds');
+					this.$.addRound.generateRequest();
+				}
 			},
 			_onResponse: function(){
+				if (this.editMode){
+					page('/round/' + this.round.id);
+				}else{
+					page('/championship/' + this.championshipId);
+				}
 				this.round = JSON.parse('{"track": {}, "scheduele": []}');
-				page('/championship/' + this.championshipId);
+				this.editMode = false;
 			}
 		});
 	</script>

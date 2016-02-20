@@ -100,6 +100,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			app.$.roundCreate.championshipId = championshipId;
 		});
 
+		page('/round/:roundId/edit', function(data){
+			if (!checkIsLoggedIn()){
+				return;
+			}
+			var roundId = data.params.roundId;
+			app.route = 'round-create';
+			app.header = 'Edit round';
+			app.$.roundCreate.getRound(roundId);
+		});
+
 		page('/news/:championshipId', function(data){
 			if (!checkIsLoggedIn()){
 				return;
