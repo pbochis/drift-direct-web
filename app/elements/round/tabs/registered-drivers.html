@@ -219,7 +219,8 @@
 
 			},
 			_judgeDriver: function(e){
-				var qualifier = e.model.item;
+//				var qualifier = e.model.item;
+				var qualifier =  e.model.dataHost.dataHost.__data__.item;
 				if (util.isJudge()){
 					page('/qualifiers/' + qualifier.id);
 				}
