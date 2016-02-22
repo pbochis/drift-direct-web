@@ -137,7 +137,6 @@
 			getQualifierJudge: function(qualifierId){
 				this.$.startJudging.url = util.build('/qualifier/' + qualifierId + '/start');
 				this.$.startJudging.generateRequest();
-				console.log('judging!');
 			},
 			_onError: function(event, e){
 				if (e.detail.request.xhr.status === 412) {
@@ -190,7 +189,6 @@
 			_clear: function(){
 				var pointsElements = Polymer.dom(this.root).querySelectorAll('qualifier-points-slider');
 				for (var i = 0; i < pointsElements.length; i++){
-					console.log('clearing ' + pointsElements[i].awardedPoints);
 					pointsElements[i].clear();
 				}
 				this.$.positiveComments = [];
