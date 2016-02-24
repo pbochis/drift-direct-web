@@ -90,8 +90,16 @@
 			properties: {
 				roundResults: {
 					type: Object,
-					notify: true
+					notify: true,
+					observer: '_resultsSet'
 				}
+			},
+			_resultsSet: function(){
+				var results = this.roundResults;
+				results.sort(function(a, b){
+					return b.roundScore - a.roundScore;
+				});
+				this.roundResults = results;
 			},
 			_profilePictureUrl: function(id){
 				return util.imageLink(id);
