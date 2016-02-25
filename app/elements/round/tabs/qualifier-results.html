@@ -100,7 +100,7 @@
 				}
 			},
 			_roundSet: function(){
-				this.qualifiers = this.round.qualifiers;
+				this.qualifiers = this.round.qualificationResults;
 			},
 			_qualifiersSet: function(){
 				var tableData = [];
@@ -111,13 +111,13 @@
 						tableData.push(qualifier);
 					}
 				}
-				tableData.sort(function(a, b){
-					var dif = b.points - a.points;
-					if (dif !== 0){
-						return dif;
-					}
-					return Math.min(b.firstRunScore, b.secondRunScore) - Math.min(a.firstRunScore, a.secondRunScore);
-				});
+//				tableData.sort(function(a, b){
+//					var dif = b.points - a.points;
+//					if (dif !== 0){
+//						return dif;
+//					}
+//					return Math.min(b.firstRunScore, b.secondRunScore) - Math.min(a.firstRunScore, a.secondRunScore);
+//				});
 				this.tableData = tableData;
 			},
 			_profilePictureUrl: function(id){

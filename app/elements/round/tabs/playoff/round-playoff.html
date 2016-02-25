@@ -5,6 +5,7 @@
 <link rel="import" href="../../../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../../../bower_components/paper-toast/paper-toast.html">
 
 <link rel="import" href="playoff-battle.html">
 <link rel="import" href="playoff-stage.html">
@@ -51,6 +52,13 @@
 			on-response="onResponse">
 		</dd-ajax>
 
+		<dd-ajax
+			id="generateTree"
+			method="POST"
+			on-response="_onGenerateResponse"
+			on-error="_onGenerateError">
+		</dd-ajax>
+
 		<paper-tabs noink no-slide elevation="1" selected="{{selectedTab}}">
 			<paper-tab>Top 32</paper-tab>
 			<paper-tab>Top 16</paper-tab>
@@ -78,11 +86,13 @@
 			<div class="warning">You should only generate the playoff tree after _ALL_ the drivers have completed both of their qualification runs.</div>
 			<div class="warning">Are you sure you want to complete this action?</div>
 			<div class="controls">
-				<paper-button autofocus on-click="_getTree">Yes</paper-button>
+				<paper-button autofocus on-click="_generateTree">Yes</paper-button>
 				<div class="flex"></div>
 				<paper-button dialog-dismiss>No</paper-button>
 			</div>
 		</paper-dialog>
+
+		<paper-toast id="playoffToast" text="Battle tree can not be generated. Qualifications are not finalized."></paper-toast>
 	</template>
 	<script>
 		Polymer({
@@ -111,6 +121,19 @@
 			_confirmPlayoff: function(){
 				this.$.warningDialog.open();
 			},
+			_generateTree: function(){
+				this.$.warningDialog.close();
+				this.$.generateTree.url = util.build('/round/' + this.round.id + '/playoff/start');
+				this.$.generateTree.generateRequest();
+			},
+			_onGenerateResponse: function(event, r){
+				this._getTree();
+			},
+			_onGenerateError: function(event, e){
+				if (e.detail.request.xhr.status === 412){
+					this.$.playoffToast.show();
+				}
+			},
 			_getTree: function(){
 				this.$.getTree.url = util.build('/round/' + this.round.id + '/playoffs');
 				this.$.getTree.generateRequest();
@@ -122,8 +145,9 @@
 				this.$.warningDialog.close();
 				if (!!this.playoffTree){
 					this.shouldGeneratePlayoff = false;
+				}else{
+					this.shouldGeneratePlayoff = true;
 				}
-				console.log(this.playoffTree);
 			}
 
 		});
