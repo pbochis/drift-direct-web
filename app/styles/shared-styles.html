@@ -79,6 +79,19 @@
 				padding: 0 16px;
 			}
 
+			paper-tabs{
+				box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+				background-color: white;
+				--paper-tabs-selection-bar: {
+					background-color: black;
+				};
+			}
+
+			paper-tabs paper-tab.iron-selected {
+				color: rgba(0, 0, 0, 1);
+				background-color: rgba(0, 0, 0, 0.05);
+			}
+
 			paper-toolbar.tall .app-name {
 				font-size: 40px;
 				font-weight: 300;
