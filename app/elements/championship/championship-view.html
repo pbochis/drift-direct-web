@@ -9,9 +9,9 @@
 <link rel="import" href="view-tabs/judges/championship-judges.html">
 <link rel="import" href="view-tabs/rounds/championship-round-list.html">
 <link rel="import" href="view-tabs/drivers/championship-driver-list.html">
-<link rel="import" href="view-tabs/news/championship-news-list.html">
 <link rel="import" href="../../elements/shared/description-list/description-list-item.html">
 <link rel="import" href="../../elements/shared/description-list/description-list.html">
+<link rel="import" href="../../elements/shared/image-link/image-link-list.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 
 <dom-module id="championship-view">
@@ -99,7 +99,7 @@
 				<championship-round-list championship="{{championship}}"></championship-round-list>
 				<championship-driver-list drivers="{{championship.drivers}}"></championship-driver-list>
 				<championship-judges judges="{{championship.judges}}"></championship-judges>
-				<championship-news-list championship="{{championship}}"></championship-news-list>
+				<image-link-list image-links="{{championship.news}}" create-url="{{newsCreateUrl}}" refresh-url="{{newsRefreshUrl}}"></image-link-list>
 				<championship-rules rules="{{championship.rules}}"></championship-rules>
 				<championship-images championship="{{championship}}"></championship-images>
 			</iron-pages>
@@ -129,6 +129,14 @@
 					type: Boolean,
 					notify: true,
 					value: false
+				},
+				newsCreateUrl: {
+					type: String,
+					notify: true
+				},
+				newsRefreshUrl: {
+					type: String,
+					notify: true
 				}
 			},
 			_organizerName: function(firstName, lastName){
@@ -141,6 +149,9 @@
 			onResponse: function(){
 				app.header = this.championship.name;
 				this.canPublish = util.isOrganizer() || util.isAdmin() && this.championship.published === false;
+				this.newsCreateUrl = '/championship/' + this.championship.id + '/news';
+				this.newsRefreshUrl = '/championship/' + this.championship.id ;
+
 			},
 			_confirmPublish: function(){
 				this.$.confirmDialog.open();

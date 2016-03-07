@@ -1,0 +1,100 @@
+<link rel="import" href="../../../styles/shared-styles.html">
+<link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../../elements/shared/dd-ajax.html">
+
+<link rel="import" href="image-link.html">
+<link rel="import" href="image-link-form.html">
+
+<dom-module id="image-link-list">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			.container {
+				@apply(--layout-vertical)
+			}
+			.controls {
+				cursor: pointer;
+				@apply(--layout-horizontal);
+				@apply(--layout-center-center);
+			}
+			paper-dialog {
+				background-color: white;
+				position: fixed;
+				top:200px;
+				margin: auto;
+				padding: 16px;
+				width: 800px;
+				height: auto;
+			}
+		</style>
+
+		<dd-ajax
+			id="postImageLink"
+			method="POST"
+			body="{{newInstance}}"
+			on-response="_onResponse"
+			on-error="_onError">
+		</dd-ajax>
+
+		<div class="container">
+			<paper-material class="controls" on-click="_openForm">
+				<iron-icon icon="add"></iron-icon>
+				<span>Create</span>
+			</paper-material>
+			<template is="dom-repeat" items="{{imageLinks}}">
+				<image-link image-link="{{item}}"></image-link>
+			</template>
+		</div>
+
+		<paper-dialog id="createDialog" modal>
+			<image-link-form id="createForm" image-link="{{newInstance}}"></image-link-form>
+			<div class="controls">
+ 				<paper-button raised autofocus on-click="_create">Save</paper-button>
+				<paper-button raised dialog-dismiss>Cancel</paper-button>
+			</div>
+		</paper-dialog>
+	</template>
+	<script>
+		Polymer({
+			is: 'image-link-list',
+			properties: {
+				imageLinks: {
+					type: Array,
+					notify: true
+				},
+				createUrl: {
+					type: String,
+					notify: true
+				},
+				newInstance: {
+					type: Object,
+					notify: true
+				},
+				refreshUrl: {
+					type: String,
+					notify: true
+				}
+			},
+			_create: function create(){
+				console.log(this.newInstance);
+				if (!this.$.createForm.validate()){
+					return;
+				}
+				console.log(this.newInstance);
+				this.$.createDialog.close();
+				this.$.postImageLink.url = util.build(this.createUrl);
+				this.$.postImageLink.generateRequest();
+			},
+			_onResponse: function(event, r){
+				page(this.refreshUrl);
+			},
+			_openForm: function(){
+				this.$.createForm.clear();
+				this.$.createDialog.open();
+			},
+			_onError: function(event, err){
+				//TODO: Handle errors
+				console.log(err);
+			}
+		});
+	</script>
+</dom-module>

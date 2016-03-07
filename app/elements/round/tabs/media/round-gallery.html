@@ -1,0 +1,64 @@
+<link rel="import" href="../../../../styles/shared-styles.html">
+<link rel="import" href="../../../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../../elements/shared/dd-ajax.html">
+
+<dom-module id="round-gallery">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			iron-icon {
+				cursor: pointer;
+			}
+		</style>
+		<dd-ajax
+			id="postGallery"
+			body="{{round.gallery}}"
+			on-response="_onResponse"
+			on-error="onError"
+			method="POST">
+		</dd-ajax>
+		<paper-material>
+			<div class="layout horizontal">
+				<div class="flex"></div>
+				<template is="dom-if" if="{{!editMode}}">
+					<iron-icon icon="create" on-click="_edit"></iron-icon>
+				</template>
+				<template is="dom-if" if="{{editMode}}">
+					<iron-icon icon="check" on-click="_save"></iron-icon>
+				</template>
+			</div>
+			<thumbnail-list id="gallery" gallery="{{round.gallery}}"></thumbnail-list>
+		</paper-material>
+	</template>
+	<script>
+		Polymer({
+			is: 'round-gallery',
+			properties: {
+				round: {
+					type: Object,
+					notify: true
+				},
+				editMode: {
+					type: Boolean,
+					value: 0,
+					notify: false
+				}
+			},
+			_edit: function(){
+				this.editMode = true;
+				this.$.gallery.editable = true;
+			},
+			_save: function(){
+				this.$.postGallery.url = util.build('/round/' + this.round.id + '/photos');
+				this.$.postGallery.generateRequest();
+			},
+			_onResponse: function(event, r){
+				this.editMode = false;
+				this.$.gallery.editable = false;
+			},
+			_onError: function(event, err){
+				//todo: do somth
+			}
+		});
+	</script>
+</dom-module>

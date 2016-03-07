@@ -56,7 +56,9 @@
 				</validateable-autogrow-textarea>
 			</form>
 		</paper-material>
-		<thumbnail-list gallery="{{person.gallery}}" editable></thumbnail-list>
+		<paper-material elevation="1">
+			<thumbnail-list gallery="{{person.gallery}}" editable></thumbnail-list>
+		</paper-material>
 		<template is="dom-if" if="{{isDriver}}">
 			<driver-details-create id="driverDetails" driver-details="{{person.driverDetails}}"></driver-details-create>
 		</template>

@@ -10,6 +10,7 @@
 <link rel="import" href="tabs/registered-drivers.html">
 <link rel="import" href="tabs/qualifier-results.html">
 <link rel="import" href="tabs/playoff/round-playoff.html">
+<link rel="import" href="tabs/media/round-media.html">
 
 <link rel="import" href="../../elements/shared/description-list/description-list.html">
 <link rel="import" href="../../elements/shared/description-list/description-list-item.html">
@@ -64,6 +65,7 @@
 				<paper-tab>Qualification List</paper-tab>
 				<paper-tab>Qualifications results</paper-tab>
 				<paper-tab>Top 32/16 Battles</paper-tab>
+				<paper-tab>Media</paper-tab>
 			</paper-tabs>
 
 			<iron-pages selected="{{selectedTab}}">
@@ -72,6 +74,7 @@
 				<registered-drivers round="{{round}}"></registered-drivers>
 				<qualifier-results round="{{round}}"></qualifier-results>
 				<round-playoff round="{{round}}"></round-playoff>
+				<round-media round="{{round}}"></round-media>
 			</iron-pages>
 		</div>
 

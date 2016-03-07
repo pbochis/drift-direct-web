@@ -1,0 +1,28 @@
+<link rel="import" href="../../../styles/shared-styles.html">
+<link rel="import" href="../../../elements/shared/description-list/description-list.html">
+<link rel="import" href="../../../elements/shared/description-list/description-list-item.html">
+
+<dom-module id="image-link">
+	<template>
+		<style is="custom-style" include="shared-styles">
+		</style>
+		<paper-material id="container">
+			<description-list>
+				<description-list-item label="Name" value="{{imageLink.name}}"></description-list-item>
+				<description-list-item label="Description" value="{{imageLink.description}}"></description-list-item>
+				<description-list-item label="Link" value="{{imageLink.url}}" link></description-list-item>
+			</description-list>
+		</paper-material>
+	</template>
+	<script>
+		Polymer({
+			is: 'image-link',
+			properties: {
+				imageLink: {
+					type: Object,
+					notify: true
+				}
+			}
+		});
+	</script>
+</dom-module>

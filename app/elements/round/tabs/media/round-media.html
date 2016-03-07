@@ -1,0 +1,67 @@
+<link rel="import" href="../../../../styles/shared-styles.html">
+
+<link rel="import" href="../../../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../../../bower_components/iron-pages/iron-pages.html">
+
+<link rel="import" href="../../../../elements/shared/image-link/image-link-list.html">
+<link rel="import" href="../../../../elements/person/gallery/thumbnail-list.html">
+
+<link rel="import" href="round-gallery.html">
+
+<dom-module id="round-media">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			:host {
+				display: block;
+				margin-top: 50px;
+			}
+		</style>
+
+		<paper-tabs noink no-slide elevation="1" selected="{{selectedTab}}">
+			<paper-tab>Gallery</paper-tab>
+			<paper-tab>Official Galleries</paper-tab>
+			<paper-tab>Highlights</paper-tab>
+		</paper-tabs>
+
+		<iron-pages selected="{{selectedTab}}">
+			<round-gallery round="{{round}}"></round-gallery>
+			<image-link-list image-links="{{round.officialGalleries}}" create-url="{{galleriesCreateUrl}}" refresh-url="{{refreshUrl}}"></image-link-list>
+			<image-link-list image-links="{{round.highlights}}" create-url="{{highlightsCreateUrl}}" refresh-url="{{refreshUrl}}"></image-link-list>
+		</iron-pages>
+	</template>
+	<script>
+		Polymer({
+			is: 'round-media',
+			properties: {
+				round: {
+					type: Object,
+					notify: true,
+					observer: '_roundSet'
+				},
+				selectedTab: {
+					type: Number,
+					notify: true,
+					value: 0
+				},
+				galleriesCreateUrl: {
+					type: String,
+					notify: true
+				},
+				highlightsCreateUrl: {
+					type: String,
+					notify: true
+				},
+				refreshUrl: {
+					type: String,
+					notify: true
+				}
+			},
+			_roundSet: function(){
+				console.log(this.round);
+				this.galleriesCreateUrl = '/round/' + this.round.id + '/gallery';
+				this.highlightsCreateUrl= '/round/' + this.round.id + '/highlights';
+				this.refreshUrl = '/round/' + this.round.id;
+			}
+		});
+	</script>
+</dom-module>

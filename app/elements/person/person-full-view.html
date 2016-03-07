@@ -88,7 +88,9 @@
 							</description-list>
 						</template>
 					</paper-material>
-					<thumbnail-list gallery="{{person.gallery}}"></thumbnail-list>
+					<paper-material elevation="1">
+						<thumbnail-list gallery="{{person.gallery}}"></thumbnail-list>
+					</paper-material>
 				</div>
 				<div>
 					<person-create-form id="personForm" person="{{person}}" person-type="{{person.personType}}"></person-create-form>

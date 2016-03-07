@@ -29,6 +29,7 @@
 		<dd-ajax
 			id="postChampionship"
 			method="POST"
+			on-response="_onPostChampResponse"
 			body="{{championship}}">
 		</dd-ajax>
 
@@ -121,6 +122,9 @@
 				this.$.postChampionship.url = util.build('/championship');
 				this.$.postChampionship.generateRequest();
 				console.log('created');
+			},
+			_onPostChampResponse: function(event, e){
+				page('/');
 			}
 		});
 	</script>

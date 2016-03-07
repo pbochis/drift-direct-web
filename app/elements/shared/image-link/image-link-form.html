@@ -1,0 +1,46 @@
+<link rel="import" href="../../../styles/shared-styles.html">
+
+<link rel="import" href="../../../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../elements/shared/validateable-autogrow-textarea.html">
+<link rel="import" href="../../../elements/shared/file-input.html">
+
+
+<dom-module id="image-link-form">
+	<template>
+		<style is="custom-style" include="shared-styles"></style>
+
+		<form is="iron-form" id="imageLinkData">
+			<paper-input id="name" label="Name*" value="{{imageLink.name}}" required></paper-input>
+			<paper-input id="url" label="Url*" value="{{imageLink.url}}" required></paper-input>
+			<file-input id="logo" label="Background image" file-id="{{imageLink.logo}}"></file-input>
+			<validateable-autogrow-textarea id="description"
+											place-holder="Description"
+											bind-value="{{imageLink.description}}"
+											rows="5"
+											max-rows="5"
+											required="false">
+			</validateable-autogrow-textarea>
+		</form>
+
+	</template>
+	<script>
+		Polymer({
+			is: 'image-link-form',
+			properties: {
+				imageLink: {
+					type: Object,
+					notify: true,
+					reflectToAttribute: true
+				}
+			},
+			validate: function(){
+				return this.$.imageLinkData.validate();
+			},
+			clear: function(){
+				this.imageLink = {};
+			}
+		});
+	</script>
+</dom-module>

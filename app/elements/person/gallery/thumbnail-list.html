@@ -15,17 +15,14 @@
 				display: none;
 			}
 		</style>
-		<paper-material>
-			<h4>Gallery</h4>
-			<div id="thumbnail-container" class="layout horizontal wrap">
-				<template is="dom-repeat" items="{{localUrls}}">
-					<removable-thumbnail image-url="{{item.localUrl}}" on-image-deleted="_imageDeleted" removable="{{editable}}"></removable-thumbnail>
-				</template>
-			</div>
-			<template is="dom-if" if="{{editable}}">
-				<paper-button raised colorful on-click="_addImage">Upload image</paper-button>
+		<div id="thumbnail-container" class="layout horizontal wrap">
+			<template is="dom-repeat" items="{{localUrls}}">
+				<removable-thumbnail image-url="{{item.localUrl}}" on-image-deleted="_imageDeleted" removable="{{editable}}"></removable-thumbnail>
 			</template>
-		</paper-material>
+		</div>
+		<template is="dom-if" if="{{editable}}">
+			<paper-button raised colorful on-click="_addImage">Upload image</paper-button>
+		</template>
 		<file-input id="fileInput" file-id="{{photoId}}" local-url="{{photoUrl}}"></file-input>
 	</template>
 	<script>
