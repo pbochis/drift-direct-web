@@ -42,6 +42,12 @@
 			last-response="{{playoffTree}}"
 			on-response="onResponse">
 		</dd-ajax>
+		
+		<dd-ajax
+			id="canGenerateTree"
+			method="GET"
+			last-response="{{canGenerateTree}}">
+		</dd-ajax>
 
 		<dd-ajax
 			id="generateTree"
@@ -59,7 +65,7 @@
 			<paper-tab>Results</paper-tab>
 		</paper-tabs>
 
-		<template is="dom-if" if="{{shouldGeneratePlayoff}}">
+		<template is="dom-if" if="{{canGenerateTree}}">
 			<paper-material class="controls" elevation="1" on-click="_confirmPlayoff">
 				<iron-icon icon="check"></iron-icon>
 				<div>Generate the battle tree for playoffs</div>
@@ -98,10 +104,10 @@
 					type: Object,
 					notify: true
 				},
-				shouldGeneratePlayoff: {
+				canGenerateTree: {
 					type: Boolean,
 					notify: true,
-					value: true
+					value: false
 				},
 				selectedTab: {
 					type: Number,
@@ -135,12 +141,12 @@
 			onResponse: function(event, r){
 				this.$.warningDialog.close();
 				if (!!this.playoffTree){
-					this.shouldGeneratePlayoff = false;
+					this.canGenerateTree = false;
 				}else{
-					this.shouldGeneratePlayoff = true;
+					this.$.canGenerateTree.url = util.build('/permissions/round/' + this.round.id + '/generate');
+					this.$.canGenerateTree.generateRequest();
 				}
 			}
-
 		});
 	</script>
 </dom-module>
